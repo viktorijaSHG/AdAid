@@ -152,7 +152,8 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
 
 <template>
   <div style="display:flex; flex-direction:column; max-width: 1280px;  margin: auto;">
-    <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')' } : {}">
+    <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
+
 
 
       <div class="first" :style="{ width: realSliderWidthAll() + 'px', height: realSliderHeight() + 'px', top: positionTop+'px',  left: positionLeft+'px'} ">
