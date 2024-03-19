@@ -1,6 +1,7 @@
 <script>
 import {Swiper, SwiperSlide, useSwiper} from "swiper/vue"
 import { EffectCube,  EffectFade, Navigation, Pagination} from 'swiper/modules';
+import { watch } from 'vue';
 
 import 'swiper/css/effect-fade';
 
@@ -11,6 +12,7 @@ import 'swiper/css/navigation';
  export default (await import('vue')).defineComponent({
   data(){
     return {
+      swiperRef: null,
       images:[],
       isDragging:false,
       // imgs,
@@ -18,7 +20,7 @@ import 'swiper/css/navigation';
        EffectFade,
        Navigation,
       Pagination,
-      modules:[Navigation],
+      modules:0,
       loopVar:false,
       slideCount:1,
       autoplay:true,
@@ -34,11 +36,29 @@ import 'swiper/css/navigation';
       positionLeft: 400,
       swiper: null,
       background: null,
-
+      modulesOptions: [
+      [Navigation],
+      [Navigation, EffectCube],
+      [],
+      [],
+      []
+    ],
     }
     },
 
-   
+    watch: {
+  modules(newModules) {
+    if (this.swiperRef) {
+      const newModulesConfig = this.modulesOptions[newModules];
+      this.swiperRef.update({
+        modules: newModulesConfig,
+      });
+    }
+  },
+},
+
+
+
 
     methods: {
       selectFiles(){
@@ -69,6 +89,7 @@ import 'swiper/css/navigation';
       return this.sliderHeight;
     },
     getSwiperNavigation() {
+      console.log(this.modulesOptions[this.modules])
     if (this.buttonVar) {
       return {
         nextEl: '.swiper-button-next',
@@ -92,7 +113,7 @@ import 'swiper/css/navigation';
     this.images.forEach((image, index) => {
       swiperSlidesHtml += `
       <div class="swiper-slide" id="card${index}">
-          <img src="assets/${image}" />
+          <gwd-image src="assets/${image}" />
         </div>
       `;
     });
@@ -113,6 +134,10 @@ import 'swiper/css/navigation';
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
       },
+      modules: [${this.modulesOptions[modules].map(m => `'${m}'`).join(',')}]
+        :navigation="${getSwiperNavigation()}"
+        :loop=${this.loopVar}
+
     });
     `;
 
@@ -145,28 +170,22 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   }
  
 });
-
-
- </script>
+</script>
  
-
 <template>
   <div style="display:flex; flex-direction:column; max-width: 1280px;  margin: auto;">
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
 
-
-
       <div class="first" :style="{ width: realSliderWidthAll() + 'px', height: realSliderHeight() + 'px', top: positionTop+'px',  left: positionLeft+'px'} ">
         <Swiper
         class="swiper"
-        :modules=modules
+        :modules=modulesOptions[modules]
         :navigation="getSwiperNavigation()"
         effect="cube"
         :loop=loopVar
         :slidesPerView=slideCount
         :spaceBetween=spaceBetweenSlides
         :style="{ width: realSliderWidth() + 'px', height: realSliderHeight() + 'px'} "
-        :setWrapperSize="true"
  
         >
       
@@ -216,6 +235,21 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
           </span>select background image
           <input name="file" type="file" class="file" ref="fileInput" @change="onBackgroundSelect"/>
         </div>
+        <label>
+          <input type="radio" value="0" v-model="modules" checked > basic
+       </label>
+       <label>
+          <input type="radio" value="1" v-model="modules" > cube
+       </label>
+       <label>
+          <input type="radio" value="2" v-model="modules"> fade
+       </label>
+       <label>
+          <input type="radio" value="3" v-model="modules"> Option 4
+       </label>
+       <label>
+          <input type="radio" value="4" v-model="modules"> Option 5
+       </label>
         <!-- <label>
           <input type="text" v-model="defineSwiper"> Side button x
         </label> -->
