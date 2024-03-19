@@ -29,7 +29,7 @@ import 'swiper/css/navigation';
       buttonVar: false,
       buttonX: 0,
       setWrapperSize:200,
-      offset:20,
+      offset:0,
       positionTop: 200,
       positionLeft: 400,
       swiper: null,
