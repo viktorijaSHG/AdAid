@@ -1,7 +1,6 @@
 <script>
 import {Swiper, SwiperSlide, useSwiper} from "swiper/vue"
 import { EffectCube,  EffectFade, Navigation, Pagination} from 'swiper/modules';
-import { watch } from 'vue';
 
 import 'swiper/css/effect-fade';
 
@@ -27,6 +26,7 @@ export default (await import('vue')).defineComponent({
       // imgs,
        EffectCube,
        EffectFade,
+       freemodeVar:false,
        Navigation,
       Pagination,
       loopVar:false,
@@ -44,6 +44,7 @@ export default (await import('vue')).defineComponent({
       positionLeft: 400,
       swiper: null,
       background: null,
+      directionVar: 'horizontal',
       effects:[
         "",
         "",
@@ -82,6 +83,17 @@ export default (await import('vue')).defineComponent({
           this.images.push({name :files[i].name,url: URL.createObjectURL(files[i])} );
       }
     },
+    buttonStyleTop(){
+      if (this.directionVar=='vertical'){
+        return 'top:0; left:'+((this.sliderWidth/2)-10) +'px; transform: rotate(90deg);' 
+      }
+      
+    },
+    buttonStyleBottom(){
+      if (this.directionVar=='vertical'){
+        return 'bottom:0; left:'+((this.sliderWidth/2)-10) +'px; transform: rotate(90deg);' 
+      }
+    },
     onBackgroundSelect(event) {
       const file = event.target.files[0]; // Corrected line
       this.background = URL.createObjectURL(file);
@@ -117,7 +129,7 @@ export default (await import('vue')).defineComponent({
 
      exportCode(){
     // Dynamically generate the SwiperSlide elements
-    let swiperSlidesHtml = '';
+
     this.images.forEach((image, index) => {
       swiperSlidesHtml += `
       <div class="swiper-slide" id="card${index}">
@@ -181,13 +193,15 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
 </script>
  
 <template>
-  <div style="display:flex; flex-direction:column; max-width: 1280px;  margin: auto;">
+  <div class="flex-container" >
     
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
 
       <div class="first" :style="{ width: realSliderWidthAll() + 'px', height: realSliderHeight() + 'px', top: positionTop+'px',  left: positionLeft+'px'} ">
         <Swiper
-        class="swiper"
+        :direction="directionVar"
+        :freeMode=freemodeVar
+        class="swiper" 
         :modules=modulesOptions[modulesIndex]
         :effect=effects[modulesIndex]
         :navigation="getSwiperNavigation()"
@@ -203,14 +217,29 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
           </SwiperSlide>
         </Swiper>
       
-        <div v-if="getSwiperNavigation() != false" class="swiper-button-prev"></div>
-        <div v-if="getSwiperNavigation() != false" class="swiper-button-next"></div>
+        <div v-if="getSwiperNavigation() != false" :style="buttonStyleTop()" class="swiper-button-prev"></div>
+        <div v-if="getSwiperNavigation() != false" :style="buttonStyleBottom()" class="swiper-button-next"></div>
  
       </div>
 
     </div>
      
      <div class="second">
+      <div class="card">
+        <div class="drag-area">
+          
+          <span class="select" role="button" @click="selectFiles">
+          </span>
+          <input name="file" type="file" class="file" ref="fileInput" multiple @change="onFileSelect"/>
+        </div>
+        <div class="container">
+          <div class="image" v-for="(image, index) in images" :key="index">
+            <span class="delete" @click="deleteImage(index)">&times;</span>
+            <img :src="image.url"/>
+          </div>
+        </div>
+     </div>
+     
       <div class="settings">
         <label>
           <input type="text" v-model="sliderHeight" /> slide heigth
@@ -221,10 +250,10 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         <label>
           <input type="checkbox" v-model="loopVar"> Enable Loop
         </label>
-        <label>
-          <input type="text" v-model="slideCount" /> Slider per view
+        <label v-if="modulesIndex==1" >
+          <input type="text" v-model="slideCount" /> Slidesper view
         </label>
-        <label>
+        <label v-if="modulesIndex==1" >
           <input type="text" v-model="spaceBetweenSlides" /> Space between slides
         </label>
         <label>
@@ -232,6 +261,17 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         </label>
         <label>
           <input type="checkbox" v-model="buttonVar"> Side buttons
+        </label>
+        <label>
+          <input type="checkbox" v-model="freemodeVar"> Freemode
+        </label>
+        <label>
+          <select v-model="directionVar">
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical">Vertical</option>
+           </select>Direction
+           
+        
         </label>
         <label>
           <input type="text" v-model="positionTop" /> Y position
@@ -253,26 +293,14 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
          <button @click="exportCode">Export Code</button>
       </div>
      
-       <div class="card">
-          <div class="drag-area">
-            
-            <span class="select" role="button" @click="selectFiles">
-            </span>
-            <input name="file" type="file" class="file" ref="fileInput" multiple @change="onFileSelect"/>
-          </div>
-          <div class="container">
-            <div class="image" v-for="(image, index) in images" :key="index">
-              <span class="delete" @click="deleteImage(index)">&times;</span>
-              <img :src="image.url"/>
-            </div>
-          </div>
-       </div>
+       
   </div>
 </div>
  </template>
  
 
  <style scoped>
+
 
 .first{
   position: relative;
@@ -294,6 +322,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  .card{
   width: 100%;
   padding: 10px;
+  margin: 10px;
  
  }
  .card .top{
@@ -361,12 +390,148 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   height: 100%;
  }
 
+.content-box{
+  align-items: center;
+  justify-content: center;
+  margin: auto
+}
+
+ .second {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #f5f5f5; /* Light grey background */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin-top: 20px; /* Space between the first and second container */
+ }
+ 
+ .settings {
+  width: 100%;
+  max-width: 600px; /* Limit the width for better readability */
+  padding: 20px;
+  background-color: #ffffff; /* White background for contrast */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+  margin-bottom: 20px; /* Space between settings and card section */
+ }
+ 
+ .settings label {
+  display: block;
+  margin-bottom: 10px;
+ }
+ 
+ .settings input[type="text"],
+ .settings input[type="checkbox"] {
+
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+ }
+ 
+ .settings button {
+  background-color: #007bff; /* Bootstrap primary color */
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+ }
+ 
+ .settings button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+ }
+ 
+ .card {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: #ffffff; /* White background for contrast */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+ }
+ 
+ .card .drag-area {
+  width: 100%;
+  height: 150px;
+  border-radius: 5px;
+  border: 2px dashed #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  background-color: #f0f0f0; /* Light grey background */
+ }
+ 
+ .card .select {
+  color: #007bff; /* Bootstrap primary color */
+  margin-left: 5px;
+  cursor: pointer;
+ }
+ 
+ .card .container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  max-height: 200px;
+  overflow-y: auto; /* Enable scrolling if content overflows */
+ }
+ 
+ .card .container .image {
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  position: relative;
+ }
+ 
+ .card .container .image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure images cover the area without stretching */
+  border-radius: 5px;
+ }
+ 
+ .card .container .image .delete {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: #ff0000; /* Red color for delete button */
+  background-color: #dedede;
+  font-size: 20px;
+  cursor: pointer;
+ }
+ 
 
 
-
-
-
-
+ .flex-container {
+  display: flex;
+  flex-wrap: wrap; /* Allows the items to wrap as needed */
+  justify-content: space-between; /* Adds space between the items */
+ }
+ 
+ .first, .second {
+  flex: 1 0 200px; /* This makes the items flexible and sets a minimum width */
+  margin: 10px; /* Adds some margin around the items */
+ }
+ 
+ /* Media query for smaller screens */
+ @media (max-width: 768px) {
+  .first, .second {
+     flex: 1 0 100%; /* Makes the items take up the full width on smaller screens */
+  }
+ }
+ 
 
 
  </style>
