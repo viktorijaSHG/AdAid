@@ -10,7 +10,15 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 
 
+
 export default (await import('vue')).defineComponent({
+  props: {
+    modulesIndex: {
+      type: Number, // Assuming 'modules' is a number based on your usage
+      
+    },
+ },
+
   data(){
     return {
       swiperRef: null,
@@ -21,7 +29,6 @@ export default (await import('vue')).defineComponent({
        EffectFade,
        Navigation,
       Pagination,
-      modules:0,
       loopVar:false,
       slideCount:1,
       autoplay:true,
@@ -37,9 +44,17 @@ export default (await import('vue')).defineComponent({
       positionLeft: 400,
       swiper: null,
       background: null,
+      effects:[
+        "",
+        "",
+        'cube',
+        "fade"
+      ],
       modulesOptions: [
+        [], 
       [Navigation],
       [Navigation, EffectCube],
+      [Navigation, EffectFade],
       [],
       [],
       []
@@ -47,16 +62,7 @@ export default (await import('vue')).defineComponent({
     }
     },
 
-    watch: {
-  modules(newModules) {
-    if (this.swiperRef) {
-      const newModulesConfig = this.modulesOptions[newModules];
-      this.swiperRef.update({
-        modules: newModulesConfig,
-      });
-    }
-  },
-},
+    
 
 
 
@@ -90,7 +96,8 @@ export default (await import('vue')).defineComponent({
       return this.sliderHeight;
     },
     getSwiperNavigation() {
-      console.log(this.modulesOptions[this.modules])
+      console.log(this.modulesOptions[this.modulesIndex], this.effects[this.modulesIndex])
+      
     if (this.buttonVar) {
       return {
         nextEl: '.swiper-button-next',
@@ -135,7 +142,7 @@ export default (await import('vue')).defineComponent({
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
       },
-      modules: [${this.modulesOptions[modules].map(m => `'${m}'`).join(',')}]
+      modules: [${this.modulesOptions[modulesIndex].map(m => `'${m}'`).join(',')}]
         :navigation="${getSwiperNavigation()}"
         :loop=${this.loopVar}
 
@@ -175,14 +182,15 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  
 <template>
   <div style="display:flex; flex-direction:column; max-width: 1280px;  margin: auto;">
+    
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
 
       <div class="first" :style="{ width: realSliderWidthAll() + 'px', height: realSliderHeight() + 'px', top: positionTop+'px',  left: positionLeft+'px'} ">
         <Swiper
         class="swiper"
-        :modules=modulesOptions[modules]
+        :modules=modulesOptions[modulesIndex]
+        :effect=effects[modulesIndex]
         :navigation="getSwiperNavigation()"
-        effect="cube"
         :loop=loopVar
         :slidesPerView=slideCount
         :spaceBetween=spaceBetweenSlides
@@ -236,25 +244,10 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
           </span>select background image
           <input name="file" type="file" class="file" ref="fileInput" @change="onBackgroundSelect"/>
         </div>
-        <label>
-          <input type="radio" :value="0" :v-model="modules" checked > basic
-       </label>
-       <label>
-          <input type="radio" :value="1" :v-model="modules" > cube
-       </label>
-       <label>
-          <input type="radio" :value="2" :v-model="modules"> fade
-       </label>
-       <label>
-          <input type="radio" :value="3" :v-model="modules"> Option 4
-       </label>
-       <label>
-          <input type="radio" value="4" v-model="modules"> Option 5
-       </label>
+ 
         <!-- <label>
           <input type="text" v-model="defineSwiper"> Side button x
         </label> -->
-
 
        
          <button @click="exportCode">Export Code</button>
@@ -373,22 +366,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
 
 
 
-.swiper-slide {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 18px;
-  font-size: 22px;
-  font-weight: bold;
-  color: #050101;
-  width: 20%;
-}
 
-.settings{
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap
-}
 
 
  </style>
