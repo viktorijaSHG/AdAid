@@ -91,7 +91,7 @@ export default (await import('vue')).defineComponent({
     },
     buttonStyleBottom(){
       if (this.directionVar=='vertical'){
-        return 'bottom:0; left:'+((this.sliderWidth/2)-10) +'px; transform: rotate(90deg);' 
+        return 'top: auto; left:'+((this.sliderWidth/2)-10) +'px; transform: rotate(90deg);' 
       }
     },
     onBackgroundSelect(event) {
@@ -102,10 +102,22 @@ export default (await import('vue')).defineComponent({
       this.images.splice(index,1);
     },
     realSliderWidth() {
-      return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides);
+      if (this.directionVar=="horizontal"){
+        return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides);
+      }
+      else{
+        return this.sliderWidth;
+      }
+
     },
     realSliderHeight() {
-      return this.sliderHeight;
+      if (this.directionVar=="horizontal"){
+        return this.sliderHeight;
+      }
+      else{
+        return this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides);
+      }
+      
     },
     getSwiperNavigation() {
       console.log(this.modulesOptions[this.modulesIndex], this.effects[this.modulesIndex])
@@ -121,11 +133,23 @@ export default (await import('vue')).defineComponent({
 
  realSliderWidthAll(){
 
-  
-    return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2;
+    if (this.directionVar=='horizontal'){
+      return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2;
+    }
+    else{
+      return this.sliderWidth;
+    }
+      
 
  },
-
+ realSliderHeightAll(){
+  if (this.directionVar=="horizontal"){
+        return this.sliderHeight;
+      }
+      else{
+        return this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2;
+      }
+ },
 
      exportCode(){
     // Dynamically generate the SwiperSlide elements
@@ -197,7 +221,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
     
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
 
-      <div class="first" :style="{ width: realSliderWidthAll() + 'px', height: realSliderHeight() + 'px', top: positionTop+'px',  left: positionLeft+'px'} ">
+      <div class="first" :style="{ height: realSliderHeightAll() + 'px', width: realSliderWidthAll() + 'px', height: realSliderHeight() + 'px', top: positionTop+'px',  left: positionLeft+'px'} ">
         <Swiper
         :direction="directionVar"
         :freeMode=freemodeVar
