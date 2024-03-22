@@ -1,11 +1,13 @@
 <script>
-import {Swiper, SwiperSlide, useSwiper} from "swiper/vue"
-import { EffectCube,  EffectFade, Navigation, Pagination} from 'swiper/modules';
+import {Swiper, SwiperSlide} from "swiper/vue"
+import { EffectCube,  EffectFade, Navigation, Pagination, FreeMode} from 'swiper/modules';
 
 import 'swiper/css/effect-fade';
 
 import 'swiper/css/effect-cube';
 import 'swiper/css';
+import 'swiper/css/navigation';
+
 import 'swiper/css/navigation';
 
 
@@ -23,10 +25,9 @@ export default (await import('vue')).defineComponent({
       swiperRef: null,
       images:[],
       isDragging:false,
-      // imgs,
        EffectCube,
        EffectFade,
-       freemodeVar:false,
+       freemodeVar:true,
        Navigation,
       Pagination,
       loopVar:false,
@@ -53,8 +54,8 @@ export default (await import('vue')).defineComponent({
       ],
       modulesOptions: [
         [], 
-      [Navigation],
-      [Navigation, EffectCube],
+      [Navigation, FreeMode],
+      [Navigation, EffectCube, FreeMode],
       [Navigation, EffectFade],
       [],
       [],
@@ -62,11 +63,6 @@ export default (await import('vue')).defineComponent({
     ],
     }
     },
-
-    
-
-
-
 
     methods: {
       selectFiles(){
@@ -83,16 +79,18 @@ export default (await import('vue')).defineComponent({
           this.images.push({name :files[i].name,url: URL.createObjectURL(files[i])} );
       }
     },
-    buttonStyleTop(){
-      if (this.directionVar=='vertical'){
-        return 'top:0; left:'+((this.sliderWidth/2)-10) +'px; transform: rotate(90deg);' 
-      }
-      
-    },
-    buttonStyleBottom(){
-      if (this.directionVar=='vertical'){
-        return 'top: auto; left:'+((this.sliderWidth/2)-10) +'px; transform: rotate(90deg);' 
-      }
+    buttonStyleTop() {
+      return
+ if (this.directionVar == 'vertical') {
+    return `left: 50%; transform: translateY(-50%); bottom: 50%;`;
+ }
+},
+buttonStyleBottom() {
+  return
+ if (this.directionVar == 'vertical') {
+    return `left: 50%; transform: translateY(-50%); top: 50%;`;
+ }
+
     },
     onBackgroundSelect(event) {
       const file = event.target.files[0]; // Corrected line
@@ -115,6 +113,7 @@ export default (await import('vue')).defineComponent({
         return this.sliderHeight;
       }
       else{
+      
         return this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides);
       }
       
@@ -144,9 +143,12 @@ export default (await import('vue')).defineComponent({
  },
  realSliderHeightAll(){
   if (this.directionVar=="horizontal"){
+    console.log(this.sliderHeight)
         return this.sliderHeight;
+        
       }
       else{
+        console.log(this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2)
         return this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2;
       }
  },
@@ -221,7 +223,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
     
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
 
-      <div class="first" :style="{ height: realSliderHeightAll() + 'px', width: realSliderWidthAll() + 'px', height: realSliderHeight() + 'px', top: positionTop+'px',  left: positionLeft+'px'} ">
+      <div class="first" :style="{ height: realSliderHeightAll() + 'px', width: realSliderWidthAll() + 'px', top: positionTop+'px',  left: positionLeft+'px', position:'relative'} ">
         <Swiper
         :direction="directionVar"
         :freeMode=freemodeVar
@@ -274,10 +276,10 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         <label>
           <input type="checkbox" v-model="loopVar"> Enable Loop
         </label>
-        <label v-if="modulesIndex==1" >
+        <label >
           <input type="text" v-model="slideCount" /> Slidesper view
         </label>
-        <label v-if="modulesIndex==1" >
+        <label  >
           <input type="text" v-model="spaceBetweenSlides" /> Space between slides
         </label>
         <label>
@@ -326,9 +328,16 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  <style scoped>
 
 
-.first{
-  position: relative;
-}
+ .first {
+  display: flex; /* Make .first a flex container */
+  justify-content: center; /* Center children horizontally */
+  align-items: center; /* Center children vertically */
+  height: 100%; /* Ensure .first takes up the full height of its parent */
+  position: relative; /* Keep this if you need to position children absolutely */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+ }
 
  
  .swiper-button-next {
@@ -555,7 +564,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
      flex: 1 0 100%; /* Makes the items take up the full width on smaller screens */
   }
  }
+
  
-
-
+ 
  </style>
