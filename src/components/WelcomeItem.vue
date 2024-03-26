@@ -12,10 +12,11 @@ import 'swiper/css/navigation';
 
 
 
+
 export default (await import('vue')).defineComponent({
   props: {
-    modulesIndex: {
-      type: Number, // Assuming 'modules' is a number based on your usage
+    images: {
+      type: Array
       
     },
  },
@@ -23,7 +24,6 @@ export default (await import('vue')).defineComponent({
   data(){
     return {
       swiperRef: null,
-      images:[],
       isDragging:false,
        EffectCube,
        EffectFade,
@@ -64,41 +64,7 @@ export default (await import('vue')).defineComponent({
     }
     },
 
-    methods: {
-      selectFiles(){
-        this.$refs.fileInput.click()
-      },
-      onFileSelect(event){
-   
-        const files = event.target.files;
-        console.log(files)
-        if(files.length === 0){
-          return;
-        }
-        for(let i=0; i< files.length ; i++){
-          this.images.push({name :files[i].name,url: URL.createObjectURL(files[i])} );
-      }
-    },
-    buttonStyleTop() {
-      return
- if (this.directionVar == 'vertical') {
-    return `left: 50%; transform: translateY(-50%); bottom: 50%;`;
- }
-},
-buttonStyleBottom() {
-  return
- if (this.directionVar == 'vertical') {
-    return `left: 50%; transform: translateY(-50%); top: 50%;`;
- }
-
-    },
-    onBackgroundSelect(event) {
-      const file = event.target.files[0]; // Corrected line
-      this.background = URL.createObjectURL(file);
-    },
-    deleteImage(index){
-      this.images.splice(index,1);
-    },
+  methods: {
     realSliderWidth() {
       if (this.directionVar=="horizontal"){
         return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides);
@@ -133,6 +99,7 @@ buttonStyleBottom() {
  realSliderWidthAll(){
 
     if (this.directionVar=='horizontal'){
+      
       return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2;
     }
     else{
@@ -197,6 +164,7 @@ buttonStyleBottom() {
       <div class="swiper-button-next" id="arrow-right"></div>
       <div class="swiper-button-prev" id="arrow-left"></div>
     </div>
+
     `;
 console.log(htmlCode);
 console.log(swiperScript);
@@ -220,9 +188,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  
 <template>
   <div class="flex-container" >
-    
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
-
       <div class="first" :style="{ height: realSliderHeightAll() + 'px', width: realSliderWidthAll() + 'px', top: positionTop+'px',  left: positionLeft+'px', position:'relative'} ">
         <Swiper
         :direction="directionVar"
@@ -235,25 +201,20 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         :slidesPerView=slideCount
         :spaceBetween=spaceBetweenSlides
         :style="{ width: realSliderWidth() + 'px', height: realSliderHeight() + 'px'} "
- 
         >
       
           <SwiperSlide v-for="(image, index) in images" :key="index">
             <img :src="image.url" alt="" />
           </SwiperSlide>
-        </Swiper>
-      
+        </Swiper>     
         <div v-if="getSwiperNavigation() != false" :style="buttonStyleTop()" class="swiper-button-prev"></div>
         <div v-if="getSwiperNavigation() != false" :style="buttonStyleBottom()" class="swiper-button-next"></div>
- 
       </div>
-
-    </div>
-     
-     <div class="second">
-      <div class="card">
-        <div class="drag-area">
-          
+    </div>   
+    <div class="second">
+        <!-- <div class="card">  
+          <div class="top">
+            <h2>Upload Images</h2>
           <span class="select" role="button" @click="selectFiles">
           </span>
           <input name="file" type="file" class="file" ref="fileInput" multiple @change="onFileSelect"/>
@@ -263,8 +224,8 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
             <span class="delete" @click="deleteImage(index)">&times;</span>
             <img :src="image.url"/>
           </div>
-        </div>
-     </div>
+        </div> -->
+     <!-- </div> -->
      
       <div class="settings">
         <label>
@@ -320,8 +281,8 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
       </div>
      
        
-  </div>
-</div>
+ 
+    </div></div>
  </template>
  
 
@@ -547,11 +508,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  
 
 
- .flex-container {
-  display: flex;
-  flex-wrap: wrap; /* Allows the items to wrap as needed */
-  justify-content: space-between; /* Adds space between the items */
- }
+
  
  .first, .second {
   flex: 1 0 200px; /* This makes the items flexible and sets a minimum width */
