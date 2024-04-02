@@ -1,7 +1,122 @@
+<script>
+import {Swiper, SwiperSlide} from "swiper/vue"
+import { EffectCube, Navigation} from 'swiper/modules';
+
+import 'swiper/css/effect-cube';
+import 'swiper/css';
+import 'swiper/css/navigation';
+
+export default (await import('vue')).defineComponent({
+  props: {
+    images: {
+      type: Array
+    },
+ },
+
+  data(){
+    return {
+      EffectCube,
+      Navigation,
+      loopVar:false,
+      autoplay:true,
+      autoplayDelay:2000,
+      sliderWidth: 230,
+      sliderHeight: 310,
+      buttonVar: false,
+      buttonX: 0,
+      setWrapperSize:200,
+      offset:0,
+      positionTop: 200,
+      positionLeft: 400,
+      swiper: null,
+      background: null,
+      effect:'cube',
+      modules: [Navigation, EffectCube],
+    }
+    },
+
+  methods: {
+    realSliderWidth() {
+      if (this.directionVar=="horizontal"){
+        return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides);
+      }
+      else{
+        return this.sliderWidth;
+      }
+    },
+    realSliderHeight() {
+        return this.sliderHeight;
+      },
+      
+   
+    getSwiperNavigation() {
+      console.log(this.modulesOptions[this.modulesIndex], this.effects[this.modulesIndex])
+      
+    if (this.buttonVar) {
+      return {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      };
+    }
+    return false; // Return undefined when navigation is not enabled
+ },
+
+ realSliderWidthAll(){
+
+      
+      return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2;
+
+
+      
+
+ },
+
+
+  },
+ 
+
+  components: {
+     Swiper,
+     SwiperSlide,
+ 
+
+  }
+ 
+});
+</script>
+ 
 <template>
-    <div class="card">
-        <div class="drag-area">
-            <input type="file" ref="fileInput" @change="importImages" multiple>
+  <div class="flex-container" >
+    <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
+      <div class="first" :style="{ height: realSliderHeightAll() + 'px', width: realSliderWidthAll() + 'px', top: positionTop+'px',  left: positionLeft+'px', position:'relative'} ">
+        <Swiper
+
+        :direction="directionVar"
+        class="swiper" 
+        :modules=modulesOptions[modulesIndex]
+        :effect=effects[modulesIndex]
+        :navigation="getSwiperNavigation()"
+        :loop=loopVar
+        :slidesPerView=slideCount
+        :spaceBetween=spaceBetweenSlides
+        :style="{ width: realSliderWidth() + 'px', height: realSliderHeight() + 'px'} "
+        >
+      
+          <SwiperSlide v-for="(image, index) in images" :key="index">
+            <img :src="image.url" alt="" />
+          </SwiperSlide>
+        </Swiper>     
+        <div v-if="getSwiperNavigation() != false" :style="buttonStyleTop()" class="swiper-button-prev"></div>
+        <div v-if="getSwiperNavigation() != false" :style="buttonStyleBottom()" class="swiper-button-next"></div>
+      </div>
+    </div>   
+    <div class="second">
+        <div class="card">  
+          <div class="top">
+            <h2>Upload Images</h2>
+          <span class="select" role="button" @click="selectFiles">
+          </span>
+          <input name="file" type="file" class="file" ref="fileInput" multiple @change="onFileSelect"/>
         </div>
         <div class="container">
           <div class="image" v-for="(image, index) in images" :key="index">
@@ -10,44 +125,68 @@
           </div>
         </div>
      </div>
-
-    <div class="file-insert">
+     
+      <div class="settings">
+        <label>
+          <input type="text" v-model="sliderHeight" /> slide heigth
+        </label>
+        <label>
+          <input type="text" v-model="sliderWidth" /> slider width
+        </label>
+        <label>
+          <input type="checkbox" v-model="loopVar"> Enable Loop
+        </label>
+        <label >
+          <input type="text" v-model="slideCount" /> Slidesper view
+        </label>
+        <label  >
+          <input type="text" v-model="spaceBetweenSlides" /> Space between slides
+        </label>
+        <label>
+          <input type="text" v-model="offset" /> Button offset
+        </label>
+        <label>
+          <input type="checkbox" v-model="buttonVar"> Side buttons
+        </label>
+        <label>
+          <input type="checkbox" v-model="freemodeVar"> Freemode
+        </label>
+        <label>
+          <select v-model="directionVar">
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical">Vertical</option>
+           </select>Direction
+           
         
-    </div>
-</template>
+        </label>
+        <label>
+          <input type="text" v-model="positionTop" /> Y position
+        </label>
+        <label>
+          <input type="text" v-model="positionLeft" /> X position
+        </label>
+        <div class="drag-area">
+          <span class="select" role="button" @click="selectFiles">
+          </span>select background image
+          <input name="file" type="file" class="file" ref="fileInput" @change="onBackgroundSelect"/>
+        </div>
+ 
 
-<script>
-export default {
-    data() {
-        return {
-            images: []
-        };
-    },
-    methods: {
-        importImages(event) {
-            const files = event.target.files;
-            for (let i = 0; i < files.length; i++) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.images.push({
-                        id: i,
-                        url: e.target.result
-                    });
-                };
-                reader.readAsDataURL(files[i]);
-            }
-            this.$emit('images-updated', this.images);
-        },
-    deleteImage(index){
-      this.images.splice(index,1);
-    },
-    }
-};
-</script>
 
-<style scoped>
+       
+         <button @click="exportCode">Export Code</button>
+      </div>
+     
+       
+ 
+    </div></div>
+ </template>
+ 
 
-.first {
+ <style scoped>
+
+
+ .first {
   display: flex; /* Make .first a flex container */
   justify-content: center; /* Center children horizontally */
   align-items: center; /* Center children vertically */
@@ -278,70 +417,5 @@ export default {
  }
 
  
-.card{
-  width: 100%;
-  padding: 10px;
-  margin: 10px;
  
- }
- .card .top{
-  text-align: center;
- }
- .card p{
-  font-weight: bold;
-  color: brown;
- }
- .card button{
-  outline: 0;
-
- }
- .card .drag-area{
-  height: 150px;
-  border-radius: 5px;
-  border: 2px dashed  #ddd;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: center;
-  margin-top: 10px;
- }
-
- .card .select{
-  color: aqua;
-  margin-left: 5px;
- }
-
- .card .container{
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
-  max-height: 200px;
-  position: relative;
-
- }
-.card .container .image img{
-  width: 100px;
- 
-  border-radius: 5px;
-}
-
-
-.file-insert {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-}
-
-.image-container {
-    margin: 10px;
-}
-
-.image {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-}
-</style>
+ </style>

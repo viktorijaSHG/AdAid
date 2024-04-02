@@ -1,6 +1,6 @@
 <script>
 import {Swiper, SwiperSlide} from "swiper/vue"
-import { EffectCube,  EffectFade, Navigation, Pagination, FreeMode} from 'swiper/modules';
+import { EffectCube,  EffectFade, Navigation, Pagination, Autoplay} from 'swiper/modules';
 
 import 'swiper/css/effect-fade';
 
@@ -8,16 +8,19 @@ import 'swiper/css/effect-cube';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
-import 'swiper/css/navigation';
-
-
+import 'swiper/css/autoplay';
 
 
 export default (await import('vue')).defineComponent({
   props: {
     images: {
       type: Array
-      
+    },
+    type: {
+      type: String
+    },
+    index: {
+      type: Number
     },
  },
 
@@ -25,49 +28,54 @@ export default (await import('vue')).defineComponent({
     return {
       swiperRef: null,
       isDragging:false,
-       EffectCube,
-       EffectFade,
-       freemodeVar:true,
-       Navigation,
+      EffectCube,
+      EffectFade,
+      Autoplay,
+      freemodeVar:true,
+      Navigation,
       Pagination,
       loopVar:false,
       slideCount:1,
-      autoplay:true,
-      autoplayDelay:2000,
-      spaceBetweenSlides: 10,
-      sliderWidth: 230,
-      sliderHeight: 310,
+      spaceBetweenSlides: 0,
+      sliderWidth: 30,
+      sliderHeight: 30,
       buttonVar: false,
       buttonX: 0,
       setWrapperSize:200,
       offset:0,
-      positionTop: 200,
-      positionLeft: 400,
+      positionTop: 0,
+      positionLeft: 0,
       swiper: null,
       background: null,
       directionVar: 'horizontal',
       effects:[
         "",
-        "",
         'cube',
         "fade"
       ],
-      modulesOptions: [
-        [], 
-      [Navigation, FreeMode],
-      [Navigation, EffectCube, FreeMode],
+      modules: [
+      [Navigation],
+      [Navigation, EffectCube],
       [Navigation, EffectFade],
-      [],
-      [],
-      []
     ],
+    autoplayVar:true,
+    autoplayDelay:2000
     }
     },
 
   methods: {
     realSliderWidth() {
       if (this.directionVar=="horizontal"){
+        // let spaceBetweenSlidesPercentage = (this.spaceBetweenSlides / 1280) * 100;
+    
+        // let totalWidthInPixels = this.slideCount * this.sliderWidth + ((this.slideCount - 1) * spaceBetweenSlidesPercentage);
+    
+        // console.log(totalWidthInPixels);
+        //   return totalWidthInPixels;
+ 
+        //console.log(this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides))
         return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides);
+
       }
       else{
         return this.sliderWidth;
@@ -85,7 +93,7 @@ export default (await import('vue')).defineComponent({
       
     },
     getSwiperNavigation() {
-      console.log(this.modulesOptions[this.modulesIndex], this.effects[this.modulesIndex])
+     
       
     if (this.buttonVar) {
       return {
@@ -96,6 +104,29 @@ export default (await import('vue')).defineComponent({
     return false; // Return undefined when navigation is not enabled
  },
 
+ getSwiperNavigationStyle(){
+       // Calculate the left and right positions based on the offset
+       const leftPosition = `calc(50% - ${this.offset}px)`;
+      const rightPosition = `calc(50% + ${this.offset}px)`;
+
+      // Return the styles as an object
+      return {
+        left: leftPosition,
+        right: rightPosition,
+        top: '50%', // Center vertically
+        transform: 'translateY(-50%)', // Adjust for the button's own height
+      };
+ },
+
+ getAutoplay(){
+  if (this.autoplayVar){
+    console.log()
+    return { delay:  this.autoplayDelay };
+  }
+  else{
+    return false
+  }
+ },
  realSliderWidthAll(){
 
     if (this.directionVar=='horizontal'){
@@ -108,11 +139,11 @@ export default (await import('vue')).defineComponent({
       
 
  },
+
  realSliderHeightAll(){
   if (this.directionVar=="horizontal"){
     console.log(this.sliderHeight)
         return this.sliderHeight;
-        
       }
       else{
         console.log(this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2)
@@ -121,16 +152,40 @@ export default (await import('vue')).defineComponent({
  },
 
      exportCode(){
-    // Dynamically generate the SwiperSlide elements
 
+    const styles = `
+    .swiper {
+      height: ${this.realSliderHeight()}%;
+      width: ${this.realSliderWidth()}%;
+    }
+    .swiper-slide {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .swiper-slide gwd-image {
+      display: block;
+      object-fit: cover;
+      width: 100%;
+    }
+    .swiper {
+      margin-left: auto;
+      margin-right: auto;
+      top: ${this.positionTop}%;
+      left:${this.positionLeft}%;
+    }
+    
+    `
+
+    let swiperSlidesHtml
     this.images.forEach((image, index) => {
       swiperSlidesHtml += `
       <div class="swiper-slide" id="card${index}">
-          <gwd-image src="assets/${image}" />
+          <gwd-image src="assets/${image.src}" />
         </div>
       `;
     });
-
+    const modulesString = this.modules[this.index].map(module => module.name).join(', ');
     // Construct the Swiper component HTML
     const swiperScript = `
     SCRIPT CODE!!!!!!!!!
@@ -140,17 +195,14 @@ export default (await import('vue')).defineComponent({
       slidesPerView: ${this.slideCount},
       spaceBetween: ${this.spaceBetweenSlides},
       loop: ${this.loopVar},
-      pagination: {
-        el: ".swiper-pagination",
-      },
       navigation: {
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
       },
-      modules: [${this.modulesOptions[modulesIndex].map(m => `'${m}'`).join(',')}]
-        :navigation="${getSwiperNavigation()}"
-        :loop=${this.loopVar}
+      modules: [${modulesString}],
+     
 
+      effect: "${this.effects[this.index]}",
     });
     `;
 
@@ -164,38 +216,55 @@ export default (await import('vue')).defineComponent({
       <div class="swiper-button-next" id="arrow-right"></div>
       <div class="swiper-button-prev" id="arrow-left"></div>
     </div>
-
     `;
+
 console.log(htmlCode);
 console.log(swiperScript);
+console.log(styles)
 console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
+ const newWindows = window.open("", "_blank");
+ newWindows.document.write('<html><head><title>Exported Code</title>');
+ newWindows.document.write('<link rel="stylesheet" href="swiper-bundle.min.css">');
+ newWindows.document.write( styles );
+ newWindows.document.write( htmlCode );
+ newWindows.document.write( swiperScript );
+ //newWindows.document.write('</body.></htm..l>');
+ newWindows.document.close();
     // The rest of your exportCode method...
 
   },
 
   },
- 
 
   components: {
      Swiper,
      SwiperSlide,
  
 
-  }
+  },
+  computed: {
+ autoplayConfig() {
+    if (this.autoplayVar) {
+      return { delay: this.autoplayDelay };
+    }
+    return false;
+ }
+}
  
 });
 </script>
  
 <template>
   <div class="flex-container" >
-    <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover' } : {}">
-      <div class="first" :style="{ height: realSliderHeightAll() + 'px', width: realSliderWidthAll() + 'px', top: positionTop+'px',  left: positionLeft+'px', position:'relative'} ">
+    <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover', position: 'relative'} : {position: 'relative'}">
+      <div :style="{top:positionTop+'px', left:positionLeft+'px'}"  class="first">
         <Swiper
+        :autoplay="autoplayConfig"
         :direction="directionVar"
-        :freeMode=freemodeVar
+       
         class="swiper" 
-        :modules=modulesOptions[modulesIndex]
-        :effect=effects[modulesIndex]
+        :modules=modules[index]
+        :effect=effects[index]
         :navigation="getSwiperNavigation()"
         :loop=loopVar
         :slidesPerView=slideCount
@@ -203,30 +272,20 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         :style="{ width: realSliderWidth() + 'px', height: realSliderHeight() + 'px'} "
         >
       
-          <SwiperSlide v-for="(image, index) in images" :key="index">
+          <SwiperSlide  v-for="(image, index) in images" :key="index">
             <img :src="image.url" alt="" />
           </SwiperSlide>
         </Swiper>     
-        <div v-if="getSwiperNavigation() != false" :style="buttonStyleTop()" class="swiper-button-prev"></div>
-        <div v-if="getSwiperNavigation() != false" :style="buttonStyleBottom()" class="swiper-button-next"></div>
+        
       </div>
-    </div>   
+      <div>
+        <div v-if="getSwiperNavigation() != false"  class="swiper-button-prev" :style="getSwiperNavigationStyle()"></div>
+        <div v-if="getSwiperNavigation() != false"  class="swiper-button-next" :style="getSwiperNavigationStyle()"></div>
+      </div>
+      </div>   
     <div class="second">
-        <!-- <div class="card">  
-          <div class="top">
-            <h2>Upload Images</h2>
-          <span class="select" role="button" @click="selectFiles">
-          </span>
-          <input name="file" type="file" class="file" ref="fileInput" multiple @change="onFileSelect"/>
-        </div>
-        <div class="container">
-          <div class="image" v-for="(image, index) in images" :key="index">
-            <span class="delete" @click="deleteImage(index)">&times;</span>
-            <img :src="image.url"/>
-          </div>
-        </div> -->
-     <!-- </div> -->
-     
+ 
+      
       <div class="settings">
         <label>
           <input type="text" v-model="sliderHeight" /> slide heigth
@@ -237,21 +296,36 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         <label>
           <input type="checkbox" v-model="loopVar"> Enable Loop
         </label>
-        <label >
-          <input type="text" v-model="slideCount" /> Slidesper view
-        </label>
-        <label  >
-          <input type="text" v-model="spaceBetweenSlides" /> Space between slides
+
+        <div v-if="this.type == 'multiple'">
+          <label >
+            <input type="text" v-model="slideCount" /> Slidesper view
+          </label>
+          <label  >
+            <input type="text" v-model="spaceBetweenSlides" /> Space between slides
+          </label>
+        </div>
+       
+        <label>
+          <input type="text" v-model="autoplayDelay" /> Delay
         </label>
         <label>
-          <input type="text" v-model="offset" /> Button offset
+          <input type="checkbox" v-model="autoplayVar"> Enable delay
         </label>
+
+        
         <label>
           <input type="checkbox" v-model="buttonVar"> Side buttons
         </label>
+
         <label>
-          <input type="checkbox" v-model="freemodeVar"> Freemode
+          <input type="text" v-model="offset" /> Button offset x
         </label>
+
+        <!-- <label>
+          <input type="checkbox" v-model="freemodeVar"> Freemode
+        </label> -->
+
         <label>
           <select v-model="directionVar">
             <option value="horizontal">Horizontal</option>
@@ -272,9 +346,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
           <input name="file" type="file" class="file" ref="fileInput" @change="onBackgroundSelect"/>
         </div>
  
-        <!-- <label>
-          <input type="text" v-model="defineSwiper"> Side button x
-        </label> -->
+
 
        
          <button @click="exportCode">Export Code</button>
@@ -290,28 +362,30 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
 
 
  .first {
-  display: flex; /* Make .first a flex container */
-  justify-content: center; /* Center children horizontally */
-  align-items: center; /* Center children vertically */
-  height: 100%; /* Ensure .first takes up the full height of its parent */
-  position: relative; /* Keep this if you need to position children absolutely */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+ 
+  
+  position: absolute; /* Keep this if you need to position children absolutely */
+
+  
+  margin: 0px!important;
  }
 
  
- .swiper-button-next {
-     right: 10px;
+ /* .swiper-button-next {
+     right: 10%;
  }
  
  .swiper-button-prev {
      left: 10px;
- }
-
+ } */
 
  .swiper{
-  margin-top: auto;
+  margin: 0;
+ }
+
+ .swiper-slide{
+  width: 100%;
+  height: 100%;
  }
  .card{
   width: 100%;
@@ -357,12 +431,12 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   position: relative;
 
  }
+
 .card .container .image img{
   width: 100px;
  
   border-radius: 5px;
 }
- 
 
  .container {
   width: 100%;
@@ -376,8 +450,6 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   background-color: #dedede;
 
  }
- 
-
  
  .swiper-slide img {
   width: 100%;
@@ -525,3 +597,5 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  
  
  </style>
+
+

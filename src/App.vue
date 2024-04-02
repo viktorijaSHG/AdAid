@@ -1,44 +1,58 @@
 <template>
   <div class="container">
-    <div v-if="selectedIndex">
-       <WelcomeItem :modulesIndex="selectedIndex" :images="images"/>
+    <div v-if="type">
+      <Images @images-updated="updateImages"/> 
+       <Default :images="images" :type="this.type" :index="this.selectedIndex"/>
        <div class="flex-container" >
-        <Images @images-updated="updateImages"/>
+             
        </div>
        
      </div>
      <div v-else class="image-grid">
        <div class="image-container" v-for="(image, index) in images" :key="index">
          <img :src="image.src" :alt="image.alt">
-         <button @click="chooseType(index+1)" class="hidden-button">Choose</button>
+         <button @click="chooseType(index)" class="hidden-button">Choose</button>
        </div>
      </div>
   </div>
 </template>
 
 <script>
-import WelcomeItem from "./components/WelcomeItem.vue";
+import Default from "./components/Default.vue";
 import Images from "./components/Images.vue";
 
 export default {
   data() {
     return {
       selectedIndex: null,
+      type: null,
       images: [
         { src: "/src/assets/default.png", alt: "Default" },
         { src: "/src/assets/cube.png", alt: "Cube" },
         { src: "/src/assets/fade.png", alt: "Fade" },
         // Add more images as needed
       ],
+
+
+      
     };
+     
+
+    
   },
   components: {
-    WelcomeItem,
+    Default,
     Images,
   },
   methods: {
     chooseType(index) {
       this.selectedIndex = index;
+      if (this.selectedIndex == 0){
+        this.type = 'multiple'
+      }
+      else{
+        this.type = 'single'
+      }
     },
     updateImages(newImages) {
       this.images = newImages;
