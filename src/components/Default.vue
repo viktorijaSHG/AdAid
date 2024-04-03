@@ -37,14 +37,14 @@ export default (await import('vue')).defineComponent({
       loopVar:false,
       slideCount:1,
       spaceBetweenSlides: 0,
-      sliderWidth: 30,
-      sliderHeight: 30,
+      sliderWidth: 130,
+      sliderHeight: 200,
       buttonVar: false,
       buttonX: 0,
       setWrapperSize:200,
       offset:0,
-      positionTop: 0,
-      positionLeft: 0,
+      positionTop: 200,
+      positionLeft: 200,
       swiper: null,
       background: null,
       directionVar: 'horizontal',
@@ -59,7 +59,8 @@ export default (await import('vue')).defineComponent({
       [Navigation, EffectFade],
     ],
     autoplayVar:true,
-    autoplayDelay:2000
+    autoplayDelay:2000,
+    btnWidth:40
     }
     },
 
@@ -104,29 +105,48 @@ export default (await import('vue')).defineComponent({
     return false; // Return undefined when navigation is not enabled
  },
 
- getSwiperNavigationStyle(){
-       // Calculate the left and right positions based on the offset
-       const leftPosition = `calc(50% - ${this.offset}px)`;
-      const rightPosition = `calc(50% + ${this.offset}px)`;
+ getSwiperNavigationLeft(){
+
+      if (this.directionVar == 'horizontal'){
+        return {
+          left: this.offset*-1 +'px',
+        '--swiper-navigation-size': this.btnWidth+'px',
+      
+      };
+      }
+      else{
+        return{
+          
+          '--swiper-navigation-size': this.btnWidth+'px',
+          'transform': 'rotate(90deg)'
+        }
+      
+
+      }
+ },
+
+ getSwiperNavigationRight(){
 
       // Return the styles as an object
-      return {
-        left: leftPosition,
-        right: rightPosition,
-        top: '50%', // Center vertically
-        transform: 'translateY(-50%)', // Adjust for the button's own height
+      if (this.directionVar == 'horizontal'){
+        return {
+          right: this.offset*-1 +'px',
+        '--swiper-navigation-size': this.btnWidth+'px',
+      
       };
+      }
+      else{
+        return{
+        
+          '--swiper-navigation-size': this.btnWidth+'px',
+          'transform': 'rotate(90deg)'
+        }
+      
+
+      }
  },
 
- getAutoplay(){
-  if (this.autoplayVar){
-    console.log()
-    return { delay:  this.autoplayDelay };
-  }
-  else{
-    return false
-  }
- },
+
  realSliderWidthAll(){
 
     if (this.directionVar=='horizontal'){
@@ -146,17 +166,32 @@ export default (await import('vue')).defineComponent({
         return this.sliderHeight;
       }
       else{
+      
         console.log(this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2)
         return this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset*2;
       }
  },
 
      exportCode(){
+    const windowHeigth = 720
+    const windowWidth = 405
+    const heigth = this.realSliderHeight()+"px";
+    const width = this.realSliderWidth()+"px";
+    const top = this.positionTop+"px";
+    const  left = this.positionLeft+"px";
+
+    const offset = "-"+this.offset+"px";
+    const btnWidth = this.btnWidth+ "px";
+   
+
 
     const styles = `
-    .swiper {
-      height: ${this.realSliderHeight()}%;
-      width: ${this.realSliderWidth()}%;
+    .wrapper {
+      height: ${heigth};
+      width: ${width};
+      position:absolute;
+      top: ${top};
+      left:${left};
     }
     .swiper-slide {
       display: flex;
@@ -168,16 +203,18 @@ export default (await import('vue')).defineComponent({
       object-fit: cover;
       width: 100%;
     }
-    .swiper {
-      margin-left: auto;
-      margin-right: auto;
-      top: ${this.positionTop}%;
-      left:${this.positionLeft}%;
+
+    .swiper-button-next{
+      right: ${offset};
+      --swiper-navigation-size: ${btnWidth};
     }
-    
+    .swiper-button-prev{
+      left: ${offset};
+      --swiper-navigation-size: ${btnWidth};
+    }
     `
 
-    let swiperSlidesHtml
+    let swiperSlidesHtml = ""
     this.images.forEach((image, index) => {
       swiperSlidesHtml += `
       <div class="swiper-slide" id="card${index}">
@@ -190,8 +227,10 @@ export default (await import('vue')).defineComponent({
     const swiperScript = `
     SCRIPT CODE!!!!!!!!!
     var swiper = new Swiper(".mySwiper", {
-      autoplay: ${this.autoplay},
-      ${this.autoplay ?  'autoplay:' + `{ delay: ${this.autoplayDelay} },` : ''}
+   
+      effect: "${this.effects[this.index]}",
+      ${this.autoplayVar ? `autoplay: ${this.autoplayVar} `:  ''},
+      ${this.autoplayVar ?  'autoplay:' + `{ delay: ${this.autoplayDelay} },` : ''}
       slidesPerView: ${this.slideCount},
       spaceBetween: ${this.spaceBetweenSlides},
       loop: ${this.loopVar},
@@ -199,19 +238,18 @@ export default (await import('vue')).defineComponent({
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
       },
-      modules: [${modulesString}],
      
-
-      effect: "${this.effects[this.index]}",
     });
     `;
 
     // Define the code you want to export
     const htmlCode = `
     HTML CODE!!!!!!!!!
-    <div class="swiper mySwiper">
-      <div class="swiper-wrapper" id="cards">
-        ${swiperSlidesHtml}
+    <div class="wrapper">
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper" id="cards">
+          ${swiperSlidesHtml}
+        </div>
       </div>
       <div class="swiper-button-next" id="arrow-right"></div>
       <div class="swiper-button-prev" id="arrow-left"></div>
@@ -226,11 +264,15 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  newWindows.document.write('<html><head><title>Exported Code</title>');
  newWindows.document.write('<link rel="stylesheet" href="swiper-bundle.min.css">');
  newWindows.document.write( styles );
- newWindows.document.write( htmlCode );
- newWindows.document.write( swiperScript );
- //newWindows.document.write('</body.></htm..l>');
+ newWindows.document.write( String(htmlCode) );
+ newWindows.document.write( "<script src='swiper-bundle.min.js'../script><script>" );
+
+ newWindows.document.write(swiperScript);
+ newWindows.document.write("../script>");
+
+
+
  newWindows.document.close();
-    // The rest of your exportCode method...
 
   },
 
@@ -245,6 +287,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   computed: {
  autoplayConfig() {
     if (this.autoplayVar) {
+     
       return { delay: this.autoplayDelay };
     }
     return false;
@@ -262,34 +305,35 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         :autoplay="autoplayConfig"
         :direction="directionVar"
        
-        class="swiper" 
+        class="swiper swiper-navigation-vertical" 
         :modules=modules[index]
         :effect=effects[index]
         :navigation="getSwiperNavigation()"
         :loop=loopVar
         :slidesPerView=slideCount
         :spaceBetween=spaceBetweenSlides
-        :style="{ width: realSliderWidth() + 'px', height: realSliderHeight() + 'px'} "
+        :style="{ width: realSliderWidth() + 'px'} "
         >
       
           <SwiperSlide  v-for="(image, index) in images" :key="index">
             <img :src="image.url" alt="" />
           </SwiperSlide>
         </Swiper>     
-        
+        <div v-if="getSwiperNavigation() != false"  class="swiper-button-prev" :style="getSwiperNavigationLeft()"></div>
+        <div v-if="getSwiperNavigation() != false"  class="swiper-button-next" :style="getSwiperNavigationRight()"></div>
       </div>
+
+      
+
       <div>
-        <div v-if="getSwiperNavigation() != false"  class="swiper-button-prev" :style="getSwiperNavigationStyle()"></div>
-        <div v-if="getSwiperNavigation() != false"  class="swiper-button-next" :style="getSwiperNavigationStyle()"></div>
+        
       </div>
       </div>   
     <div class="second">
  
       
       <div class="settings">
-        <label>
-          <input type="text" v-model="sliderHeight" /> slide heigth
-        </label>
+      
         <label>
           <input type="text" v-model="sliderWidth" /> slider width
         </label>
@@ -307,20 +351,32 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         </div>
        
         <label>
-          <input type="text" v-model="autoplayDelay" /> Delay
+          <input type="checkbox" v-model="autoplayVar"> Enable autoplay
         </label>
-        <label>
-          <input type="checkbox" v-model="autoplayVar"> Enable delay
+
+        <label v-if="autoplayVar">
+          <input type="text" v-model="autoplayDelay" /> Delay(ms)
         </label>
+        
 
         
         <label>
           <input type="checkbox" v-model="buttonVar"> Side buttons
         </label>
 
-        <label>
-          <input type="text" v-model="offset" /> Button offset x
-        </label>
+        <div v-if="buttonVar">
+          
+          <label>
+            <input type="text" v-model="offset" /> Button offset x
+          </label>
+  
+  
+          <label>
+            <input type="text" v-model="btnWidth" /> Button width
+          </label>
+
+        </div>
+        
 
         <!-- <label>
           <input type="checkbox" v-model="freemodeVar"> Freemode
@@ -445,8 +501,8 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  }
  
  .content-box {
-  width: 1280px;
-  height: 720px;
+  width: 720px;
+  height: 405px;
   background-color: #dedede;
 
  }

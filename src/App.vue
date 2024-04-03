@@ -3,10 +3,8 @@
     <div v-if="type">
       <Images @images-updated="updateImages"/> 
        <Default :images="images" :type="this.type" :index="this.selectedIndex"/>
-       <div class="flex-container" >
-             
+       <div class="flex-container" >       
        </div>
-       
      </div>
      <div v-else class="image-grid">
        <div class="image-container" v-for="(image, index) in images" :key="index">
