@@ -1,6 +1,9 @@
 <script>
+
 import {Swiper, SwiperSlide} from "swiper/vue"
 import { EffectCube,  EffectFade, Navigation, Pagination, Autoplay} from 'swiper/modules';
+import Images from "./Images.vue";
+// import { VDialog } from 'vuetify/lib';
 
 import 'swiper/css/effect-fade';
 
@@ -13,41 +16,42 @@ import 'swiper/css/autoplay';
 
 export default (await import('vue')).defineComponent({
   props: {
-    images: {
-      type: Array
-    },
+
     type: {
       type: String
     },
     index: {
       type: Number
     },
+
+
  },
 
   data(){
     return {
+      images: [],
       swiperRef: null,
-      isDragging:false,
       EffectCube,
       EffectFade,
       Autoplay,
-      freemodeVar:true,
       Navigation,
       Pagination,
-      loopVar:false,
+      loopVar:true,
       slideCount:1,
       spaceBetweenSlides: 0,
-      sliderWidth: 130,
-      sliderHeight: 200,
+      sliderWidth: 150,
       buttonVar: false,
       buttonX: 0,
       setWrapperSize:200,
       offset:0,
-      positionTop: 200,
-      positionLeft: 200,
+      positionTop: 50,
+      positionLeft: 50,
       swiper: null,
       background: null,
       directionVar: 'horizontal',
+      showDialog: false,
+      btnColor: '#fff',
+      btnType: 'd efault',
       effects:[
         "",
         'cube',
@@ -60,11 +64,88 @@ export default (await import('vue')).defineComponent({
     ],
     autoplayVar:true,
     autoplayDelay:2000,
-    btnWidth:40
+    btnWidth:40,
+    ContentJavaScript:'',
+    ContentHtml:'',
+    ContentCss:'',
+    BtnHtml:'Copy HTML',
+    BtnJavaScript:'Copy JavaScript',
+    BtnCss:'Copy Css',
     }
     },
 
   methods: {
+
+    chooseType(index) {
+      this.selectedIndex = index;
+      if (this.selectedIndex == 0){
+        this.type = 'multiple'
+      }
+      else{
+        this.type = 'single'
+      }
+    },
+    updateImages(newImages) {
+      this.images = newImages;
+
+ },
+
+    copyCssCode() {
+    navigator.clipboard.writeText(this.ContentCss)
+
+    .then(() => {
+      var button = document.getElementById('copy-css-btn');
+      button.textContent = "Copied to clipboard ✔";
+
+    // Use setTimeout to revert the button text after 3 seconds
+    setTimeout(function() {
+      button.textContent = 'Copy Css';
+    }, 2000); // 2000 milliseconds = 3 seconds
+          })
+          .catch(err => {
+            console.error('Could not copy text: ', err);
+          });
+
+ },
+ copyJavaScriptCode() {
+    navigator.clipboard.writeText(this.ContentJavaScript)
+    .then(() => {
+      var button = document.getElementById('copy-js-btn');
+      button.textContent = "Copied to clipboard ✔";
+
+    // Use setTimeout to revert the button text after 3 seconds
+    setTimeout(function() {
+      button.textContent = 'Copy javascript';
+    }, 2000); // 2000 milliseconds = 3 seconds
+          })
+          .catch(err => {
+            console.error('Could not copy text: ', err);
+          });
+ },
+ copyHtmlCode() {
+    navigator.clipboard.writeText(this.ContentHtml)
+    .then(() => {
+      var button = document.getElementById('copy-html-btn');
+      button.textContent = "Copied to clipboard ✔";
+
+    // Use setTimeout to revert the button text after 3 seconds
+    setTimeout(function() {
+      button.textContent = 'Copy HTML';
+    }, 2000); // 2000 milliseconds = 3 seconds
+          })
+          .catch(err => {
+            console.error('Could not copy text: ', err);
+          });
+ },
+ 
+
+
+    importImages(event) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.background = e.target.result
+                }
+        },
     realSliderWidth() {
       if (this.directionVar=="horizontal"){
         // let spaceBetweenSlidesPercentage = (this.spaceBetweenSlides / 1280) * 100;
@@ -111,7 +192,7 @@ export default (await import('vue')).defineComponent({
         return {
           left: this.offset*-1 +'px',
         '--swiper-navigation-size': this.btnWidth+'px',
-      
+        color:this.btnColor,
       };
       }
       else{
@@ -128,10 +209,11 @@ export default (await import('vue')).defineComponent({
  getSwiperNavigationRight(){
 
       // Return the styles as an object
-      if (this.directionVar == 'horizontal'){
+      if (this.directionVar == 'horizontal'){ 
         return {
           right: this.offset*-1 +'px',
         '--swiper-navigation-size': this.btnWidth+'px',
+        color:this.btnColor,
       
       };
       }
@@ -139,7 +221,8 @@ export default (await import('vue')).defineComponent({
         return{
         
           '--swiper-navigation-size': this.btnWidth+'px',
-          'transform': 'rotate(90deg)'
+          'transform': 'rotate(90deg)',
+         
         }
       
 
@@ -172,22 +255,22 @@ export default (await import('vue')).defineComponent({
       }
  },
 
-     exportCode(){
-    const windowHeigth = 720
-    const windowWidth = 405
-    const heigth = this.realSliderHeight()+"px";
-    const width = this.realSliderWidth()+"px";
-    const top = this.positionTop+"px";
-    const  left = this.positionLeft+"px";
+  exportCode(){
+    const windowHeigth = 405
+    const windowWidth = 720
+    const heigth = this.realSliderHeight()/windowHeigth*100+"vh";
+    const width = this.realSliderWidth()/windowWidth*100+"vw";
+    const top = this.positionTop/windowHeigth*100+"vh";
+    const  left = this.positionLeft/windowWidth*100+"vw";
 
-    const offset = "-"+this.offset+"px";
-    const btnWidth = this.btnWidth+ "px";
+    const offset = "-"+this.offset/windowWidth*100+"vw";
+    const btnWidth = this.btnWidth/windowWidth*100+"vw";
    
 
 
     const styles = `
     .wrapper {
-      height: ${heigth};
+      height: auto;
       width: ${width};
       position:absolute;
       top: ${top};
@@ -225,7 +308,6 @@ export default (await import('vue')).defineComponent({
     const modulesString = this.modules[this.index].map(module => module.name).join(', ');
     // Construct the Swiper component HTML
     const swiperScript = `
-    SCRIPT CODE!!!!!!!!!
     var swiper = new Swiper(".mySwiper", {
    
       effect: "${this.effects[this.index]}",
@@ -244,7 +326,6 @@ export default (await import('vue')).defineComponent({
 
     // Define the code you want to export
     const htmlCode = `
-    HTML CODE!!!!!!!!!
     <div class="wrapper">
       <div class="swiper mySwiper">
         <div class="swiper-wrapper" id="cards">
@@ -260,20 +341,21 @@ console.log(htmlCode);
 console.log(swiperScript);
 console.log(styles)
 console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
- const newWindows = window.open("", "_blank");
- newWindows.document.write('<html><head><title>Exported Code</title>');
- newWindows.document.write('<link rel="stylesheet" href="swiper-bundle.min.css">');
- newWindows.document.write( styles );
- newWindows.document.write( String(htmlCode) );
- newWindows.document.write( "<script src='swiper-bundle.min.js'../script><script>" );
-
- newWindows.document.write(swiperScript);
- newWindows.document.write("../script>");
 
 
 
- newWindows.document.close();
 
+ this.ContentHtml = `
+    <pre>${htmlCode}</pre>
+ `;
+ this.ContentCss = `
+    <pre>${styles}</pre>
+ `;
+ this.ContentJavaScript = `
+    <pre>${swiperScript}</pre>
+ `;
+
+ this.showDialog = true;
   },
 
   },
@@ -281,6 +363,8 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   components: {
      Swiper,
      SwiperSlide,
+    Images,
+
  
 
   },
@@ -298,6 +382,42 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
 </script>
  
 <template>
+
+  <v-dialog v-if="showDialog" v-model="showDialog" style="width: 1200px;">
+    <v-card>
+      <v-card-title>Exported Code</v-card-title>
+      <v-card-text>
+        <h3>HTML code</h3>
+        <pre v-text="ContentHtml"></pre>
+        <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
+          {{BtnHtml}}
+        </v-btn>
+      <br>  <br>   <br>  
+        <v-divider :thickness="7"></v-divider>
+        <br>  <br>
+        <h3>Css code</h3>
+        <pre v-text="ContentCss"></pre>
+        <v-btn id="copy-css-btn" @click="copyCssCode">
+         {{BtnCss}}
+        </v-btn>
+        <br>  <br> <br>  
+        <v-divider :thickness="7"></v-divider>
+        <br>  <br>
+        <h3>JavaScript code</h3>
+        <pre v-text="ContentJavaScript"></pre>
+        <v-btn id="copy-js-btn" @click="copyJavaScriptCode">
+          {{BtnJavaScript}}
+        </v-btn>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="showDialog = false">Close Dialog</v-btn>
+      </v-card-actions>
+    </v-card>
+ </v-dialog>
+
+
+
   <div class="flex-container" >
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover', position: 'relative'} : {position: 'relative'}">
       <div :style="{top:positionTop+'px', left:positionLeft+'px'}"  class="first">
@@ -314,7 +434,6 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         :spaceBetween=spaceBetweenSlides
         :style="{ width: realSliderWidth() + 'px'} "
         >
-      
           <SwiperSlide  v-for="(image, index) in images" :key="index">
             <img :src="image.url" alt="" />
           </SwiperSlide>
@@ -330,7 +449,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
       </div>
       </div>   
     <div class="second">
- 
+      <Images @imagesUpdated="updateImages"/>
       
       <div class="settings">
       
@@ -365,7 +484,14 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         </label>
 
         <div v-if="buttonVar">
-          
+          <label>
+            <select v-model="btnType">
+              <option value="image">Image</option>
+              <option value="default">Default</option>
+             </select>Button Type
+  
+          </label>
+
           <label>
             <input type="text" v-model="offset" /> Button offset x
           </label>
@@ -375,7 +501,13 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
             <input type="text" v-model="btnWidth" /> Button width
           </label>
 
+          <div v-if="btnType=='default'">
+            <v-color-picker v-model="btnColor"></v-color-picker>
+          </div>
+
         </div>
+       
+ 
         
 
         <!-- <label>
@@ -387,8 +519,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
             <option value="horizontal">Horizontal</option>
             <option value="vertical">Vertical</option>
            </select>Direction
-           
-        
+
         </label>
         <label>
           <input type="text" v-model="positionTop" /> Y position
@@ -405,18 +536,23 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
 
 
        
-         <button @click="exportCode">Export Code</button>
+         <button @click="exportCode" id="activator-target">Export Code</button>
+
+        
+
       </div>
      
        
  
     </div></div>
+
  </template>
  
 
  <style scoped>
 
 
+ 
  .first {
  
   
@@ -643,6 +779,11 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   margin: 10px; /* Adds some margin around the items */
  }
  
+
+ .flex-container{
+  display: flex;
+  justify-content: space-between;
+ }
  /* Media query for smaller screens */
  @media (max-width: 768px) {
   .first, .second {
@@ -650,8 +791,12 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   }
  }
 
+ @media (min-width: 769px) {
+  .first, .second {
+     flex: 1 0 50%; /* Makes the items take up half the width on larger screens */
+  }
+}
+
  
  
  </style>
-
-

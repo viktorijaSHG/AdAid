@@ -20,9 +20,10 @@
 export default {
     data() {
         return {
-            images: []
+            images: [] // Initialize the images array
         };
     },
+    emits: ['imagesUpdated'],
     methods: {
         importImages(event) {
             const files = event.target.files;
@@ -36,14 +37,15 @@ export default {
                 };
                 reader.readAsDataURL(files[i]);
             }
-            this.$emit('images-updated', this.images);
+            this.$emit('imagesUpdated', this.images);
         },
-    deleteImage(index){
-      this.images.splice(index,1);
-    },
+        deleteImage(index){
+            this.images.splice(index,1);
+        },
     }
 };
 </script>
+
 
 <style scoped>
 

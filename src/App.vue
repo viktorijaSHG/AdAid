@@ -1,23 +1,24 @@
 <template>
-  <div class="container">
+
     <div v-if="type">
-      <Images @images-updated="updateImages"/> 
-       <Default :images="images" :type="this.type" :index="this.selectedIndex"/>
-       <div class="flex-container" >       
-       </div>
+    
+       <Default  :type="this.type" :index="this.selectedIndex"/>
+ 
      </div>
-     <div v-else class="image-grid">
-       <div class="image-container" v-for="(image, index) in images" :key="index">
-         <img :src="image.src" :alt="image.alt">
-         <button @click="chooseType(index)" class="hidden-button">Choose</button>
-       </div>
-     </div>
-  </div>
+     
+     <div v-else class="container">
+      <div  class="image-grid">
+        <div class="image-container" v-for="(image, index) in images" :key="index">
+          <img :src="image.src" :alt="image.alt">
+          <button @click="chooseType(index)" class="hidden-button">Choose</button>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script>
 import Default from "./components/Default.vue";
-import Images from "./components/Images.vue";
+
 
 export default {
   data() {
@@ -40,7 +41,7 @@ export default {
   },
   components: {
     Default,
-    Images,
+
   },
   methods: {
     chooseType(index) {
@@ -52,9 +53,7 @@ export default {
         this.type = 'single'
       }
     },
-    updateImages(newImages) {
-      this.images = newImages;
-    },
+    
   },
 };
 </script>

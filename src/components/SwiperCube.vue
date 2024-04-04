@@ -36,6 +36,12 @@ export default (await import('vue')).defineComponent({
     },
 
   methods: {
+     importImages(event) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.background = e.target.result
+                }
+        },
     realSliderWidth() {
       if (this.directionVar=="horizontal"){
         return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides);
