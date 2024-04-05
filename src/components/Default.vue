@@ -140,12 +140,19 @@ export default (await import('vue')).defineComponent({
  
 
 
-    importImages(event) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.background = e.target.result
-                }
-        },
+ importImages(event) {
+ const file = event.target.files[0]; // Get the first file from the input
+ console.log(file)
+ if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.background = e.target.result; // Update the component's state with the file's data URL
+    };
+    reader.readAsDataURL(file); // Start reading the file
+    console.log(this.background)
+ }
+},
+
     realSliderWidth() {
       if (this.directionVar=="horizontal"){
         // let spaceBetweenSlidesPercentage = (this.spaceBetweenSlides / 1280) * 100;
@@ -514,13 +521,13 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
           <input type="checkbox" v-model="freemodeVar"> Freemode
         </label> -->
 
-        <label>
+        <!-- <label>
           <select v-model="directionVar">
             <option value="horizontal">Horizontal</option>
             <option value="vertical">Vertical</option>
            </select>Direction
 
-        </label>
+        </label> -->
         <label>
           <input type="text" v-model="positionTop" /> Y position
         </label>
@@ -530,7 +537,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         <div class="drag-area">
           <span class="select" role="button" @click="selectFiles">
           </span>select background image
-          <input name="file" type="file" class="file" ref="fileInput" @change="onBackgroundSelect"/>
+          <input name="file" type="file" class="file" ref="fileInput" @change="importImages"/>
         </div>
  
 
