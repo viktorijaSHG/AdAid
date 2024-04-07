@@ -58,14 +58,12 @@ export default {
 };
 </script>
 
- <style scoped>
- .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 20px;
- }
+ <style >
+
+body{
+  background-color: #0b3144!important;
+}
+
  
  .image-grid {
   display: grid;
@@ -110,11 +108,6 @@ export default {
   opacity: 1;
  }
  
- .flex-container {
-  display: flex;
-  flex-wrap: wrap; /* Allows the items to wrap as needed */
-  justify-content: space-between; /* Adds space between the items */
- }
 
  @media (max-width: 768px) {
   .image-grid {

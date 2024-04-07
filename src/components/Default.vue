@@ -51,7 +51,7 @@ export default (await import('vue')).defineComponent({
       directionVar: 'horizontal',
       showDialog: false,
       btnColor: '#fff',
-      btnType: 'd efault',
+      btnType: 'default',
       effects:[
         "",
         'cube',
@@ -431,7 +431,6 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         <Swiper
         :autoplay="autoplayConfig"
         :direction="directionVar"
-       
         class="swiper swiper-navigation-vertical" 
         :modules=modules[index]
         :effect=effects[index]
@@ -460,54 +459,88 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
       
       <div class="settings">
       
-        <label>
-          <input type="text" v-model="sliderWidth" /> slider width
-        </label>
-        <label>
-          <input type="checkbox" v-model="loopVar"> Enable Loop
-        </label>
+        <v-text-field
+        label="Slider width"
+        v-model="sliderWidth"
+        outlined
+      ></v-text-field>
 
+
+      <v-switch
+      v-model="loopVar"
+      color="#00e18c"
+      label="Enable Loop"
+      value="true"
+      hide-details
+    ></v-switch>
+
+        
         <div v-if="this.type == 'multiple'">
-          <label >
-            <input type="text" v-model="slideCount" /> Slidesper view
-          </label>
-          <label  >
-            <input type="text" v-model="spaceBetweenSlides" /> Space between slides
-          </label>
-        </div>
-       
-        <label>
-          <input type="checkbox" v-model="autoplayVar"> Enable autoplay
-        </label>
+   
+      <v-text-field
+        label="Slides Per View"
+        v-model="slideCount"
+        outlined
+      ></v-text-field>
+      <v-text-field
+        label="Space Between Slides"
+        v-model="spaceBetweenSlides"
+        outlined
+      ></v-text-field>
+    </div>
 
-        <label v-if="autoplayVar">
-          <input type="text" v-model="autoplayDelay" /> Delay(ms)
-        </label>
-        
 
-        
-        <label>
-          <input type="checkbox" v-model="buttonVar"> Side buttons
-        </label>
+    <v-switch
+      v-model="autoplayVar"
+      color="#00e18c"
+      label="Enable autoplay"
+      value="true"
+      hide-details
+    ></v-switch>
+
+
+
+        <v-text-field v-if="autoplayVar"
+        label="Delay(ms)"
+        v-model="autoplayDelay"
+        outlined
+      ></v-text-field>
+      
+      <v-switch
+      v-model="buttonVar"
+      color="#00e18c"
+      label="Side buttons"
+      value="true"
+      hide-details
+    ></v-switch>
+
 
         <div v-if="buttonVar">
-          <label>
-            <select v-model="btnType">
-              <option value="image">Image</option>
-              <option value="default">Default</option>
-             </select>Button Type
-  
-          </label>
+          <v-select
+    v-model="btnType"
+    :items="['image', 'default']"
+    label="Button Type"
+    item-text="text"
+    item-value="value"
+    return-object
+    outlined
+ ></v-select>
 
-          <label>
-            <input type="text" v-model="offset" /> Button offset x
-          </label>
-  
-  
-          <label>
-            <input type="text" v-model="btnWidth" /> Button width
-          </label>
 
+ <v-text-field 
+        label="Button offset x"
+        v-model="offset"
+        outlined
+      ></v-text-field>
+
+
+      <v-text-field 
+        label="Button width"
+        v-model="btnWidth"
+        outlined
+      ></v-text-field>
+  
+          
           <div v-if="btnType=='default'">
             <v-color-picker v-model="btnColor"></v-color-picker>
           </div>
@@ -528,18 +561,26 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
            </select>Direction
 
         </label> -->
-        <label>
-          <input type="text" v-model="positionTop" /> Y position
-        </label>
-        <label>
-          <input type="text" v-model="positionLeft" /> X position
-        </label>
+ 
+        <v-text-field 
+        label="Position Top"
+        v-model="positionTop"
+        outlined
+      ></v-text-field>
+
+      <v-text-field 
+        label="Position left"
+        v-model="positionLeft"
+        outlined
+      ></v-text-field>
+
+      
         <div class="drag-area">
           <span class="select" role="button" @click="selectFiles">
           </span>select background image
           <input name="file" type="file" class="file" ref="fileInput" @change="importImages"/>
         </div>
- 
+        
 
 
        
@@ -559,9 +600,14 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  <style scoped>
 
 
+
+* {
+ color: #ffffff;
+}
+
+
  
  .first {
- 
   
   position: absolute; /* Keep this if you need to position children absolutely */
 
@@ -590,29 +636,18 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   width: 100%;
   padding: 10px;
   margin: 10px;
+  background-color: #0b3144;
  
  }
  .card .top{
   text-align: center;
- }
- .card p{
-  font-weight: bold;
-  color: brown;
+ 
  }
  .card button{
   outline: 0;
 
  }
- .card .drag-area{
-  height: 150px;
-  border-radius: 5px;
-  border: 2px dashed  #ddd;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: center;
-  margin-top: 10px;
- }
+
 
  .card .select{
   color: aqua;
@@ -667,7 +702,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background-color: #f5f5f5; /* Light grey background */
+  background-color: #2b4d5e; /* Light grey background */
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
   margin-top: 20px; /* Space between the first and second container */
@@ -677,7 +712,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   width: 100%;
   max-width: 600px; /* Limit the width for better readability */
   padding: 20px;
-  background-color: #ffffff; /* White background for contrast */
+  background-color: #0b3144;
   border-radius: 10px; /* Rounded corners */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
   margin-bottom: 20px; /* Space between settings and card section */
@@ -698,8 +733,8 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  }
  
  .settings button {
-  background-color: #007bff; /* Bootstrap primary color */
-  color: #ffffff;
+  background-color: #00e18c; /* Bootstrap primary color */
+  color: #2b4d5e;
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
@@ -711,19 +746,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  .settings button:hover {
   background-color: #0056b3; /* Darker shade on hover */
  }
- 
- .card {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 600px;
-  padding: 20px;
-  background-color: #ffffff; /* White background for contrast */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
- }
+
  
  .card .drag-area {
   width: 100%;
@@ -791,6 +814,10 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   display: flex;
   justify-content: space-between;
  }
+
+ 
+
+
  /* Media query for smaller screens */
  @media (max-width: 768px) {
   .first, .second {
