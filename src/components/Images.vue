@@ -1,10 +1,11 @@
 <template>
     <div class="card">
+
         <div class="custom-file-input">
-            <label for="fileInput" class="custom-file-label">Choose file</label>
+            <label for="fileInput" class="custom-file-label">Choose files</label>
             <input type="file" id="fileInput" ref="fileInput" @change="importImages" multiple style="display: none;" />
         </div>
-        <div class="container">
+        <div class="img-container">
           <div class="image" v-for="(image, index) in images" :key="index">
             <span class="delete" @click="deleteImage(index)">&times;</span>
             <img :src="image.url"/>
@@ -80,7 +81,7 @@ export default {
  }
 
 
-.card .container .image img{
+.card .img-container .image img{
   width: 100px;
  
   border-radius: 5px;
@@ -120,7 +121,7 @@ export default {
   cursor: pointer;
  }
  
- .card .container {
+ .card .img-container {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
@@ -130,21 +131,21 @@ export default {
   overflow-y: auto; /* Enable scrolling if content overflows */
  }
  
- .card .container .image {
+ .card .img-container .image {
   width: 100px;
   height: 100px;
   margin: 10px;
   position: relative;
  }
  
- .card .container .image img {
+ .card .img-container .image img {
   width: 100%;
   height: 100%;
   object-fit: cover; /* Ensure images cover the area without stretching */
   border-radius: 5px;
  }
  
- .card .container .image .delete {
+ .card .img-container .image .delete {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -196,7 +197,7 @@ export default {
   margin-top: 10px;
  }
 
-.card .container .image img{
+.card .img-container .image img{
   width: 100px;
  
   border-radius: 5px;
@@ -212,6 +213,7 @@ export default {
 }
 
 .custom-file-input {
+    margin: 30px 0;
  position: relative;
  display: inline-block;
  cursor: pointer;
@@ -220,8 +222,8 @@ export default {
 }
 
 .custom-file-label {
- padding: 6px 12px;
- background-color: #007bff;
+    padding: 10px 16px;
+
  color: white;
  border-radius: 4px;
  cursor: pointer;

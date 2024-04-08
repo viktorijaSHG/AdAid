@@ -1,13 +1,13 @@
 <template>
 
-    <div v-if="type">
+    <div v-if="type" >
     
        <Default  :type="this.type" :index="this.selectedIndex"/>
  
      </div>
      
-     <div v-else class="container">
-      <div  class="image-grid">
+     <div v-else class="container" >
+      <div  class="image-grid" style="margin: auto;">
         <div class="image-container" v-for="(image, index) in images" :key="index">
           <img :src="image.src" :alt="image.alt">
           <button @click="chooseType(index)" class="hidden-button">Choose</button>
@@ -29,6 +29,7 @@ export default {
         { src: "/src/assets/default.png", alt: "Default" },
         { src: "/src/assets/cube.png", alt: "Cube" },
         { src: "/src/assets/fade.png", alt: "Fade" },
+        
         // Add more images as needed
       ],
 
@@ -64,6 +65,14 @@ body{
   background-color: #0b3144!important;
 }
 
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* This makes the container take up the full viewport height */
+  flex-direction: column; /* This ensures the content is centered vertically */
+ }
+ 
  
  .image-grid {
   display: grid;

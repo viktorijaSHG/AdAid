@@ -36,7 +36,7 @@ export default (await import('vue')).defineComponent({
       Autoplay,
       Navigation,
       Pagination,
-      loopVar:true,
+      loopVar:false,
       slideCount:1,
       spaceBetweenSlides: 0,
       sliderWidth: 150,
@@ -62,9 +62,10 @@ export default (await import('vue')).defineComponent({
       [Navigation, EffectCube],
       [Navigation, EffectFade],
     ],
-    autoplayVar:true,
+    autoplayVar:false,
     autoplayDelay:2000,
     btnWidth:40,
+    btnImg: null,
     ContentJavaScript:'',
     ContentHtml:'',
     ContentCss:'',
@@ -138,20 +139,32 @@ export default (await import('vue')).defineComponent({
           });
  },
  
-
+ removeBackgroundImage(){
+  this.background = null
+ },
 
  importImages(event) {
  const file = event.target.files[0]; // Get the first file from the input
- console.log(file)
  if (file) {
     const reader = new FileReader();
     reader.onload = (e) => {
       this.background = e.target.result; // Update the component's state with the file's data URL
     };
     reader.readAsDataURL(file); // Start reading the file
-    console.log(this.background)
  }
 },
+
+importBtnImage(event){
+  const file = event.target.files[0]; // Get the first file from the input
+ if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.btnImg = e.target.result; // Update the component's state with the file's data URL
+    };
+    reader.readAsDataURL(file); // Start reading the file
+ }
+},
+
 
     realSliderWidth() {
       if (this.directionVar=="horizontal"){
@@ -195,6 +208,16 @@ export default (await import('vue')).defineComponent({
 
  getSwiperNavigationLeft(){
 
+  if(this.btnType=='image'){
+
+return {
+  transform: 'rotate(180deg)',
+  width: this.btnWidth+'px',
+  left: this.offset*-1 +'px',
+}
+}
+
+  this.btnImg = null;
       if (this.directionVar == 'horizontal'){
         return {
           left: this.offset*-1 +'px',
@@ -215,6 +238,15 @@ export default (await import('vue')).defineComponent({
 
  getSwiperNavigationRight(){
 
+  if(this.btnType=='image'){
+
+    return {
+      width: this.btnWidth+'px',
+      right: this.offset*-1 +'px',
+    }
+  }
+
+  this.btnImg = null;
       // Return the styles as an object
       if (this.directionVar == 'horizontal'){ 
         return {
@@ -263,8 +295,8 @@ export default (await import('vue')).defineComponent({
  },
 
   exportCode(){
-    const windowHeigth = 405
-    const windowWidth = 720
+    const windowHeigth = 810
+    const windowWidth = 1440  
     const heigth = this.realSliderHeight()/windowHeigth*100+"vh";
     const width = this.realSliderWidth()/windowWidth*100+"vw";
     const top = this.positionTop/windowHeigth*100+"vh";
@@ -308,7 +340,7 @@ export default (await import('vue')).defineComponent({
     this.images.forEach((image, index) => {
       swiperSlidesHtml += `
       <div class="swiper-slide" id="card${index}">
-          <gwd-image src="assets/${image.src}" />
+          <gwd-image src="assets/img${index}" />
         </div>
       `;
     });
@@ -395,7 +427,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
       <v-card-title>Exported Code</v-card-title>
       <v-card-text>
         <h3>HTML code</h3>
-        <pre v-text="ContentHtml"></pre>
+        <pre v-text="ContentHtml" class="codeBlock"></pre>
         <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
           {{BtnHtml}}
         </v-btn>
@@ -403,7 +435,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         <v-divider :thickness="7"></v-divider>
         <br>  <br>
         <h3>Css code</h3>
-        <pre v-text="ContentCss"></pre>
+        <pre v-text="ContentCss" class="codeBlock"></pre>
         <v-btn id="copy-css-btn" @click="copyCssCode">
          {{BtnCss}}
         </v-btn>
@@ -411,7 +443,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         <v-divider :thickness="7"></v-divider>
         <br>  <br>
         <h3>JavaScript code</h3>
-        <pre v-text="ContentJavaScript"></pre>
+        <pre v-text="ContentJavaScript" class="codeBlock"></pre>
         <v-btn id="copy-js-btn" @click="copyJavaScriptCode">
           {{BtnJavaScript}}
         </v-btn>
@@ -444,8 +476,13 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
             <img :src="image.url" alt="" />
           </SwiperSlide>
         </Swiper>     
-        <div v-if="getSwiperNavigation() != false"  class="swiper-button-prev" :style="getSwiperNavigationLeft()"></div>
-        <div v-if="getSwiperNavigation() != false"  class="swiper-button-next" :style="getSwiperNavigationRight()"></div>
+        <div v-if="getSwiperNavigation() != false" class="swiper-button-prev" :style="getSwiperNavigationLeft() " v-bind:class="{ 'after-class': btnType=='image' }" >
+          <img v-if="btnImg" :src="btnImg"  alt="Previous Slide">
+        </div>
+        <div v-if="getSwiperNavigation() != false" class="swiper-button-next" :style="getSwiperNavigationRight()" v-bind:class="{ 'after-class': btnType=='image' }">
+          <img v-if="btnImg" :src="btnImg" alt="Next Slide" >
+        </div>
+         
       </div>
 
       
@@ -526,6 +563,13 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
     outlined
  ></v-select>
 
+ <div v-if="btnType=='default'">
+  <v-color-picker v-model="btnColor"></v-color-picker>
+</div>
+
+<div v-else>
+  <v-file-input clearable @change="importBtnImage" prepend-icon="" label="Button image"></v-file-input>
+</div>
 
  <v-text-field 
         label="Button offset x"
@@ -541,9 +585,7 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
       ></v-text-field>
   
           
-          <div v-if="btnType=='default'">
-            <v-color-picker v-model="btnColor"></v-color-picker>
-          </div>
+         
 
         </div>
        
@@ -574,14 +616,22 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
         outlined
       ></v-text-field>
 
-      
+<!--       
         <div class="drag-area">
           <span class="select" role="button" @click="selectFiles">
           </span>select background image
           <input name="file" type="file" class="file" ref="fileInput" @change="importImages"/>
         </div>
-        
+         -->
 
+         <!-- <div class="bg-img" style="display:flex">
+          <v-btn icon @click="removeBackgroundImage" style="margin-top: 0;">
+            <v-icon large color="red">X</v-icon>
+           </v-btn> -->
+          <v-file-input clearable @change="importImages" prepend-icon="" label="Background image"></v-file-input>
+<!--          
+         </div> -->
+        
 
        
          <button @click="exportCode" id="activator-target">Export Code</button>
@@ -601,12 +651,13 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
 
 
 
-* {
- color: #ffffff;
-}
 
 
- 
+
+.v-dialog > .v-overlay__content > .v-card > .v-card-text, .v-dialog > .v-overlay__content > form > .v-card > .v-card-text{
+  color: #0b3144!important;
+} 
+
  .first {
   
   position: absolute; /* Keep this if you need to position children absolutely */
@@ -679,9 +730,10 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
  }
  
  .content-box {
-  width: 720px;
-  height: 405px;
+  width: 1440px;
+  height: 810px;
   background-color: #dedede;
+  flex: none;
 
  }
  
@@ -690,13 +742,11 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
   height: 100%;
  }
 
-.content-box{
-  align-items: center;
-  justify-content: center;
-  margin: auto
-}
+
 
  .second {
+  color: #f0f0f0;
+  max-width: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -832,5 +882,46 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
 }
 
  
+.flex-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: row
+ }
+ 
+ .content-box {
+  flex: none;
+  width: 1440px;
+  /* Other styles */
+ }
+ 
+ .second {
+  flex: 1;
+  /* Other styles */
+ }
+
+ @media (max-width: 2000px) {
+  .flex-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+   }
+   .second {
+    
+    margin: auto;
+    margin-top: 30px;
+    width: 600px;
+   }
+  
+ }
+
+ .after-class::after{
+  content: none;
+ }
+
+ .codeBlock{
+    max-height: 200px;
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    margin-bottom: 50px;
+ }
  
  </style>
