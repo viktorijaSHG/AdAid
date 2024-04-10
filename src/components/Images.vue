@@ -32,7 +32,8 @@ export default {
                 reader.onload = (e) => {
                     this.images.push({
                         id: i,
-                        url: e.target.result
+                        url: e.target.result,
+                        name: files[i].name
                     });
                 };
                 reader.readAsDataURL(files[i]);

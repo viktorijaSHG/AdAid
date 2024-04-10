@@ -66,12 +66,15 @@ export default (await import('vue')).defineComponent({
     autoplayDelay:2000,
     btnWidth:40,
     btnImg: null,
+    btnImgName: '',
     ContentJavaScript:'',
     ContentHtml:'',
     ContentCss:'',
+    ContentHead:'',
     BtnHtml:'Copy HTML',
     BtnJavaScript:'Copy JavaScript',
     BtnCss:'Copy Css',
+    BtnHead:'Copy head code',
     }
     },
 
@@ -91,8 +94,11 @@ export default (await import('vue')).defineComponent({
 
  },
 
+ trim(text){
+  return text.substring(5, text.length - 6)
+ },
     copyCssCode() {
-    navigator.clipboard.writeText(this.ContentCss)
+  navigator.clipboard.writeText(this.trim(this.ContentCss))
 
     .then(() => {
       var button = document.getElementById('copy-css-btn');
@@ -109,7 +115,9 @@ export default (await import('vue')).defineComponent({
 
  },
  copyJavaScriptCode() {
-    navigator.clipboard.writeText(this.ContentJavaScript)
+
+  navigator.clipboard.writeText(this.trim(this.ContentJavaScript).replace(/\*/g, ''))
+
     .then(() => {
       var button = document.getElementById('copy-js-btn');
       button.textContent = "Copied to clipboard ✔";
@@ -124,7 +132,7 @@ export default (await import('vue')).defineComponent({
           });
  },
  copyHtmlCode() {
-    navigator.clipboard.writeText(this.ContentHtml)
+  navigator.clipboard.writeText(this.trim(this.ContentHtml))
     .then(() => {
       var button = document.getElementById('copy-html-btn');
       button.textContent = "Copied to clipboard ✔";
@@ -138,6 +146,23 @@ export default (await import('vue')).defineComponent({
             console.error('Could not copy text: ', err);
           });
  },
+
+ copyHeadCode() {
+  navigator.clipboard.writeText(this.trim(this.ContentHead))
+    .then(() => {
+      var button = document.getElementById('copy-head-btn');
+      button.textContent = "Copied to clipboard ✔";
+
+    // Use setTimeout to revert the button text after 3 seconds
+    setTimeout(function() {
+      button.textContent = 'Copy Head code';
+    }, 2000); // 2000 milliseconds = 3 seconds
+          })
+          .catch(err => {
+            console.error('Could not copy text: ', err);
+          });
+ },
+
  
  removeBackgroundImage(){
   this.background = null
@@ -160,6 +185,7 @@ importBtnImage(event){
     const reader = new FileReader();
     reader.onload = (e) => {
       this.btnImg = e.target.result; // Update the component's state with the file's data URL
+      this.btnImgName = file.name;
     };
     reader.readAsDataURL(file); // Start reading the file
  }
@@ -206,39 +232,46 @@ importBtnImage(event){
     return false; // Return undefined when navigation is not enabled
  },
 
+ getSwiperNavigationImg(){
+  return {
+    width: this.btnWidth+'px',
+}
+ },
+
  getSwiperNavigationLeft(){
 
   if(this.btnType=='image'){
 
 return {
   transform: 'rotate(180deg)',
-  width: this.btnWidth+'px',
   left: this.offset*-1 +'px',
+  width: this.btnWidth+'px',
 }
 }
 
   this.btnImg = null;
-      if (this.directionVar == 'horizontal'){
+      // if (this.directionVar == 'horizontal'){
         return {
           left: this.offset*-1 +'px',
         '--swiper-navigation-size': this.btnWidth+'px',
         color:this.btnColor,
       };
-      }
-      else{
-        return{
+      // }
+      // else{
+      //   return{
           
-          '--swiper-navigation-size': this.btnWidth+'px',
-          'transform': 'rotate(90deg)'
-        }
+      //     '--swiper-navigation-size': this.btnWidth+'px',
+      //     'transform': 'rotate(90deg)'
+      //   }
       
 
-      }
+      // }
  },
 
  getSwiperNavigationRight(){
 
   if(this.btnType=='image'){
+    console.log(this.btnImg)
 
     return {
       width: this.btnWidth+'px',
@@ -248,24 +281,24 @@ return {
 
   this.btnImg = null;
       // Return the styles as an object
-      if (this.directionVar == 'horizontal'){ 
+      // if (this.directionVar == 'horizontal'){ 
         return {
           right: this.offset*-1 +'px',
         '--swiper-navigation-size': this.btnWidth+'px',
         color:this.btnColor,
       
       };
-      }
-      else{
-        return{
+      // }
+      // else{
+      //   return{
         
-          '--swiper-navigation-size': this.btnWidth+'px',
-          'transform': 'rotate(90deg)',
+      //     '--swiper-navigation-size': this.btnWidth+'px',
+      //     'transform': 'rotate(90deg)',
          
-        }
+      //   }
       
 
-      }
+      // }
  },
 
 
@@ -310,7 +343,7 @@ return {
     const styles = `
     .wrapper {
       height: auto;
-      width: ${width};
+      width: ${this.realSliderHeight()/2}px;
       position:absolute;
       top: ${top};
       left:${left};
@@ -328,71 +361,84 @@ return {
 
     .swiper-button-next{
       right: ${offset};
-      --swiper-navigation-size: ${btnWidth};
+      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; color: ${this.btnColor}; `:  ``}
+      
     }
     .swiper-button-prev{
       left: ${offset};
-      --swiper-navigation-size: ${btnWidth};
+      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; color: ${this.btnColor}; `:  `transform: rotate(180deg);`}
     }
+
+    .swiper-button-next::after{
+      content:'none';
+      
+    }
+
+    .swiper-button-prev::after{
+      content:'none';
+      
+    }
+
+    ${this.btnType== 'image' ? `.img-arrow{width: ${btnWidth};}`:  ``}
+    
     `
 
     let swiperSlidesHtml = ""
     this.images.forEach((image, index) => {
       swiperSlidesHtml += `
       <div class="swiper-slide" id="card${index}">
-          <gwd-image src="assets/img${index}" />
+        <div>
+          <gwd-image src="assets/${image.name}" />
+          <gwd-taparea id="gwd-taparea_${index}"></gwd-taparea>
         </div>
+      </div>
       `;
     });
     const modulesString = this.modules[this.index].map(module => module.name).join(', ');
     // Construct the Swiper component HTML
     const swiperScript = `
-    var swiper = new Swiper(".mySwiper", {
-   
-      effect: "${this.effects[this.index]}",
-      ${this.autoplayVar ? `autoplay: ${this.autoplayVar} `:  ''},
-      ${this.autoplayVar ?  'autoplay:' + `{ delay: ${this.autoplayDelay} },` : ''}
-      slidesPerView: ${this.slideCount},
-      spaceBetween: ${this.spaceBetweenSlides},
-      loop: ${this.loopVar},
-      navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
-      },
-     
-    });
-    `;
+<script* src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script*>
+<script*>
+var swiper = new Swiper(".mySwiper", {
+ effect: "${this.effects[this.index]}",
+ ${this.autoplayVar ? `autoplay: ${this.autoplayVar},`: ''}
+ ${this.autoplayVar ? 'autoplay:' + `{ delay: ${this.autoplayDelay} },` : ''}
+ slidesPerView: ${this.slideCount},
+ spaceBetween: ${this.spaceBetweenSlides},
+ loop: ${this.loopVar},
+ navigation: {
+    nextEl: ".swiper-button-next",
+    prevEl: ".swiper-button-prev",
+ },
+});
+</script*>
+`;
+
 
     // Define the code you want to export
     const htmlCode = `
-    <div class="wrapper">
-      <div class="swiper mySwiper">
-        <div class="swiper-wrapper" id="cards">
-          ${swiperSlidesHtml}
+      <div class="wrapper">
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper" id="cards">
+            ${swiperSlidesHtml}
+          </div>
         </div>
+        <div class="swiper-button-next" id="arrow-right">${this.btnType== 'image' ? `<img src='/assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
+        <div class="swiper-button-prev" id="arrow-left">${this.btnType== 'image' ? `<img src='/assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
       </div>
-      <div class="swiper-button-next" id="arrow-right"></div>
-      <div class="swiper-button-prev" id="arrow-left"></div>
-    </div>
     `;
 
-console.log(htmlCode);
-console.log(swiperScript);
-console.log(styles)
-console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
+ 
 
 
 
-
- this.ContentHtml = `
-    <pre>${htmlCode}</pre>
- `;
- this.ContentCss = `
-    <pre>${styles}</pre>
- `;
- this.ContentJavaScript = `
-    <pre>${swiperScript}</pre>
- `;
+this.ContentHead = `<pre><link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/></pre>`;
+ this.ContentHtml = `<pre>${htmlCode}</pre>`;
+ this.ContentCss = `<pre>${styles}</pre>`;
+ this.ContentJavaScript = `<pre>${swiperScript}</pre>`;
 
  this.showDialog = true;
   },
@@ -426,6 +472,15 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
     <v-card>
       <v-card-title>Exported Code</v-card-title>
       <v-card-text>
+        <h3>Head import</h3>
+        <pre v-text="ContentHead" class="codeBlock"></pre>
+        <v-btn id="copy-head-btn" class="copy-btn" @click="copyHeadCode">
+          {{BtnHead}}
+        </v-btn>
+      <br>  <br>   <br>  
+        <v-divider :thickness="7"></v-divider>
+        <br>  <br>
+
         <h3>HTML code</h3>
         <pre v-text="ContentHtml" class="codeBlock"></pre>
         <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
@@ -477,10 +532,10 @@ console.log('<link rel="stylesheet" href="swiper-bundle.min.css">')
           </SwiperSlide>
         </Swiper>     
         <div v-if="getSwiperNavigation() != false" class="swiper-button-prev" :style="getSwiperNavigationLeft() " v-bind:class="{ 'after-class': btnType=='image' }" >
-          <img v-if="btnImg" :src="btnImg"  alt="Previous Slide">
+          <img v-if="btnImg" :style="getSwiperNavigationImg()" :src="btnImg"  alt="Previous Slide">
         </div>
         <div v-if="getSwiperNavigation() != false" class="swiper-button-next" :style="getSwiperNavigationRight()" v-bind:class="{ 'after-class': btnType=='image' }">
-          <img v-if="btnImg" :src="btnImg" alt="Next Slide" >
+          <img v-if="btnImg" :style="getSwiperNavigationImg()" :src="btnImg" alt="Next Slide" >
         </div>
          
       </div>
