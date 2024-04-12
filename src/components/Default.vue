@@ -40,6 +40,7 @@ export default (await import('vue')).defineComponent({
       slideCount:1,
       spaceBetweenSlides: 0,
       sliderWidth: 150,
+   
       buttonVar: false,
       buttonX: 0,
       setWrapperSize:200,
@@ -327,69 +328,83 @@ return {
       }
  },
 
+ calculateWrapperHeight() {
+      const wrapper = document.querySelector('.swiper');
+      if (wrapper) {
+        const height = wrapper.offsetHeight;
+       return height/2+'px';
+        // You can now use the height value as needed
+      }
+    },
+
   exportCode(){
-    const windowHeigth = 810
-    const windowWidth = 1440  
-    const heigth = this.realSliderHeight()/windowHeigth*100+"vh";
-    const width = this.realSliderWidth()/windowWidth*100+"vw";
-    const top = this.positionTop/windowHeigth*100+"vh";
-    const  left = this.positionLeft/windowWidth*100+"vw";
+    const wrapperHeight = this.calculateWrapperHeight()
+    const windowHeight = 810;
+    const windowWidth = 1440;
+    const height = this.realSliderHeight()/2+"px";
+    const width = this.realSliderWidth()/2+"px";
+    const top = this.positionTop/windowHeight*100+"%";
+    const  left = this.positionLeft/windowWidth*100+"%";
 
     const offset = "-"+this.offset/windowWidth*100+"vw";
     const btnWidth = this.btnWidth/windowWidth*100+"vw";
    
-
-
     const styles = `
     .wrapper {
-      height: auto;
-      width: ${this.realSliderHeight()/2}px;
+      height: ${wrapperHeight};
+      width: ${this.realSliderWidth()/2}px;
       position:absolute;
       top: ${top};
       left:${left};
     }
-    .swiper-slide {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+
     .swiper-slide gwd-image {
       display: block;
       object-fit: cover;
-      width: 100%;
     }
 
     .swiper-button-next{
+      top: 46%;
       right: ${offset};
-      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; color: ${this.btnColor}; `:  ``}
-      
+      ${this.btnType== 'default' ? `color: ${this.btnColor}; `:  ``}
     }
+
     .swiper-button-prev{
+      top: 46%;
       left: ${offset};
-      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; color: ${this.btnColor}; `:  `transform: rotate(180deg);`}
+      ${this.btnType== 'default' ? ` color: ${this.btnColor}; `:  `transform: rotate(180deg);`}
     }
 
     .swiper-button-next::after{
-      content:'none';
-      
+      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; `:  `transform: rotate(180deg);`}
     }
-
     .swiper-button-prev::after{
-      content:'none';
-      
+      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
     }
 
     ${this.btnType== 'image' ? `.img-arrow{width: ${btnWidth};}`:  ``}
+
+    .slide-content {
+      position: absolute;
+      width: 100%;
+      top: 0px;
+      left: 0px;
+      height: 100%;
+      transform-style: preserve-3d;
+    }
     
+    .max-height{
+      height: 100%;
+    }
     `
 
     let swiperSlidesHtml = ""
     this.images.forEach((image, index) => {
       swiperSlidesHtml += `
-      <div class="swiper-slide" id="card${index}">
-        <div>
-          <gwd-image src="assets/${image.name}" />
-          <gwd-taparea id="gwd-taparea_${index}"></gwd-taparea>
+      <div class="swiper-slide max-height" id="card${index}">
+        <div class="max-height">
+          <gwd-taparea class="slide-content"></gwd-taparea>
+          <gwd-image class="slide-content" src="assets/${image.name}" />
         </div>
       </div>
       `;
@@ -414,12 +429,11 @@ var swiper = new Swiper(".mySwiper", {
 </script*>
 `;
 
-
     // Define the code you want to export
     const htmlCode = `
       <div class="wrapper">
-        <div class="swiper mySwiper">
-          <div class="swiper-wrapper" id="cards">
+        <div class="swiper mySwiper max-height">
+          <div class="swiper-wrapper max-height" id="cards">
             ${swiperSlidesHtml}
           </div>
         </div>
