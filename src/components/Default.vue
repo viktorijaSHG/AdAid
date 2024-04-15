@@ -1,7 +1,7 @@
 <script>
 
 import {Swiper, SwiperSlide} from "swiper/vue"
-import { EffectCube,  EffectFade, Navigation, Pagination, Autoplay} from 'swiper/modules';
+import { EffectCube,  EffectFade, Navigation, Pagination, Autoplay, EffectCreative} from 'swiper/modules';
 import Images from "./Images.vue";
 // import { VDialog } from 'vuetify/lib';
 
@@ -10,7 +10,7 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/effect-cube';
 import 'swiper/css';
 import 'swiper/css/navigation';
-
+import 'swiper/css/effect-creative';
 import 'swiper/css/autoplay';
 
 
@@ -38,7 +38,7 @@ export default (await import('vue')).defineComponent({
       Pagination,
       loopVar:false,
       slideCount:1,
-      spaceBetweenSlides: 0,
+      spaceBetweenSlides:0,
       sliderWidth: 150,
    
       buttonVar: false,
@@ -56,12 +56,14 @@ export default (await import('vue')).defineComponent({
       effects:[
         "",
         'cube',
-        "fade"
+        "fade",
+        "creative"
       ],
       modules: [
       [Navigation],
       [Navigation, EffectCube],
       [Navigation, EffectFade],
+      [Navigation, EffectCreative],
     ],
     autoplayVar:false,
     autoplayDelay:2000,
@@ -76,6 +78,7 @@ export default (await import('vue')).defineComponent({
     BtnJavaScript:'Copy JavaScript',
     BtnCss:'Copy Css',
     BtnHead:'Copy head code',
+    creativeType: 3,
     }
     },
 
@@ -195,14 +198,7 @@ importBtnImage(event){
 
     realSliderWidth() {
       if (this.directionVar=="horizontal"){
-        // let spaceBetweenSlidesPercentage = (this.spaceBetweenSlides / 1280) * 100;
-    
-        // let totalWidthInPixels = this.slideCount * this.sliderWidth + ((this.slideCount - 1) * spaceBetweenSlidesPercentage);
-    
-        // console.log(totalWidthInPixels);
-        //   return totalWidthInPixels;
- 
-        //console.log(this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides))
+
         return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides);
 
       }
@@ -230,7 +226,7 @@ importBtnImage(event){
         prevEl: '.swiper-button-prev',
       };
     }
-    return false; // Return undefined when navigation is not enabled
+    return false; 
  },
 
  getSwiperNavigationImg(){
@@ -251,28 +247,18 @@ return {
 }
 
   this.btnImg = null;
-      // if (this.directionVar == 'horizontal'){
         return {
           left: this.offset*-1 +'px',
         '--swiper-navigation-size': this.btnWidth+'px',
         color:this.btnColor,
       };
-      // }
-      // else{
-      //   return{
-          
-      //     '--swiper-navigation-size': this.btnWidth+'px',
-      //     'transform': 'rotate(90deg)'
-      //   }
-      
 
-      // }
  },
 
  getSwiperNavigationRight(){
 
   if(this.btnType=='image'){
-    console.log(this.btnImg)
+   
 
     return {
       width: this.btnWidth+'px',
@@ -281,25 +267,14 @@ return {
   }
 
   this.btnImg = null;
-      // Return the styles as an object
-      // if (this.directionVar == 'horizontal'){ 
+
         return {
           right: this.offset*-1 +'px',
         '--swiper-navigation-size': this.btnWidth+'px',
         color:this.btnColor,
       
       };
-      // }
-      // else{
-      //   return{
-        
-      //     '--swiper-navigation-size': this.btnWidth+'px',
-      //     'transform': 'rotate(90deg)',
-         
-      //   }
-      
 
-      // }
  },
 
 
@@ -328,12 +303,96 @@ return {
       }
  },
 
+ getCreativeParams(){
+
+  switch(this.creativeType) {
+  case 1:
+    return {
+      prev: {
+            shadow: true,
+            translate: [0, 0, -400],
+          },
+      next: {
+            translate: ["100%", 0, 0],
+          }
+        }
+
+  case 2:
+    return {
+      prev: {
+            shadow: true,
+            translate: ["-120%", 0, -500],
+          },
+      next: {
+            shadow: true,
+            translate: ["120%", 0, -500],
+          },
+        }
+
+  case 3:
+    return {
+      prev: {
+            shadow: true,
+            translate: ["-20%", 0, -1],
+          },
+      next: {
+            translate: ["100%", 0, 0],
+          },
+        }
+  case 4:
+    return {
+      prev: {
+          shadow: true,
+          translate: [0, 0, -800],
+          rotate: [180, 0, 0],
+        },
+      next: {
+          shadow: true,
+          translate: [0, 0, -800],
+          rotate: [-180, 0, 0],
+        },
+      }
+
+  case 5:
+    return {
+      prev: {
+          shadow: true,
+          translate: ["-125%", 0, -800],
+          rotate: [0, 0, -90],
+        },
+      next: {
+          shadow: true,
+          translate: ["125%", 0, -800],
+          rotate: [0, 0, 90],
+        },
+      }
+
+  case 6:
+    return {
+      prev: {
+          shadow: true,
+          origin: "left center",
+          translate: ["-5%", 0, -200],
+          rotate: [0, 100, 0],
+        },
+        next: {
+          origin: "right center",
+          translate: ["5%", 0, -200],
+          rotate: [0, -100, 0],
+        },
+      }
+
+ 
+
+ }
+},
+
  calculateWrapperHeight() {
       const wrapper = document.querySelector('.swiper');
       if (wrapper) {
         const height = wrapper.offsetHeight;
        return height/2+'px';
-        // You can now use the height value as needed
+
       }
     },
 
@@ -367,23 +426,29 @@ return {
       ${this.index== '1' ? `overflow: visible; `:  ``}
     }
 
-    .swiper-button-next{
-      top: 46%;
+    ${this.btnVar ? `
+
+      .swiper-button-next{
+      top: 50%;
       right: ${offset};
       ${this.btnType== 'default' ? `color: ${this.btnColor}; `:  ``}
     }
 
     .swiper-button-prev{
-      top: 46%;
+      top: 50%;
       left: ${offset};
       ${this.btnType== 'default' ? ` color: ${this.btnColor}; `:  `transform: rotate(180deg);`}
     }
 
+    
+    `:  ``}
+
+  
     .swiper-button-next::after{
-      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
+      ${this.btnType== 'default' || this.btnVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
     }
     .swiper-button-prev::after{
-      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
+      ${this.btnType== 'default' || this.btnVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
     }
 
     ${this.btnType== 'image' ? `.img-arrow{width: ${btnWidth};}`:  ``}
@@ -405,10 +470,10 @@ return {
     let swiperSlidesHtml = ""
     this.images.forEach((image, index) => {
       swiperSlidesHtml += `
-      <div class="swiper-slide max-height" id="card${index}">
-        <div class="max-height">
-          <gwd-taparea class="slide-content"></gwd-taparea>
-          <gwd-image class="slide-content" src="assets/${image.name}" />
+      <div class="swiper-slide max-height" id="card${index+1}">
+        <div class="max-height" id="slide-wrapper">
+          <gwd-image class="slide-content" id="image_${index+1}" src="assets/${image.name}" />
+          <gwd-taparea class="slide-content" id="taparea_${index+1}"></gwd-taparea>
         </div>
       </div>
       `;
@@ -420,10 +485,17 @@ return {
 <script*>
 var swiper = new Swiper(".mySwiper", {
  effect: "${this.effects[this.index]}",
+ ${this.effects[this.index]== 'cube' ? `cubeEffect: {
+        shadow: true,
+        slideShadows: true,
+        shadowOffset: 20,
+        shadowScale: 0.94,
+      },`:  ``}
+  ${this.effects[this.index] == 'creative' ? 'creativeEffect:'+ JSON.stringify(this.getCreativeParams())+',': ''}
  ${this.autoplayVar ? `autoplay: ${this.autoplayVar},`: ''}
  ${this.autoplayVar ? 'autoplay:' + `{ delay: ${this.autoplayDelay} },` : ''}
  slidesPerView: ${this.slideCount},
- spaceBetween: ${this.spaceBetweenSlides},
+ spaceBetween: ${this.spaceBetweenSlides/2},
  loop: ${this.loopVar},
  navigation: {
     nextEl: ".swiper-button-next",
@@ -440,9 +512,11 @@ var swiper = new Swiper(".mySwiper", {
           <div class="swiper-wrapper max-height" id="cards">
             ${swiperSlidesHtml}
           </div>
-        </div>
-        <div class="swiper-button-next" id="arrow-right">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
+        </div>btnVar
+        ${this.btnVar ? `
+          <div class="swiper-button-next" id="arrow-right">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
         <div class="swiper-button-prev" id="arrow-left">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
+          `:  ''}
       </div>
     `;
 
@@ -472,6 +546,9 @@ this.ContentHead = `<pre><link
 
   },
   computed: {
+
+    
+
  autoplayConfig() {
     if (this.autoplayVar) {
      
@@ -498,19 +575,18 @@ this.ContentHead = `<pre><link
       <br>  <br>   <br>  
         <v-divider :thickness="7"></v-divider>
         <br>  <br>
-
-        <h3>HTML code</h3>
-        <pre v-text="ContentHtml" class="codeBlock"></pre>
-        <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
-          {{BtnHtml}}
-        </v-btn>
-      <br>  <br>   <br>  
-        <v-divider :thickness="7"></v-divider>
-        <br>  <br>
         <h3>Css code</h3>
         <pre v-text="ContentCss" class="codeBlock"></pre>
         <v-btn id="copy-css-btn" @click="copyCssCode">
          {{BtnCss}}
+        </v-btn>
+      <br>  <br>   <br>  
+        <v-divider :thickness="7"></v-divider>
+        <br>  <br>
+        <h3>HTML code</h3>
+        <pre v-text="ContentHtml" class="codeBlock"></pre>
+        <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
+          {{BtnHtml}}
         </v-btn>
         <br>  <br> <br>  
         <v-divider :thickness="7"></v-divider>
@@ -529,21 +605,22 @@ this.ContentHead = `<pre><link
  </v-dialog>
 
 
-
   <div class="flex-container" >
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover', position: 'relative'} : {position: 'relative'}">
       <div :style="{top:positionTop+'px', left:positionLeft+'px'}"  class="first">
         <Swiper 
+        :key="creativeType"
         :style="index == 1 ? { overflow: 'visible', width: realSliderWidth() + 'px' } : {width: realSliderWidth() + 'px'}"
         :autoplay="autoplayConfig"
         :direction="directionVar"
         class="swiper swiper-navigation-vertical" 
         :modules=modules[index]
-        :effect=effects[index]
+        :effect="effects[index]"
         :navigation="getSwiperNavigation()"
         :loop=loopVar
         :slidesPerView=slideCount
         :spaceBetween=spaceBetweenSlides
+        v-bind="type == 'creative' && { creativeEffect: getCreativeParams() }"
         >
           <SwiperSlide  v-for="(image, index) in images" :key="index">
             <img :src="image.url" alt="" />
@@ -663,20 +740,19 @@ this.ContentHead = `<pre><link
         </div>
        
  
-        
+        <div v-if="effects[index]=='creative'">
+        <v-select
+        v-model="creativeType"
+        :items="[1, 2, 3, 4, 5, 6]"
+        label="Slide type"
+        item-text="text"
+        item-value="value"
+        return-object
+        outlined
+     ></v-select>
+     </div>
 
-        <!-- <label>
-          <input type="checkbox" v-model="freemodeVar"> Freemode
-        </label> -->
 
-        <!-- <label>
-          <select v-model="directionVar">
-            <option value="horizontal">Horizontal</option>
-            <option value="vertical">Vertical</option>
-           </select>Direction
-
-        </label> -->
- 
         <v-text-field 
         label="Position Top"
         v-model="positionTop"
@@ -689,21 +765,8 @@ this.ContentHead = `<pre><link
         outlined
       ></v-text-field>
 
-<!--       
-        <div class="drag-area">
-          <span class="select" role="button" @click="selectFiles">
-          </span>select background image
-          <input name="file" type="file" class="file" ref="fileInput" @change="importImages"/>
-        </div>
-         -->
-
-         <!-- <div class="bg-img" style="display:flex">
-          <v-btn icon @click="removeBackgroundImage" style="margin-top: 0;">
-            <v-icon large color="red">X</v-icon>
-           </v-btn> -->
           <v-file-input clearable @change="importImages" prepend-icon="" label="Background image"></v-file-input>
-<!--          
-         </div> -->
+
         
 
        

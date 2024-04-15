@@ -29,6 +29,7 @@ export default {
         { src: "/src/assets/default.png", alt: "Default" },
         { src: "/src/assets/cube.png", alt: "Cube" },
         { src: "/src/assets/fade.png", alt: "Fade" },
+        { src: "/src/assets/creative.png", alt: "Fade" },
         
         // Add more images as needed
       ],
@@ -49,6 +50,9 @@ export default {
       this.selectedIndex = index;
       if (this.selectedIndex == 0){
         this.type = 'multiple'
+      }
+      else if (this.selectedIndex == 3){
+        this.type = 'creative'
       }
       else{
         this.type = 'single'
