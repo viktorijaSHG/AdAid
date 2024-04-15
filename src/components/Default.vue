@@ -363,6 +363,10 @@ return {
       object-fit: cover;
     }
 
+    .swiper{
+      ${this.index== '1' ? `overflow: visible; `:  ``}
+    }
+
     .swiper-button-next{
       top: 46%;
       right: ${offset};
@@ -376,7 +380,7 @@ return {
     }
 
     .swiper-button-next::after{
-      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; `:  `transform: rotate(180deg);`}
+      ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
     }
     .swiper-button-prev::after{
       ${this.btnType== 'default' ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
@@ -437,8 +441,8 @@ var swiper = new Swiper(".mySwiper", {
             ${swiperSlidesHtml}
           </div>
         </div>
-        <div class="swiper-button-next" id="arrow-right">${this.btnType== 'image' ? `<img src='/assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
-        <div class="swiper-button-prev" id="arrow-left">${this.btnType== 'image' ? `<img src='/assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
+        <div class="swiper-button-next" id="arrow-right">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
+        <div class="swiper-button-prev" id="arrow-left">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
       </div>
     `;
 
@@ -529,7 +533,8 @@ this.ContentHead = `<pre><link
   <div class="flex-container" >
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover', position: 'relative'} : {position: 'relative'}">
       <div :style="{top:positionTop+'px', left:positionLeft+'px'}"  class="first">
-        <Swiper
+        <Swiper 
+        :style="index == 1 ? { overflow: 'visible', width: realSliderWidth() + 'px' } : {width: realSliderWidth() + 'px'}"
         :autoplay="autoplayConfig"
         :direction="directionVar"
         class="swiper swiper-navigation-vertical" 
@@ -539,7 +544,6 @@ this.ContentHead = `<pre><link
         :loop=loopVar
         :slidesPerView=slideCount
         :spaceBetween=spaceBetweenSlides
-        :style="{ width: realSliderWidth() + 'px'} "
         >
           <SwiperSlide  v-for="(image, index) in images" :key="index">
             <img :src="image.url" alt="" />
