@@ -40,7 +40,6 @@ export default (await import('vue')).defineComponent({
       slideCount:1,
       spaceBetweenSlides:0,
       sliderWidth: 150,
-   
       buttonVar: false,
       buttonX: 0,
       setWrapperSize:200,
@@ -79,6 +78,8 @@ export default (await import('vue')).defineComponent({
     BtnCss:'Copy Css',
     BtnHead:'Copy head code',
     creativeType: 3,
+    cubeShaddow: true,
+
     }
     },
 
@@ -304,7 +305,7 @@ return {
  },
 
  getCreativeParams(){
-
+  
   switch(this.creativeType) {
   case 1:
     return {
@@ -381,11 +382,44 @@ return {
           rotate: [0, -100, 0],
         },
       }
-
- 
-
  }
 },
+
+getCubeParams(){
+
+  
+
+    if (!this.cubeShaddow){
+
+      return {
+          shadow: false,
+          slideShadows: false,
+      }
+    }
+    else{   
+      return {
+          shadow: true,
+          slideShadows: true,
+          shadowOffset: 20,
+          shadowScale: 0.94,
+      }
+    }
+},
+
+effectBindings(){
+  if (this.effects[this.index] == 'creative'){
+    return {
+      creativeEffect: this.getCreativeParams()
+    }
+  }
+  if (this.effects[this.index] == 'cube' ){
+    return {
+      cubeEffect: this.getCubeParams()
+    }
+  }
+  return null
+  },
+
 
  calculateWrapperHeight() {
       const wrapper = document.querySelector('.swiper');
@@ -485,13 +519,8 @@ return {
 <script*>
 var swiper = new Swiper(".mySwiper", {
  effect: "${this.effects[this.index]}",
- ${this.effects[this.index]== 'cube' ? `cubeEffect: {
-        shadow: true,
-        slideShadows: true,
-        shadowOffset: 20,
-        shadowScale: 0.94,
-      },`:  ``}
-  ${this.effects[this.index] == 'creative' ? 'creativeEffect:'+ JSON.stringify(this.getCreativeParams())+',': ''}
+${this.effects[this.index] == 'creative' ? 'creativeEffect:'+ JSON.stringify(this.getCreativeParams())+',': ''}
+${this.effects[this.index] == 'cube' ? 'cubeEffect:'+ JSON.stringify(this.getCubeParams())+',': ''}
  ${this.autoplayVar ? `autoplay: ${this.autoplayVar},`: ''}
  ${this.autoplayVar ? 'autoplay:' + `{ delay: ${this.autoplayDelay} },` : ''}
  slidesPerView: ${this.slideCount},
@@ -609,7 +638,7 @@ this.ContentHead = `<pre><link
     <div class="content-box" :style="background ? { backgroundImage: 'url(' + background + ')', backgroundSize: 'cover', position: 'relative'} : {position: 'relative'}">
       <div :style="{top:positionTop+'px', left:positionLeft+'px'}"  class="first">
         <Swiper 
-        :key="creativeType"
+        :key="creativeType+cubeShaddow"
         :style="index == 1 ? { overflow: 'visible', width: realSliderWidth() + 'px' } : {width: realSliderWidth() + 'px'}"
         :autoplay="autoplayConfig"
         :direction="directionVar"
@@ -620,7 +649,8 @@ this.ContentHead = `<pre><link
         :loop=loopVar
         :slidesPerView=slideCount
         :spaceBetween=spaceBetweenSlides
-        v-bind="type == 'creative' && { creativeEffect: getCreativeParams() }"
+        v-bind="effectBindings()"
+      
         >
           <SwiperSlide  v-for="(image, index) in images" :key="index">
             <img :src="image.url" alt="" />
@@ -661,6 +691,13 @@ this.ContentHead = `<pre><link
       hide-details
     ></v-switch>
 
+
+    <v-switch v-if="this.type == 'cube'"
+    v-model="cubeShaddow"
+    color="#00e18c"
+    label="Enable Shaddow"
+    hide-details
+  ></v-switch>
         
         <div v-if="this.type == 'multiple'">
    

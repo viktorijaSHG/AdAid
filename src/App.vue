@@ -51,6 +51,9 @@ export default {
       if (this.selectedIndex == 0){
         this.type = 'multiple'
       }
+      else if (this.selectedIndex == 1){
+        this.type = 'cube'
+      }
       else if (this.selectedIndex == 3){
         this.type = 'creative'
       }
