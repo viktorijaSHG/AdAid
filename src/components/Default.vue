@@ -46,7 +46,7 @@
       <div :style="{ top: positionTop + 'px', left: positionLeft + 'px' }" class="first">
         <Swiper :key="creativeType + cubeShaddow"
           :style="index == 1 ? { overflow: 'visible', width: realSliderWidth() + 'px' } : { width: realSliderWidth() + 'px' }"
-          :autoplay="autoplayConfig" :direction="directionVar" class="swiper swiper-navigation-vertical"
+          class="swiper swiper-navigation-vertical"
           :modules=modules[index] :effect="effects[index]" :navigation="getSwiperNavigation()" :loop=loopVar
           :slidesPerView=slideCount :spaceBetween=spaceBetweenSlides v-bind="effectBindings()">
           <SwiperSlide v-for="(image, index) in images" :key="index">
@@ -100,7 +100,7 @@
 
         <v-text-field label="Position Top" v-model="positionTop" outlined></v-text-field>
         <v-text-field label="Position left" v-model="positionLeft" outlined></v-text-field>
-        <v-file-input clearable @change="importImages" prepend-icon="" label="Background image"></v-file-input>
+        <v-file-input clearable @change="importBgImage" prepend-icon="" label="Background image"></v-file-input>
 
         <button @click="exportCode" id="activator-target">Export Code</button>
 
@@ -114,17 +114,14 @@
 <script>
 
 import {Swiper, SwiperSlide} from "swiper/vue"
-import { EffectCube,  EffectFade, Navigation, Pagination, Autoplay, EffectCreative} from 'swiper/modules';
+import { EffectCube,  EffectFade, Navigation, EffectCreative} from 'swiper/modules';
 import Images from "./Images.vue";
-// import { VDialog } from 'vuetify/lib';
-
 import 'swiper/css/effect-fade';
 import 'swiper/css/effect-cube';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-creative';
 import 'swiper/css/autoplay';
-
 
 export default {
   props: {
@@ -134,49 +131,33 @@ export default {
     index: {
       type: Number
     },
-  },
+ },
 
   data(){
     return {
-      images: [],
-      swiperRef: null,
-      EffectCube,
-      EffectFade,
-      Autoplay,
-      Navigation,
-      Pagination,
-      loopVar:false,
+      images: [],  
+      // params
+      positionTop: 50,
+      positionLeft: 50,
       slideCount:1,
       spaceBetweenSlides:0,
       sliderWidth: 150,
-      buttonVar: false,
-      buttonX: 0,
-      setWrapperSize:200,
-      offset:0,
-      positionTop: 50,
-      positionLeft: 50,
-      swiper: null,
-      background: null,
-      directionVar: 'horizontal',
-      showDialog: false,
-      btnColor: '#fff',
-      btnType: 'default',
-      effects:[
-        "",
-        'cube',
-        "fade",
-        "creative"
-      ],
-      modules: [
-        [Navigation],
-        [Navigation, EffectCube],
-        [Navigation, EffectFade],
-        [Navigation, EffectCreative],
-      ],
+      loopVar:true,
       autoplayVar:false,
       autoplayDelay:2000,
+      swiper: null,
+      background: null,
+      showDialog: false,
+
+      // for buttons
+      buttonVar: false,
+      offset:0,
+      btnColor: '#fff',
+      btnType: 'default',
       btnWidth:40,
       btnImg: null,
+    
+      // for pop-up dialog
       btnImgName: '',
       ContentJavaScript:'',
       ContentHtml:'',
@@ -186,312 +167,284 @@ export default {
       BtnJavaScript:'Copy JavaScript',
       BtnCss:'Copy Css',
       BtnHead:'Copy head code',
+
+      // for effect specifics
       creativeType: 3,
       cubeShaddow: true,
-    }
-  },
+
+      // effects&modules
+      effects:[
+          "",
+          'cube',
+          "fade",
+          "creative"
+        ],
+        modules: [
+        [Navigation],
+        [Navigation, EffectCube],
+        [Navigation, EffectFade],
+        [Navigation, EffectCreative],
+      ],
+      }
+      },
 
   methods: {
 
-    chooseType(index) {
-      this.selectedIndex = index;
-      if (this.selectedIndex == 0) {
-        this.type = 'multiple'
-      }
-      else {
-        this.type = 'single'
-      }
-    },
-
+    // slider images
     updateImages(newImages) {
       this.images = newImages;
     },
 
-    trim(text) {
+    // functions for coping code from dialog box (they will become one later)
+    trim(text){
       return text.substring(5, text.length - 6)
     },
 
     copyCssCode() {
       navigator.clipboard.writeText(this.trim(this.ContentCss))
-        .then(() => {
-          var button = document.getElementById('copy-css-btn');
-          button.textContent = "Copied to clipboard ✔";
+      .then(() => {
+        var button = document.getElementById('copy-css-btn');
+        button.textContent = "Copied to clipboard ✔";
+        // Use setTimeout to revert the button text after 3 seconds
+        setTimeout(function() {
+          button.textContent = 'Copy Css';
+        }, 2000); // 2000 milliseconds = 3 seconds
+              })
+              .catch(err => {
+                console.error('Could not copy text: ', err);
+              });
+      },
 
+      copyJavaScriptCode() {
+        navigator.clipboard.writeText(this.trim(this.ContentJavaScript).replace(/\*/g, ''))
+          .then(() => {
+            var button = document.getElementById('copy-js-btn');
+            button.textContent = "Copied to clipboard ✔";
           // Use setTimeout to revert the button text after 3 seconds
-          setTimeout(function () {
-            button.textContent = 'Copy Css';
-          }, 2000); // 2000 milliseconds = 3 seconds
-        })
-        .catch(err => {
-          console.error('Could not copy text: ', err);
-        });
-    },
-
-    copyJavaScriptCode() {
-      navigator.clipboard.writeText(this.trim(this.ContentJavaScript).replace(/\*/g, ''))
-        .then(() => {
-          var button = document.getElementById('copy-js-btn');
-          button.textContent = "Copied to clipboard ✔";
-
-          // Use setTimeout to revert the button text after 3 seconds
-          setTimeout(function () {
+          setTimeout(function() {
             button.textContent = 'Copy javascript';
           }, 2000); // 2000 milliseconds = 3 seconds
-        })
-        .catch(err => {
-          console.error('Could not copy text: ', err);
-        });
-    },
+                })
+                .catch(err => {
+                  console.error('Could not copy text: ', err);
+                });
+        },
 
-    copyHtmlCode() {
-      navigator.clipboard.writeText(this.trim(this.ContentHtml))
-        .then(() => {
-          var button = document.getElementById('copy-html-btn');
-          button.textContent = "Copied to clipboard ✔";
+        copyHtmlCode() {
+          navigator.clipboard.writeText(this.trim(this.ContentHtml))
+            .then(() => {
+              var button = document.getElementById('copy-html-btn');
+              button.textContent = "Copied to clipboard ✔";
 
-          // Use setTimeout to revert the button text after 3 seconds
-          setTimeout(function () {
-            button.textContent = 'Copy HTML';
-          }, 2000); // 2000 milliseconds = 3 seconds
-        })
-        .catch(err => {
-          console.error('Could not copy text: ', err);
-        });
-    },
+            // Use setTimeout to revert the button text after 3 seconds
+            setTimeout(function() {
+              button.textContent = 'Copy HTML';
+            }, 2000); // 2000 milliseconds = 3 seconds
+                  })
+                  .catch(err => {
+                    console.error('Could not copy text: ', err);
+                  });
+          },
 
-    copyHeadCode() {
-      navigator.clipboard.writeText(this.trim(this.ContentHead))
-        .then(() => {
-          var button = document.getElementById('copy-head-btn');
-          button.textContent = "Copied to clipboard ✔";
+          copyHeadCode() {
+            navigator.clipboard.writeText(this.trim(this.ContentHead))
+              .then(() => {
+                var button = document.getElementById('copy-head-btn');
+                button.textContent = "Copied to clipboard ✔";
+              // Use setTimeout to revert the button text after 3 seconds
+              setTimeout(function() {
+                button.textContent = 'Copy Head code';
+              }, 2000); // 2000 milliseconds = 3 seconds
+                    })
+                    .catch(err => {
+                      console.error('Could not copy text: ', err);
+                    });
+          },
+ 
+      // background image save function
+      importBgImage(event) {
+        const file = event.target.files[0]; // Get the first file from the input
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              this.background = e.target.result; // Update the component's state with the file's data URL
+            };
+            reader.readAsDataURL(file); 
+        }
+      },
 
-          // Use setTimeout to revert the button text after 3 seconds
-          setTimeout(function () {
-            button.textContent = 'Copy Head code';
-          }, 2000); // 2000 milliseconds = 3 seconds
-        })
-        .catch(err => {
-          console.error('Could not copy text: ', err);
-        });
-    },
+      // Button image save function
+      importBtnImage(event){
+        const file = event.target.files[0]; // Get the first file from the input
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                this.btnImg = e.target.result; // Update the component's state with the file's data URL
+                this.btnImgName = file.name;
+              };
+              reader.readAsDataURL(file); // Start reading the file
+          }
+      },
 
-    removeBackgroundImage() {
-      this.background = null
-    },
 
-    importImages(event) {
-      const file = event.target.files[0]; // Get the first file from the input
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.background = e.target.result; // Update the component's state with the file's data URL
-        };
-        reader.readAsDataURL(file); // Start reading the file
-      }
-    },
-
-    importBtnImage(event) {
-      const file = event.target.files[0]; // Get the first file from the input
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          this.btnImg = e.target.result; // Update the component's state with the file's data URL
-          this.btnImgName = file.name;
-        };
-        reader.readAsDataURL(file); // Start reading the file
-      }
-    },
-
+    // calculate width
     realSliderWidth() {
-      if (this.directionVar == "horizontal") {
         return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides);
-      }
-      else {
-        return this.sliderWidth;
-      }
-    },
-
-    realSliderHeight() {
-      if (this.directionVar == "horizontal") {
-        return this.sliderHeight;
-      }
-      else {
-        return this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides);
-      }
     },
 
     getSwiperNavigation() {
-      if (this.buttonVar) {
+        if (this.buttonVar) {
+          return {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          };
+        }
+        return false; 
+    },
+
+    //get navigation styling
+    getSwiperNavigationImg(){
         return {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        };
-      }
-      return false;
-    },
-
-    getSwiperNavigationImg() {
-      return {
-        width: this.btnWidth + 'px',
+          width: this.btnWidth+'px',
       }
     },
 
-    getSwiperNavigationLeft() {
-      if (this.btnType == 'image') {
+    getSwiperNavigationLeft(){
+
+      if(this.btnType=='image'){
         return {
           transform: 'rotate(180deg)',
-          left: this.offset * -1 + 'px',
-          width: this.btnWidth + 'px',
+          left: this.offset*-1 +'px',
+          width: this.btnWidth+'px',
         }
       }
       this.btnImg = null;
-      return {
-        left: this.offset * -1 + 'px',
-        '--swiper-navigation-size': this.btnWidth + 'px',
-        color: this.btnColor,
-      };
+            return {
+              left: this.offset*-1 +'px',
+            '--swiper-navigation-size': this.btnWidth+'px',
+            color:this.btnColor,
+          };
     },
 
-    getSwiperNavigationRight() {
-      if (this.btnType == 'image') {
-        return {
-          width: this.btnWidth + 'px',
-          right: this.offset * -1 + 'px',
-        }
-      }
-      this.btnImg = null;
-      return {
-        right: this.offset * -1 + 'px',
-        '--swiper-navigation-size': this.btnWidth + 'px',
-        color: this.btnColor,
-      };
-    },
-
-
-    realSliderWidthAll() {
-      if (this.directionVar == 'horizontal') {
-        return this.slideCount * this.sliderWidth + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset * 2;
-      }
-      else {
-        return this.sliderWidth;
-      }
-    },
-
-    realSliderHeightAll() {
-      if (this.directionVar == "horizontal") {
-        console.log(this.sliderHeight)
-        return this.sliderHeight;
-      }
-      else {
-        console.log(this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset * 2)
-        return this.slideCount * this.sliderHeight + ((this.slideCount - 1) * this.spaceBetweenSlides) + this.offset * 2;
-      }
-    },
-
-    getCreativeParams() {
-      switch (this.creativeType) {
-        case 1:
-          return {
-            prev: {
-              shadow: true,
-              translate: [0, 0, -400],
-            },
-            next: {
-              translate: ["100%", 0, 0],
+    getSwiperNavigationRight(){
+          if(this.btnType=='image'){
+            return {
+              width: this.btnWidth+'px',
+              right: this.offset*-1 +'px',
             }
           }
+          this.btnImg = null;
+                return {
+                  right: this.offset*-1 +'px',
+                '--swiper-navigation-size': this.btnWidth+'px',
+                color:this.btnColor,
+              };
+        },
 
-        case 2:
-          return {
-            prev: {
-              shadow: true,
-              translate: ["-120%", 0, -500],
-            },
-            next: {
-              shadow: true,
-              translate: ["120%", 0, -500],
-            },
-          }
+    getCreativeParams(){
+      switch(this.creativeType) {
+      case 1:
+        return {
+          prev: {
+                shadow: true,
+                translate: [0, 0, -400],
+              },
+          next: {
+                translate: ["100%", 0, 0],
+              }
+            }
 
-        case 3:
-          return {
-            prev: {
-              shadow: true,
-              translate: ["-20%", 0, -1],
-            },
-            next: {
-              translate: ["100%", 0, 0],
-            },
-          }
-        case 4:
-          return {
-            prev: {
+      case 2:
+        return {
+          prev: {
+                shadow: true,
+                translate: ["-120%", 0, -500],
+              },
+          next: {
+                shadow: true,
+                translate: ["120%", 0, -500],
+              },
+            }
+
+      case 3:
+        return {
+          prev: {
+                shadow: true,
+                translate: ["-20%", 0, -1],
+              },
+          next: {
+                translate: ["100%", 0, 0],
+              },
+            }
+      case 4:
+        return {
+          prev: {
               shadow: true,
               translate: [0, 0, -800],
               rotate: [180, 0, 0],
             },
-            next: {
+          next: {
               shadow: true,
               translate: [0, 0, -800],
               rotate: [-180, 0, 0],
             },
           }
 
-        case 5:
-          return {
-            prev: {
+      case 5:
+        return {
+          prev: {
               shadow: true,
               translate: ["-125%", 0, -800],
               rotate: [0, 0, -90],
             },
-            next: {
+          next: {
               shadow: true,
               translate: ["125%", 0, -800],
               rotate: [0, 0, 90],
             },
           }
 
-        case 6:
-          return {
-            prev: {
+      case 6:
+        return {
+          prev: {
               shadow: true,
               origin: "left center",
               translate: ["-5%", 0, -200],
               rotate: [0, 100, 0],
             },
-            next: {
+          next: {
               origin: "right center",
               translate: ["5%", 0, -200],
               rotate: [0, -100, 0],
             },
           }
-      }
+    }
     },
 
-    getCubeParams() {
-      if (!this.cubeShaddow) {
-        return {
-          shadow: false,
-          slideShadows: false,
+    getCubeParams(){
+        if (!this.cubeShaddow){
+          return {
+              shadow: false,
+              slideShadows: false,
+          }
         }
-      }
-      else {
-        return {
-          shadow: true,
-          slideShadows: true,
-          shadowOffset: 20,
-          shadowScale: 0.94,
+        else{   
+          return {
+              shadow: true,
+              slideShadows: true,
+              shadowOffset: 20,
+              shadowScale: 0.94,
+          }
         }
-      }
     },
 
-    effectBindings() {
-      if (this.effects[this.index] == 'creative') {
+    effectBindings(){
+      if (this.effects[this.index] == 'creative'){
         return {
           creativeEffect: this.getCreativeParams()
         }
       }
-      if (this.effects[this.index] == 'cube') {
+      if (this.effects[this.index] == 'cube' ){
         return {
           cubeEffect: this.getCubeParams()
         }
@@ -499,145 +452,154 @@ export default {
       return null
     },
 
+    //calculate wrapper height from auto to px for export to gwd
     calculateWrapperHeight() {
-      const wrapper = document.querySelector('.swiper');
-      if (wrapper) {
-        const height = wrapper.offsetHeight;
-        return height / 2 + 'px';
+        const wrapper = document.querySelector('.swiper');
+        if (wrapper) {
+          const height = wrapper.offsetHeight;
+        return height/2+'px';
       }
     },
 
-    exportCode() {
-      const wrapperHeight = this.calculateWrapperHeight()
-      const windowHeight = 810;
-      const windowWidth = 1440;
-      const height = this.realSliderHeight() / 2 + "px";
-      const width = this.realSliderWidth() / 2 + "px";
-      const top = this.positionTop / windowHeight * 100 + "%";
-      const left = this.positionLeft / windowWidth * 100 + "%";
-      const offset = "-" + this.offset / windowWidth * 100 + "vw";
-      const btnWidth = this.btnWidth / windowWidth * 100 + "vw";
-      const styles = `
-            .wrapper {
-              height: ${wrapperHeight};
-              width: ${this.realSliderWidth() / 2}px;
-              position:absolute;
-              top: ${top};
-              left:${left};
-            }
-            .swiper-slide gwd-image {
-              display: block;
-              object-fit: cover;
-            }
-            ${this.btnVar ? `
-              .swiper-button-next{
-              top: 50%;
-              right: ${offset};
-              ${this.btnType == 'default' ? `color: ${this.btnColor}; ` : ``}
-            }
-            .swiper-button-prev{
-              top: 50%;
-              left: ${offset};
-              ${this.btnType == 'default' ? ` color: ${this.btnColor}; ` : `transform: rotate(180deg);`}
-            }
-            .swiper-button-next::after{
-              ${this.btnType == 'default' || this.btnVar ? `--swiper-navigation-size: ${btnWidth}; ` : `content:'none';`}
-            }
-            .swiper-button-prev::after{
-              ${this.btnType == 'default' || this.btnVar ? `--swiper-navigation-size: ${btnWidth}; ` : `content:'none';`}
-            }
-            ${this.btnType == 'image' ? `.img-arrow{width: ${btnWidth};}` : ``}
-            `: ``}
-
-            .slide-content {
-              position: absolute;
-              width: 100%;
-              top: 0px;
-              left: 0px;
-              height: 100%;
-              transform-style: preserve-3d;
-            }    
-            .max-height{
-              height: 100%;
-            }
-            `
-
-              let swiperSlidesHtml = ""
-              this.images.forEach((image, index) => {
-                swiperSlidesHtml += `
-              <div class="swiper-slide max-height" id="card${index + 1}">
-                <div class="max-height" id="slide-wrapper">
-                  <gwd-image class="slide-content" id="image_${index + 1}" src="assets/${image.name}"></gwd-image>
-                  <gwd-taparea class="slide-content" id="tapareae_${index + 1}"></gwd-taparea>
-                </div>
-              </div>
-              `;
-              });
-      // Construct the Swiper component HTML
-      const swiperScript = `
-            <script* src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script*>
-            <script*>
-            var swiper = new Swiper(".mySwiper", {
-            effect: "${this.effects[this.index]}",
-            ${this.effects[this.index] == 'creative' ? 'creativeEffect:' + JSON.stringify(this.getCreativeParams()) + ',' : ''}
-            ${this.effects[this.index] == 'cube' ? 'cubeEffect:' + JSON.stringify(this.getCubeParams()) + ',' : ''}
-            ${this.autoplayVar ? `autoplay: ${this.autoplayVar},` : ''}
-            ${this.autoplayVar ? 'autoplay:' + `{ delay: ${this.autoplayDelay} },` : ''}
-            slidesPerView: ${this.slideCount},
-            spaceBetween: ${this.spaceBetweenSlides / 2},
-            loop: ${this.loopVar},
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-            },
-            });
-            </script*>
-            `;
-
-      // Define the code you want to export
-      const htmlCode = `
-            <div class="wrapper">
-              <div class="swiper mySwiper max-height">
-                <div class="swiper-wrapper max-height" id="cards">
-                  ${swiperSlidesHtml}
-                </div>
-              </div>
-              ${this.btnVar ? `
-                <div class="swiper-button-next" id="arrow-right">${this.btnType == 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>` : ''}</div>
-              <div class="swiper-button-prev" id="arrow-left">${this.btnType == 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>` : ''}</div>
-                `: ''}
-            </div>
-          `;
-
-      this.ContentHead = `<pre><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" /></pre>`;
-      this.ContentHtml = `<pre>${htmlCode}</pre>`;
-      this.ContentCss = `<pre>${styles}</pre>`;
-      this.ContentJavaScript = `<pre>${swiperScript}</pre>`;
-      this.showDialog = true;
+  // big export code function
+  exportCode(){
+    const wrapperHeight = this.calculateWrapperHeight()
+    const windowHeight = 810;
+    const windowWidth = 1440;
+    const top = this.positionTop/windowHeight*100+"%";
+    const  left = this.positionLeft/windowWidth*100+"%";
+    const offset = "-"+this.offset/windowWidth*100+"vw";
+    const btnWidth = this.btnWidth/windowWidth*100+"vw";
+    const styles = `
+    .wrapper {
+      height: ${wrapperHeight};
+      width: ${this.realSliderWidth()/2}px;
+      position:absolute;
+      top: ${top};
+      left:${left};
+    }
+    .swiper-slide gwd-image {
+      display: block;
+      object-fit: cover;
+    }
+    ${this.buttonVar ? `
+      .swiper-button-next{
+      top: 50%;
+      right: ${offset};
+      ${this.btnType== 'default' ? `color: ${this.btnColor}; `:  ``}
+    }
+    .swiper-button-prev{
+      top: 50%;
+      left: ${offset};
+      ${this.btnType== 'default' ? ` color: ${this.btnColor}; `:  `transform: rotate(180deg);`}
+    }
+    .swiper-button-next::after{
+      ${this.btnType== 'default' || this.buttonVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
+    }
+    .swiper-button-prev::after{
+      ${this.btnType== 'default' || this.buttonVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
+    }
+    ${this.btnType== 'image' ? `.img-arrow{width: ${btnWidth};}`:  ``}
+    `:  ``}
+    .slide-content {
+      position: absolute;
+      width: 100%;
+      top: 0px;
+      left: 0px;
+      height: 100%;
+      transform-style: preserve-3d;
+    }    
+    .max-height{
+      height: 100%;
+    }
+    `
+    let swiperSlidesHtml = ""
+    this.images.forEach((image, index) => {
+      swiperSlidesHtml += `
+      <div class="swiper-slide max-height" id="card${index+1}">
+        <div class="max-height" id="slide-wrapper">
+          <gwd-image class="slide-content" id="image_${index+1}" src="assets/${image.name}"></gwd-image>
+          <gwd-taparea class="slide-content" id="taparea_${index+1}"></gwd-taparea>
+        </div>
+      </div>
+      `;
+    });
+    // Construct the Swiper component HTML
+    const swiperScript = `
+    <script* src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script*>
+    <script*>
+    var swiper = new Swiper(".mySwiper", {
+    effect: "${this.effects[this.index]}",
+    ${this.effects[this.index] == 'creative' ? 'creativeEffect:'+ JSON.stringify(this.getCreativeParams())+',': ''}
+    ${this.effects[this.index] == 'cube' ? 'cubeEffect:'+ JSON.stringify(this.getCubeParams())+',': ''}
+    ${this.autoplayVar ? `autoplay: ${this.autoplayVar},`: ''}
+    ${this.autoplayVar ? 'autoplay:' + `{ delay: ${this.autoplayDelay} },` : ''}
+    slidesPerView: ${this.slideCount},
+    spaceBetween: ${this.spaceBetweenSlides/2},
+    loop: ${this.loopVar},
+    navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
     },
-
-  },
-
+    on: {
+            slideNextTransitionEnd: (swiper) => {
+              messageGateway().message({
+                intent: 'adInteraction',
+                type: 'Swipe',
+                name: 'Gallery Swipe'
+              });
+            },
+            slidePrevTransitionEnd: (swiper) => {
+              messageGateway().message({
+                intent: 'adInteraction',
+                type: 'Swipe',
+                name: 'Gallery Swipe'
+              });
+            },
+            autoplay: (swiper) => {
+          messageGateway().message({
+                intent: 'adInteraction',
+                type: 'Swipe',
+                name: 'Autoplay - subtract this from Gallery Swipe'
+              });
+    };
+    });
+    </script*>
+    `;
+    // Define the code you want to export
+    const htmlCode = `
+      <div class="wrapper">
+        <div class="swiper mySwiper max-height">
+          <div class="swiper-wrapper max-height" id="cards">
+            ${swiperSlidesHtml}
+          </div>
+        </div>
+        ${this.buttonVar ? `
+          <div class="swiper-button-next" id="arrow-right">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
+        <div class="swiper-button-prev" id="arrow-left">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
+          `:  ''}
+      </div>
+    `;
+    this.ContentHead = `<pre><link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    /></pre>`;
+    this.ContentHtml = `<pre>${htmlCode}</pre>`;
+    this.ContentCss = `<pre>${styles}</pre>`;
+    this.ContentJavaScript = `<pre>${swiperScript}</pre>`;
+    this.showDialog = true;
+      },
+      },
   components: {
-    Swiper,
-    SwiperSlide,
+     Swiper,
+     SwiperSlide,
     Images,
   },
-
-  computed: {
-    autoplayConfig() {
-      if (this.autoplayVar) {
-        return { delay: this.autoplayDelay };
-      }
-      return false;
-    }
-  }
- 
-}
+};
 </script>
- 
 
-<style scoped>
+  
+  <style scoped>
 
   .v-dialog>.v-overlay__content>.v-card>.v-card-text,
   .v-dialog>.v-overlay__content>form>.v-card>.v-card-text {
@@ -650,13 +612,6 @@ export default {
     margin: 0px !important;
   }
 
-  /* .swiper-button-next {
-      right: 10%;
-  }
-  
-  .swiper-button-prev {
-      left: 10px;
-  } */
 
   .swiper {
     margin: 0;
@@ -705,7 +660,7 @@ export default {
   }
 
   .container {
-    width: 100%;
+width: 100%;
     display: flex;
     flex-direction: row;
   }
@@ -731,27 +686,20 @@ export default {
     justify-content: center;
     padding: 20px;
     background-color: #2b4d5e;
-    /* Light grey background */
     border-radius: 10px;
-    /* Rounded corners */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow for depth */
     margin-top: 20px;
-    /* Space between the first and second container */
   }
 
   .settings {
     width: 100%;
     max-width: 600px;
-    /* Limit the width for better readability */
     padding: 20px;
     background-color: #0b3144;
     border-radius: 10px;
-    /* Rounded corners */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* Slight shadow for depth */
     margin-bottom: 20px;
-    /* Space between settings and card section */
+
   }
 
   .settings label {
@@ -794,12 +742,10 @@ export default {
     align-items: center;
     margin-top: 10px;
     background-color: #f0f0f0;
-    /* Light grey background */
   }
 
   .card .select {
     color: #007bff;
-    /* Bootstrap primary color */
     margin-left: 5px;
     cursor: pointer;
   }
@@ -812,10 +758,9 @@ export default {
     align-items: flex-start;
     max-height: 200px;
     overflow-y: auto;
-    /* Enable scrolling if content overflows */
   }
 
-  .card .container .image {
+.card .container .image {
     width: 100px;
     height: 100px;
     margin: 10px;
@@ -826,7 +771,6 @@ export default {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Ensure images cover the area without stretching */
     border-radius: 5px;
   }
 
@@ -835,7 +779,6 @@ export default {
     top: 5px;
     right: 5px;
     color: #ff0000;
-    /* Red color for delete button */
     background-color: #dedede;
     font-size: 20px;
     cursor: pointer;
@@ -844,9 +787,7 @@ export default {
   .first,
   .second {
     flex: 1 0 200px;
-    /* This makes the items flexible and sets a minimum width */
     margin: 10px;
-    /* Adds some margin around the items */
   }
 
   .flex-container {
@@ -895,7 +836,7 @@ export default {
       flex-direction: column;
     }
 
-    .second {
+.second {
       margin: auto;
       margin-top: 30px;
       width: 600px;
@@ -912,5 +853,5 @@ export default {
     /* Enable scrolling if content overflows */
     margin-bottom: 50px;
   }
- 
+
 </style>
