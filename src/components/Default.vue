@@ -450,42 +450,29 @@ effectBindings(){
       top: ${top};
       left:${left};
     }
-
     .swiper-slide gwd-image {
       display: block;
       object-fit: cover;
     }
-
-    .swiper{
-      ${this.index== '1' ? `overflow: visible; `:  ``}
-    }
-
     ${this.btnVar ? `
-
       .swiper-button-next{
       top: 50%;
       right: ${offset};
       ${this.btnType== 'default' ? `color: ${this.btnColor}; `:  ``}
     }
-
     .swiper-button-prev{
       top: 50%;
       left: ${offset};
       ${this.btnType== 'default' ? ` color: ${this.btnColor}; `:  `transform: rotate(180deg);`}
     }
-
-    
-    `:  ``}
-
-  
     .swiper-button-next::after{
       ${this.btnType== 'default' || this.btnVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
     }
     .swiper-button-prev::after{
       ${this.btnType== 'default' || this.btnVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
     }
-
     ${this.btnType== 'image' ? `.img-arrow{width: ${btnWidth};}`:  ``}
+    `:  ``}
 
     .slide-content {
       position: absolute;
@@ -494,8 +481,7 @@ effectBindings(){
       left: 0px;
       height: 100%;
       transform-style: preserve-3d;
-    }
-    
+    }    
     .max-height{
       height: 100%;
     }
@@ -506,13 +492,12 @@ effectBindings(){
       swiperSlidesHtml += `
       <div class="swiper-slide max-height" id="card${index+1}">
         <div class="max-height" id="slide-wrapper">
-          <gwd-image class="slide-content" id="image_${index+1}" src="assets/${image.name}" />
-          <gwd-taparea class="slide-content" id="taparea_${index+1}"></gwd-taparea>
+          <gwd-image class="slide-content" id="image_${index+1}" src="assets/${image.name}"></gwd-image>
+          <gwd-taparea class="slide-content" id="tapareae_${index+1}"></gwd-taparea>
         </div>
       </div>
       `;
     });
-    const modulesString = this.modules[this.index].map(module => module.name).join(', ');
     // Construct the Swiper component HTML
     const swiperScript = `
 <script* src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script*>
@@ -541,7 +526,7 @@ ${this.effects[this.index] == 'cube' ? 'cubeEffect:'+ JSON.stringify(this.getCub
           <div class="swiper-wrapper max-height" id="cards">
             ${swiperSlidesHtml}
           </div>
-        </div>btnVar
+        </div>
         ${this.btnVar ? `
           <div class="swiper-button-next" id="arrow-right">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
         <div class="swiper-button-prev" id="arrow-left">${this.btnType== 'image' ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`:  ''}</div>
@@ -687,7 +672,6 @@ this.ContentHead = `<pre><link
       v-model="loopVar"
       color="#00e18c"
       label="Enable Loop"
-      value="true"
       hide-details
     ></v-switch>
 
@@ -718,7 +702,6 @@ this.ContentHead = `<pre><link
       v-model="autoplayVar"
       color="#00e18c"
       label="Enable autoplay"
-      value="true"
       hide-details
     ></v-switch>
 
@@ -734,7 +717,6 @@ this.ContentHead = `<pre><link
       v-model="buttonVar"
       color="#00e18c"
       label="Side buttons"
-      value="true"
       hide-details
     ></v-switch>
 
