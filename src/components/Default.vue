@@ -558,14 +558,15 @@ export default {
             },
             autoplay: (swiper) => {
           messageGateway().message({
-                intent: 'adInteraction',
-                type: 'Swipe',
-                name: 'Autoplay - subtract this from Gallery Swipe'
-              });
-    };
+            intent: 'adInteraction',
+            type: 'Swipe',
+            name: 'Autoplay - subtract this from Gallery Swipe'
+          });
+        },
+      }
     });
-    </script*>
-    `;
+  </script*>
+    `; 
     // Define the code you want to export
     const htmlCode = `
       <div class="wrapper">
