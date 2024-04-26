@@ -494,10 +494,10 @@ export default {
       ${this.btnType== 'default' ? ` color: ${this.btnColor}; `:  `transform: rotate(180deg);`}
     }
     .swiper-button-next::after{
-      ${this.btnType== 'default' || this.buttonVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
+      ${this.btnType== 'default' && this.buttonVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
     }
     .swiper-button-prev::after{
-      ${this.btnType== 'default' || this.buttonVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
+      ${this.btnType== 'default' && this.buttonVar ? `--swiper-navigation-size: ${btnWidth}; `:  `content:'none';`}
     }
     ${this.btnType== 'image' ? `.img-arrow{width: ${btnWidth};}`:  ``}
     `:  ``}
