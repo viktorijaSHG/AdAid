@@ -823,7 +823,6 @@ export default {
     flex: none;
     width: 100%;
     max-width: 1920px;
-    border: 1px solid red;
     /* Other styles */
   }
 
