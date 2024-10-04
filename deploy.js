@@ -1,8 +1,9 @@
+require("dotenv").config();
 const { Octokit } = require("@octokit/rest");
 const fetch = require("node-fetch");
 
 const octokit = new Octokit({
-  auth: "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",
+  auth: process.env.GITHUB_TOKEN,
   request: {
     fetch: fetch,
   },
