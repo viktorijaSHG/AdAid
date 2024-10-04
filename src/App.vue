@@ -1,18 +1,20 @@
 <template>
+  <div v-if="type">
+    <Default :type="this.type" :index="this.selectedIndex" />
+  </div>
 
-    <div v-if="type">
-       <Default  :type="this.type" :index="this.selectedIndex"/>
-     </div>
-     
-     <div v-else class="container" >
-      <div  class="image-grid" style="margin: auto;">
-        <div class="image-container" v-for="(image, index) in images" :key="index">
-          <img :src="getImage(image.src)" :alt="image.alt">
-          <button @click="chooseType(index)" class="hidden-button">Choose</button>
-        </div>
+  <div v-else class="container">
+    <div class="image-grid" style="margin: auto">
+      <div
+        class="image-container"
+        v-for="(image, index) in images"
+        :key="index"
+      >
+        <img :src="getImage(image.src)" :alt="image.alt" />
+        <button @click="chooseType(index)" class="hidden-button">Choose</button>
       </div>
     </div>
-
+  </div>
 </template>
 
 <script>
@@ -38,22 +40,19 @@ export default {
   methods: {
     chooseType(index) {
       this.selectedIndex = index;
-      if (this.selectedIndex == 0){
-        this.type = 'multiple'
-      }
-      else if (this.selectedIndex == 1){
-        this.type = 'cube'
-      }
-      else if (this.selectedIndex == 3){
-        this.type = 'creative'
-      }
-      else{
-        this.type = 'single'
+      if (this.selectedIndex == 0) {
+        this.type = "multiple";
+      } else if (this.selectedIndex == 1) {
+        this.type = "cube";
+      } else if (this.selectedIndex == 3) {
+        this.type = "creative";
+      } else {
+        this.type = "single";
       }
     },
     getImage(image) {
-      return new URL(`./assets/${image}`, import.meta.url).href
-    }
+      return new URL(`./assets/${image}`, import.meta.url).href;
+    },
   },
 };
 </script>
@@ -73,18 +72,21 @@ body {
   /* This ensures the content is centered vertically */
 }
 
-
 .image-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(
+    4,
+    minmax(12.5rem, 1fr)
+  ); /* 200px is approximately 12.5rem */
+  gap: 1rem;
+  width: 65rem; /* 40% of viewport width */
+  height: auto; /* 40% of viewport height */
 }
 
 .image-container {
   position: relative;
   display: inline-block;
   margin: 10px;
-
 }
 
 .image-container img {
@@ -117,11 +119,9 @@ body {
   opacity: 1;
 }
 
-
 @media (max-width: 768px) {
   .image-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
 </style>
- 
