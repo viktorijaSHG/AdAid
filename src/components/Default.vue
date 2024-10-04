@@ -895,7 +895,7 @@ export default {
 }
 
 .settings button:hover {
-  background-color: #0056b3;
+  background-color: #76ffbc;
   /* Darker shade on hover */
 }
 
