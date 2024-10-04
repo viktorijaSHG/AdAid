@@ -661,7 +661,11 @@ export default {
   }
 
   .container {
+<<<<<<< HEAD
     width: 100%;
+=======
+width: 100%;
+>>>>>>> source/main
     display: flex;
     flex-direction: row;
   }
@@ -821,8 +825,12 @@ export default {
 
   .content-box {
     flex: none;
+<<<<<<< HEAD
     width: 100%;
     max-width: 1920px;
+=======
+    width: 1440px;
+>>>>>>> source/main
     /* Other styles */
   }
 

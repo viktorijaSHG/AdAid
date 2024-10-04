@@ -1,18 +1,31 @@
-# swiperMaker
-Simple templates from xllies 
-
 # widgets
+
 This template should help get you started developing with Vue 3 in Vite.
 
-# Recommended IDE Setup
-VSCode + Volar (and disable Vetur).
+## Recommended IDE Setup
 
-# Customize configuration
-See Vite Configuration Reference.
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-# Project Setup
+## Customize configuration
+
+See [Vite Configuration Reference](https://vitejs.dev/config/).
+
+## Project Setup
+
+```sh
 npm install
-# Compile and Hot-Reload for Development
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
 npm run dev
-# Compile and Minify for Production
+```
+
+### Compile and Minify for Production
+
+```sh
 npm run build
+```
+
+> > > > > > > source/main
