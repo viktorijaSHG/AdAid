@@ -73,7 +73,8 @@
               ? { overflow: 'visible', width: realSliderWidth() + 'px' }
               : { width: realSliderWidth() + 'px' }
           "
-          class="swiper swiper-navigation-vertical"
+          
+          class="swiper mySwiper swiper-navigation-vertical"
           :modules="modules[index]"
           :effect="effects[index]"
           :navigation="getSwiperNavigation()"
@@ -82,8 +83,8 @@
           :spaceBetween="spaceBetweenSlides"
           v-bind="effectBindings()"
         >
-          <SwiperSlide v-for="(image, index) in images" :key="index">
-            <img :src="image.url" alt="" />
+          <SwiperSlide v-for="(image, index) in images" :key="index" >
+            <img :src="image.url" alt=""/>
           </SwiperSlide>
         </Swiper>
         <div
@@ -715,14 +716,6 @@ export default {
     },` : ""}
         
     on: {
-        autoplay: function () {
-          messageGateway().message({
-            intent: 'adInteraction',
-            type: 'Swipe',
-            name: 'Gallery Slide Autoplay'
-          });
-          console.log('Gallery Slide Autoplay');
-        },
         touchStart: function () {
           lastSwiperTouch = Date.now();
           userSwipe = true;
