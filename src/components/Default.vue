@@ -157,6 +157,13 @@
           label="Enable autoplay"
           hide-details
         ></v-switch>
+        <v-switch
+          v-model="autoplayInt"
+          v-if="autoplayVar"
+          color="#00e18c"
+          label="Disable Autoplay On Interaction"
+          hide-details
+        ></v-switch>
         <v-text-field
           v-if="autoplayVar"
           label="Delay(ms)"
@@ -277,6 +284,7 @@ export default {
       sliderWidth: 150,
       loopVar: true,
       autoplayVar: false,
+      autoplayInt: false,
       autoplayDelay: 2000,
       swiper: null,
       background: null,
@@ -679,6 +687,10 @@ export default {
       const swiperScript = `
     <script* src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script*>
     <script*>
+    var lastSwiperTouch = 0;
+    var userSwipe = false;
+    var buttonClicked = false;
+
     var swiper = new Swiper(".mySwiper", {
     effect: "${this.effects[this.index]}",
     ${
@@ -691,37 +703,68 @@ export default {
         ? "cubeEffect:" + JSON.stringify(this.getCubeParams()) + ","
         : ""
     }
-    ${this.autoplayVar ? `autoplay: ${this.autoplayVar},` : ""}
-    ${this.autoplayVar ? "autoplay:" + `{ delay: ${this.autoplayDelay} },` : ""}
+    ${this.autoplayVar ? "autoplay:" + `{ delay: ${this.autoplayDelay}, 
+      disableOnInteraction: ${this.autoplayInt},
+    },` : ""}
     slidesPerView: ${this.slideCount},
     spaceBetween: ${this.spaceBetweenSlides / 2},
     loop: ${this.loopVar},
-    navigation: {
+    ${this.buttonVar ? `navigation: {
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
-    },
+    },` : ""}
+        
     on: {
-            slideNextTransitionEnd: (swiper) => {
-              messageGateway().message({
-                intent: 'adInteraction',
-                type: 'Swipe',
-                name: 'Gallery Swipe'
-              });
-            },
-            slidePrevTransitionEnd: (swiper) => {
-              messageGateway().message({
-                intent: 'adInteraction',
-                type: 'Swipe',
-                name: 'Gallery Swipe'
-              });
-            },
-            autoplay: (swiper) => {
+        autoplay: function () {
           messageGateway().message({
             intent: 'adInteraction',
             type: 'Swipe',
-            name: 'Autoplay - subtract this from Gallery Swipe'
+            name: 'Gallery Slide Autoplay'
           });
+          console.log('Gallery Slide Autoplay');
         },
+        touchStart: function () {
+          lastSwiperTouch = Date.now();
+          userSwipe = true;
+        },
+        slideChange: function () {
+          setTimeout(() => {
+            if (userSwipe && !buttonClicked) {
+            console.log('Gallery Slide User-Triggered');
+              messageGateway().message({
+                intent: 'adInteraction',
+                type: 'Swipe',
+                name: 'Gallery Slide User-Triggered'
+              });
+            }
+            userSwipe = false;
+            buttonClicked = false;
+          }, 50);
+        },
+        ${
+          this.buttonVar
+            ? `init: function () {
+          document.querySelector('.swiper-button-next').addEventListener('click', function () {
+            buttonClicked = true;  // Set flag for button click
+            console.log('Gallery Next-Button clicked');
+            messageGateway().message({
+              intent: 'adInteraction',
+              type: 'Click',
+              name: 'Gallery Next-Button'
+            });
+          });
+          document.querySelector('.swiper-button-prev').addEventListener('click', function () {
+            buttonClicked = true;
+            console.log('Gallery Previous-Button clicked');
+            messageGateway().message({
+              intent: 'adInteraction',
+              type: 'Click',
+              name: 'Gallery Previous-Button'
+            });
+          });
+        }`
+            : ""
+        }
       }
     });
   </script*>
