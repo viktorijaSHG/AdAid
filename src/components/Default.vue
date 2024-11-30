@@ -73,7 +73,6 @@
               ? { overflow: 'visible', width: realSliderWidth() + 'px' }
               : { width: realSliderWidth() + 'px' }
           "
-          
           class="swiper mySwiper swiper-navigation-vertical"
           :modules="modules[index]"
           :effect="effects[index]"
@@ -83,8 +82,8 @@
           :spaceBetween="spaceBetweenSlides"
           v-bind="effectBindings()"
         >
-          <SwiperSlide v-for="(image, index) in images" :key="index" >
-            <img :src="image.url" alt=""/>
+          <SwiperSlide v-for="(image, index) in images" :key="index">
+            <img :src="image.url" alt="" />
           </SwiperSlide>
         </Swiper>
         <div
@@ -212,15 +211,22 @@
             outlined
           ></v-text-field>
         </div>
-
+        <!-- changed the names from numbers to titles -->
         <div v-if="effects[index] == 'creative'">
           <v-select
             v-model="creativeType"
-            :items="[1, 2, 3, 4, 5, 6]"
+            :items="[
+              { text: 'Zoomout Slider', value: 1 },
+              { text: 'Zoomout Carousel', value: 2 },
+              { text: 'Slider', value: 3 },
+              { text: 'Flip', value: 4 },
+              { text: 'Roll', value: 5 },
+              { text: 'Flipbook', value: 6 },
+            ]"
             label="Slide type"
             item-text="text"
+            item-title="text"
             item-value="value"
-            return-object
             outlined
           ></v-select>
         </div>
@@ -704,16 +710,25 @@ export default {
         ? "cubeEffect:" + JSON.stringify(this.getCubeParams()) + ","
         : ""
     }
-    ${this.autoplayVar ? "autoplay:" + `{ delay: ${this.autoplayDelay}, 
+    ${
+      this.autoplayVar
+        ? "autoplay:" +
+          `{ delay: ${this.autoplayDelay}, 
       disableOnInteraction: ${this.autoplayInt},
-    },` : ""}
+    },`
+        : ""
+    }
     slidesPerView: ${this.slideCount},
     spaceBetween: ${this.spaceBetweenSlides / 2},
     loop: ${this.loopVar},
-    ${this.buttonVar ? `navigation: {
+    ${
+      this.buttonVar
+        ? `navigation: {
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
-    },` : ""}
+    },`
+        : ""
+    }
         
     on: {
         touchStart: function () {
