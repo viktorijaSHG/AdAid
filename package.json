@@ -10,17 +10,20 @@
     "serve": "vite"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "@netlify/functions": "^2.8.2",
     "axios": "^1.6.7",
+    "bootstrap": "^5.3.3",
     "bootstrap-vue": "^2.23.1",
     "dotenv": "^16.4.5",
     "input": "^1.0.1",
     "node-fetch": "^3.3.2",
     "picture": "^1.0.6",
     "swiper": "^11.0.7",
+    "vite-plugin-vuetify": "^2.0.4",
     "vue": "^3.4.21",
     "vue-picture-input": "^3.0.1",
-    "vuetify": "^3.5.14",
+    "vuetify": "^3.7.0-beta.1",
     "win-ca": "^3.5.1"
   },
   "devDependencies": {

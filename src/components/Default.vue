@@ -131,6 +131,11 @@
             :style="{
               fontSize: btnWidth + 'px',
               fontFamily: 'Arial, sans-serif',
+              width: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              left: this.offset + 'px',
             }"
           >
             <span style="transform: scaleX(-1); display: inline-block"
@@ -154,7 +159,13 @@
             v-if="btnType == 'default'"
             :style="{
               fontSize: btnWidth + 'px',
+              width: btnWidth + 'px',
               fontFamily: 'Arial, sans-serif',
+              width: 'auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              right: this.offset + 'px',
             }"
           >
             <span style="display: inline-block">&#x203A;</span>
@@ -519,6 +530,7 @@ export default {
         left: this.offset * -1 + "px",
         "--swiper-navigation-size": this.btnWidth + "px",
         color: this.btnColor,
+        width: "auto",
       };
     },
 
@@ -534,6 +546,7 @@ export default {
         right: this.offset * -1 + "px",
         "--swiper-navigation-size": this.btnWidth + "px",
         color: this.btnColor,
+        width: "auto",
       };
     },
 
@@ -687,7 +700,7 @@ export default {
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? `color: ${this.btnColor}; font-size: ${btnWidth};`
+          ? ` color: ${this.btnColor}; font-size: ${btnWidth}; width: auto;`
           : ``
       }
     }
@@ -697,7 +710,7 @@ export default {
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? ` color: ${this.btnColor}; font-size: ${btnWidth};`
+          ? ` color: ${this.btnColor}; font-size: ${btnWidth}; width: auto;`
           : `transform: rotate(180deg);`
       }
     }
@@ -855,12 +868,12 @@ export default {
             : ``
         }</div>
           <div class="swiper-button-next btn btn-primary" id="arrow-right">
-            <div v-if="btnType == 'default'" :style="{ fontSize: btnWidth + 'px' }">
+            <div>
                 <span style="display: inline-block">&#x203A;</span>
             </div>
           </div>
           <div class="swiper-button-prev" id="arrow-left">
-            <div v-if="btnType == 'default'" :style="{ fontSize: btnWidth + 'px' }">
+            <div>
                 <span style="transform: scaleX(-1); display: inline-block">&#x203A;</span>
             </div>
           </div>
