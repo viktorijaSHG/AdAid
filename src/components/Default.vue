@@ -73,7 +73,6 @@
               ? { overflow: 'visible', width: realSliderWidth() + 'px' }
               : { width: realSliderWidth() + 'px' }
           "
-          
           class="swiper mySwiper swiper-navigation-vertical"
           :modules="modules[index]"
           :effect="effects[index]"
@@ -83,10 +82,12 @@
           :spaceBetween="spaceBetweenSlides"
           v-bind="effectBindings()"
         >
-          <SwiperSlide v-for="(image, index) in images" :key="index" >
-            <img :src="image.url" alt=""/>
+          <SwiperSlide v-for="(image, index) in images" :key="index">
+            <img :src="image.url" alt="" />
           </SwiperSlide>
         </Swiper>
+
+        <!-- swiper default buttons -->
         <div
           v-if="getSwiperNavigation() != false"
           class="swiper-button-prev"
@@ -112,6 +113,52 @@
             :src="btnImg"
             alt="Next Slide"
           />
+        </div>
+        <div
+          v-if="getSwiperNavigation() != false"
+          class="swiper-button-prev"
+          :style="getSwiperNavigationLeft()"
+          v-bind:class="{ 'after-class': btnType == 'image' }"
+        >
+          <img
+            v-if="btnImg"
+            :style="getSwiperNavigationImg()"
+            :src="btnImg"
+            alt="Previous Slide"
+          />
+          <div
+            v-if="btnType == 'default'"
+            :style="{
+              fontSize: btnWidth + 'px',
+              fontFamily: 'Arial, sans-serif',
+            }"
+          >
+            <span style="transform: scaleX(-1); display: inline-block"
+              >&#x203A;</span
+            >
+          </div>
+        </div>
+        <div
+          v-if="getSwiperNavigation() != false"
+          class="swiper-button-next"
+          :style="getSwiperNavigationRight()"
+          v-bind:class="{ 'after-class': btnType == 'image' }"
+        >
+          <img
+            v-if="btnImg"
+            :style="getSwiperNavigationImg()"
+            :src="btnImg"
+            alt="Next Slide"
+          />
+          <div
+            v-if="btnType == 'default'"
+            :style="{
+              fontSize: btnWidth + 'px',
+              fontFamily: 'Arial, sans-serif',
+            }"
+          >
+            <span style="display: inline-block">&#x203A;</span>
+          </div>
         </div>
       </div>
       <div></div>
@@ -192,6 +239,7 @@
           <div v-if="btnType == 'default'">
             <v-color-picker v-model="btnColor"></v-color-picker>
           </div>
+
           <div v-else>
             <v-file-input
               clearable
@@ -212,15 +260,22 @@
             outlined
           ></v-text-field>
         </div>
-
+        <!-- changed the names from numbers to titles -->
         <div v-if="effects[index] == 'creative'">
           <v-select
             v-model="creativeType"
-            :items="[1, 2, 3, 4, 5, 6]"
+            :items="[
+              { text: 'Zoomout Slider', value: 1 },
+              { text: 'Zoomout Carousel', value: 2 },
+              { text: 'Slider', value: 3 },
+              { text: 'Flip', value: 4 },
+              { text: 'Roll', value: 5 },
+              { text: 'Flipbook', value: 6 },
+            ]"
             label="Slide type"
             item-text="text"
+            item-title="text"
             item-value="value"
-            return-object
             outlined
           ></v-select>
         </div>
@@ -447,7 +502,7 @@ export default {
     //get navigation styling
     getSwiperNavigationImg() {
       return {
-        width: this.btnWidth + "px",
+        "font-size": this.btnWidth + "px",
       };
     },
 
@@ -608,7 +663,8 @@ export default {
       const windowWidth = 1440;
       const top = (this.positionTop / windowHeight) * 100 + "%";
       const left = (this.positionLeft / windowWidth) * 100 + "%";
-      const offset = "-" + (this.offset / windowWidth) * 100 + "vw";
+      const offset = "-" + (this.offset / windowWidth) * 100 + "%";
+      //const offset = "-" + this.offset + "px";
       const btnWidth = (this.btnWidth / windowWidth) * 100 + "vw";
       const styles = `
     .wrapper {
@@ -628,29 +684,35 @@ export default {
       .swiper-button-next{
       top: 50%;
       right: ${offset};
-      ${this.btnType == "default" ? `color: ${this.btnColor}; ` : ``}
+      font-family: Arial, sans-serif;
+      ${
+        this.btnType == "default"
+          ? `color: ${this.btnColor}; font-size: ${btnWidth};`
+          : ``
+      }
     }
     .swiper-button-prev{
       top: 50%;
       left: ${offset};
+      font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? ` color: ${this.btnColor}; `
+          ? ` color: ${this.btnColor}; font-size: ${btnWidth};`
           : `transform: rotate(180deg);`
       }
     }
     .swiper-button-next::after{
       ${
         this.btnType == "default" && this.buttonVar
-          ? `--swiper-navigation-size: ${btnWidth}; `
-          : `content:'none';`
+          ? `--swiper-navigation-size: ${btnWidth}; content: '';`
+          : `content:'';`
       }
     }
     .swiper-button-prev::after{
       ${
         this.btnType == "default" && this.buttonVar
-          ? `--swiper-navigation-size: ${btnWidth}; `
-          : `content:'none';`
+          ? `--swiper-navigation-size: ${btnWidth}; content: '';`
+          : `content:'';`
       }
     }
     ${this.btnType == "image" ? `.img-arrow{width: ${btnWidth};}` : ``}
@@ -664,7 +726,7 @@ export default {
       left: 0px;
       height: 100%;
       transform-style: preserve-3d;
-    }    
+    }
     .max-height{
       height: 100%;
     }
@@ -704,17 +766,26 @@ export default {
         ? "cubeEffect:" + JSON.stringify(this.getCubeParams()) + ","
         : ""
     }
-    ${this.autoplayVar ? "autoplay:" + `{ delay: ${this.autoplayDelay}, 
+    ${
+      this.autoplayVar
+        ? "autoplay:" +
+          `{ delay: ${this.autoplayDelay},
       disableOnInteraction: ${this.autoplayInt},
-    },` : ""}
+    },`
+        : ""
+    }
     slidesPerView: ${this.slideCount},
     spaceBetween: ${this.spaceBetweenSlides / 2},
     loop: ${this.loopVar},
-    ${this.buttonVar ? `navigation: {
+    ${
+      this.buttonVar
+        ? `navigation: {
         nextEl: ".swiper-button-next",
         prevEl: ".swiper-button-prev",
-    },` : ""}
-        
+    },`
+        : ""
+    }
+
     on: {
         touchStart: function () {
           lastSwiperTouch = Date.now();
@@ -773,16 +844,26 @@ export default {
         ${
           this.buttonVar
             ? `
-          <div class="swiper-button-next" id="arrow-right">${
+          <div class="swiper-button-next btn btn-primary" id="arrow-right">${
             this.btnType == "image"
               ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`
-              : ""
+              : ``
           }</div>
         <div class="swiper-button-prev" id="arrow-left">${
           this.btnType == "image"
             ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`
-            : ""
+            : ``
         }</div>
+          <div class="swiper-button-next btn btn-primary" id="arrow-right">
+            <div v-if="btnType == 'default'" :style="{ fontSize: btnWidth + 'px' }">
+                <span style="display: inline-block">&#x203A;</span>
+            </div>
+          </div>
+          <div class="swiper-button-prev" id="arrow-left">
+            <div v-if="btnType == 'default'" :style="{ fontSize: btnWidth + 'px' }">
+                <span style="transform: scaleX(-1); display: inline-block">&#x203A;</span>
+            </div>
+          </div>
           `
             : ""
         }
@@ -1055,5 +1136,12 @@ export default {
   overflow-y: auto;
   /* Enable scrolling if content overflows */
   margin-bottom: 50px;
+}
+.swiper-button-next:after,
+.swiper-rtl .swiper-button-prev:after {
+  content: "";
+}
+.swiper-button-prev:after {
+  content: "";
 }
 </style>
