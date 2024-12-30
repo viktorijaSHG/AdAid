@@ -762,8 +762,7 @@ export default {
       // Construct the Swiper component HTML
       const swiperScript = `
     <script* src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script*>
-    <script*>
-    var lastSwiperTouch = 0;
+    <script*> 
     var userSwipe = false;
     var buttonClicked = false;
 
@@ -800,18 +799,16 @@ export default {
     }
 
     on: {
-        touchStart: function () {
-          lastSwiperTouch = Date.now();
+        touchStart: function () { 
           userSwipe = true;
         },
         slideChange: function () {
           setTimeout(() => {
-            if (userSwipe && !buttonClicked) {
-            console.log('Gallery Slide User-Triggered');
+            if (userSwipe && !buttonClicked) { 
               messageGateway().message({
                 intent: 'adInteraction',
                 type: 'Swipe',
-                name: 'Gallery Slide User-Triggered'
+                name: 'User Gallery Swipe'
               });
             }
             userSwipe = false;
@@ -822,21 +819,19 @@ export default {
           this.buttonVar
             ? `init: function () {
           document.querySelector('.swiper-button-next').addEventListener('click', function () {
-            buttonClicked = true;  // Set flag for button click
-            console.log('Gallery Next-Button clicked');
+            buttonClicked = true;  // Set flag for button click 
             messageGateway().message({
               intent: 'adInteraction',
               type: 'Click',
-              name: 'Gallery Next-Button'
+              name: 'User Gallery Swipe'
             });
           });
           document.querySelector('.swiper-button-prev').addEventListener('click', function () {
-            buttonClicked = true;
-            console.log('Gallery Previous-Button clicked');
+            buttonClicked = true; 
             messageGateway().message({
               intent: 'adInteraction',
               type: 'Click',
-              name: 'Gallery Previous-Button'
+              name: 'User Gallery Swipe'
             });
           });
         }`
@@ -855,31 +850,25 @@ export default {
           </div>
         </div>
         ${
-          this.buttonVar
-            ? `
-          <div class="swiper-button-next btn btn-primary" id="arrow-right">${
-            this.btnType == "image"
-              ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`
-              : ``
-          }</div>
-        <div class="swiper-button-prev" id="arrow-left">${
-          this.btnType == "image"
-            ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`
-            : ``
-        }</div>
-          <div class="swiper-button-next btn btn-primary" id="arrow-right">
-            <div>
-                <span style="display: inline-block">&#x203A;</span>
-            </div>
-          </div>
-          <div class="swiper-button-prev" id="arrow-left">
-            <div>
-                <span style="transform: scaleX(-1); display: inline-block">&#x203A;</span>
-            </div>
-          </div>
-          `
-            : ""
-        }
+            this.buttonVar
+              ? `
+                <div class="swiper-button-next btn btn-primary" id="arrow-right">
+                  ${
+                    this.btnType === "image"
+                      ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`
+                      : `<div><span style="display: inline-block">&#x203A;</span></div>`
+                  }
+                </div>
+                <div class="swiper-button-prev" id="arrow-left">
+                  ${
+                    this.btnType === "image"
+                      ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`
+                      : `<div><span style="transform: scaleX(-1); display: inline-block">&#x203A;</span></div>`
+                  }
+                </div>
+              ` 
+              : ""
+          }
       </div>
     `;
       this.ContentHead = `<pre><link
