@@ -807,7 +807,7 @@ export default {
             if (userSwipe && !buttonClicked) { 
               messageGateway().message({
                 intent: 'adInteraction',
-                type: 'Swipe',
+                type: 'Click/Swipe',
                 name: 'User Gallery Swipe'
               });
             }
@@ -822,7 +822,7 @@ export default {
             buttonClicked = true;  // Set flag for button click 
             messageGateway().message({
               intent: 'adInteraction',
-              type: 'Click',
+              type: 'Click/Swipe',
               name: 'User Gallery Swipe'
             });
           });
@@ -830,7 +830,7 @@ export default {
             buttonClicked = true; 
             messageGateway().message({
               intent: 'adInteraction',
-              type: 'Click',
+              type: 'Click/Swipe',
               name: 'User Gallery Swipe'
             });
           });
