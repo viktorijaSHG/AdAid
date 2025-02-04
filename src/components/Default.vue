@@ -1,7 +1,7 @@
 <template>
   <v-dialog v-if="showDialog" v-model="showDialog" style="width: 1200px">
     <v-card>
-      <v-card-title>Exported Code</v-card-title>
+      <v-card-title class="code-title">Exported Code</v-card-title>
       <v-card-text class="import-flex">
         <div class="codeCopy">
           <h3>Head import</h3>
@@ -13,7 +13,7 @@
         <div class="codeCopy">
           <h3>CSS code</h3>
           <pre v-text="ContentCss" class="codeBlock"></pre>
-          <v-btn id="copy-css-btn" @click="copyCssCode">
+          <v-btn id="copy-css-btn" class="copy-btn" @click="copyCssCode">
             {{ BtnCss }}
           </v-btn> 
         </div>
@@ -27,7 +27,7 @@
         <div class="codeCopy">
           <h3>JavaScript code</h3>
           <pre v-text="ContentJavaScript" class="codeBlock"></pre>
-          <v-btn id="copy-js-btn" @click="copyJavaScriptCode">
+          <v-btn id="copy-js-btn" class="copy-btn" @click="copyJavaScriptCode">
             {{ BtnJavaScript }}
           </v-btn>
         </div>
@@ -1106,14 +1106,17 @@ export default {
  background-color: #f3f3f3; 
  border-radius: .75rem;
  overflow: hidden;
- padding: 2rem;
+ padding: 1rem 2rem 2rem 2rem;
  width: 100%;
  position: relative;
 } 
 .copy-btn {
   position: absolute;
-  bottom: 5%;
+  bottom: 8%;
   left: 5%;
+}
+.code-title {
+  padding: 1rem 2rem 0rem 2rem;
 }
 /*.swiper-button-next:after,
 .swiper-rtl .swiper-button-prev:after {
