@@ -2,45 +2,35 @@
   <v-dialog v-if="showDialog" v-model="showDialog" style="width: 1200px">
     <v-card>
       <v-card-title>Exported Code</v-card-title>
-      <v-card-text>
-        <h3>Head import</h3>
-        <pre v-text="ContentHead" class="codeBlock"></pre>
-        <v-btn id="copy-head-btn" class="copy-btn" @click="copyHeadCode">
-          {{ BtnHead }}
-        </v-btn>
-        <br />
-        <br />
-        <br />
-        <v-divider :thickness="7"></v-divider>
-        <br />
-        <br />
-        <h3>Css code</h3>
-        <pre v-text="ContentCss" class="codeBlock"></pre>
-        <v-btn id="copy-css-btn" @click="copyCssCode">
-          {{ BtnCss }}
-        </v-btn>
-        <br />
-        <br />
-        <br />
-        <v-divider :thickness="7"></v-divider>
-        <br />
-        <br />
-        <h3>HTML code</h3>
-        <pre v-text="ContentHtml" class="codeBlock"></pre>
-        <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
-          {{ BtnHtml }}
-        </v-btn>
-        <br />
-        <br />
-        <br />
-        <v-divider :thickness="7"></v-divider>
-        <br />
-        <br />
-        <h3>JavaScript code</h3>
-        <pre v-text="ContentJavaScript" class="codeBlock"></pre>
-        <v-btn id="copy-js-btn" @click="copyJavaScriptCode">
-          {{ BtnJavaScript }}
-        </v-btn>
+      <v-card-text class="import-flex">
+        <div class="codeCopy">
+          <h3>Head import</h3>
+          <pre v-text="ContentHead" class="codeBlock"></pre>
+          <v-btn id="copy-head-btn" class="copy-btn" @click="copyHeadCode">
+            {{ BtnHead }}
+          </v-btn> 
+        </div>
+        <div class="codeCopy">
+          <h3>CSS code</h3>
+          <pre v-text="ContentCss" class="codeBlock"></pre>
+          <v-btn id="copy-css-btn" @click="copyCssCode">
+            {{ BtnCss }}
+          </v-btn> 
+        </div>
+        <div class="codeCopy">
+          <h3>HTML code</h3>
+          <pre v-text="ContentHtml" class="codeBlock"></pre>
+          <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
+            {{ BtnHtml }}
+          </v-btn> 
+        </div>
+        <div class="codeCopy">
+          <h3>JavaScript code</h3>
+          <pre v-text="ContentJavaScript" class="codeBlock"></pre>
+          <v-btn id="copy-js-btn" @click="copyJavaScriptCode">
+            {{ BtnJavaScript }}
+          </v-btn>
+        </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -73,10 +63,11 @@
               ? { overflow: 'visible', width: realSliderWidth() + 'px' }
               : { width: realSliderWidth() + 'px' }
           "
-          class="swiper mySwiper swiper-navigation-vertical"
+          class="swiper mySwiper asd swiper-navigation-vertical"
           :modules="modules[index]"
           :effect="effects[index]"
           :navigation="getSwiperNavigation()"
+          :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
           :loop="loopVar"
           :slidesPerView="slideCount"
           :spaceBetween="spaceBetweenSlides"
@@ -92,85 +83,28 @@
           v-if="getSwiperNavigation() != false"
           class="swiper-button-prev"
           :style="getSwiperNavigationLeft()"
-          v-bind:class="{ 'after-class': btnType == 'image' }"
+          v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
         >
-          <img
+          <!-- <img
             v-if="btnImg"
             :style="getSwiperNavigationImg()"
             :src="btnImg"
             alt="Previous Slide"
-          />
+          /> -->
         </div>
         <div
           v-if="getSwiperNavigation() != false"
           class="swiper-button-next"
           :style="getSwiperNavigationRight()"
-          v-bind:class="{ 'after-class': btnType == 'image' }"
+          v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
         >
-          <img
+          <!-- <img
             v-if="btnImg"
             :style="getSwiperNavigationImg()"
             :src="btnImg"
             alt="Next Slide"
-          />
-        </div>
-        <div
-          v-if="getSwiperNavigation() != false"
-          class="swiper-button-prev"
-          :style="getSwiperNavigationLeft()"
-          v-bind:class="{ 'after-class': btnType == 'image' }"
-        >
-          <img
-            v-if="btnImg"
-            :style="getSwiperNavigationImg()"
-            :src="btnImg"
-            alt="Previous Slide"
-          />
-          <div
-            v-if="btnType == 'default'"
-            :style="{
-              fontSize: btnWidth + 'px',
-              fontFamily: 'Arial, sans-serif',
-              width: 'auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              left: this.offset + 'px',
-            }"
-          >
-            <span style="transform: scaleX(-1); display: inline-block"
-              >&#x203A;</span
-            >
-          </div>
-        </div>
-        <div
-          v-if="getSwiperNavigation() != false"
-          class="swiper-button-next"
-          :style="getSwiperNavigationRight()"
-          v-bind:class="{ 'after-class': btnType == 'image' }"
-        >
-          <img
-            v-if="btnImg"
-            :style="getSwiperNavigationImg()"
-            :src="btnImg"
-            alt="Next Slide"
-          />
-          <div
-            v-if="btnType == 'default'"
-            :style="{
-              fontSize: btnWidth + 'px',
-              width: btnWidth + 'px',
-              fontFamily: 'Arial, sans-serif',
-              width: 'auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              right: this.offset + 'px',
-            }"
-          >
-            <span style="display: inline-block">&#x203A;</span>
-          </div>
-        </div>
+          /> -->
+        </div>  
       </div>
       <div></div>
     </div>
@@ -181,6 +115,7 @@
         <v-text-field
           label="Slider width"
           v-model="sliderWidth"
+          type="number"
           outlined
         ></v-text-field>
         <v-switch
@@ -227,6 +162,7 @@
           v-if="autoplayVar"
           label="Delay(ms)"
           v-model="autoplayDelay"
+          type="number"
           outlined
         ></v-text-field>
         <v-switch
@@ -263,11 +199,13 @@
           <v-text-field
             label="Button offset x"
             v-model="offset"
+            type="number"
             outlined
           ></v-text-field>
           <v-text-field
             label="Button width"
             v-model="btnWidth"
+            type="number"
             outlined
           ></v-text-field>
         </div>
@@ -294,11 +232,13 @@
         <v-text-field
           label="Position Top"
           v-model="positionTop"
+          type="number"
           outlined
         ></v-text-field>
         <v-text-field
           label="Position left"
           v-model="positionLeft"
+          type="number"Q
           outlined
         ></v-text-field>
         <v-file-input
@@ -315,6 +255,7 @@
 </template>
 
 <script>
+
 import { Swiper, SwiperSlide } from "swiper/vue";
 import {
   EffectCube,
@@ -519,10 +460,10 @@ export default {
 
     getSwiperNavigationLeft() {
       if (this.btnType == "image") {
-        return {
-          transform: "rotate(180deg)",
+        return { 
           left: this.offset * -1 + "px",
-          width: this.btnWidth + "px",
+          transform: `rotate(180deg) scale(${this.btnWidth / 50})`, // Adjust scaling dynamically
+          backgroundImage: `url('${this.btnImg}')`,
         };
       }
       this.btnImg = null;
@@ -537,8 +478,9 @@ export default {
     getSwiperNavigationRight() {
       if (this.btnType == "image") {
         return {
-          width: this.btnWidth + "px",
+          transform: `scale(${this.btnWidth / 50})`, // Adjust scaling dynamically
           right: this.offset * -1 + "px",
+          backgroundImage: `url('${this.btnImg}')`,
         };
       }
       this.btnImg = null;
@@ -680,12 +622,23 @@ export default {
       //const offset = "-" + this.offset + "px";
       const btnWidth = (this.btnWidth / windowWidth) * 100 + "vw";
       const styles = `
+    html, body {
+      text-rendering: auto !important;
+    }
+    .swiper {
+      line-height: 0;
+    }
     .wrapper {
       height: ${wrapperHeight};
       width: ${this.realSliderWidth() / 2}px;
       position:absolute;
       top: ${top};
       left:${left};
+    }
+    .swiper-custom-next, .swiper-custom-prev {
+      background-repeat: no-repeat;
+      background-size: 100%;
+      background-position: center center;
     }
     .swiper-slide gwd-image {
       display: block;
@@ -694,14 +647,14 @@ export default {
     ${
       this.buttonVar
         ? `
-      .swiper-button-next{
+    .swiper-button-next{
       top: 50%;
       right: ${offset};
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
           ? ` color: ${this.btnColor}; font-size: ${btnWidth}; width: auto;`
-          : ``
+          : `transform: scale(${this.btnWidth / 100});background-image: url('assets/${this.btnImgName}');`
       }
     }
     .swiper-button-prev{
@@ -711,24 +664,24 @@ export default {
       ${
         this.btnType == "default"
           ? ` color: ${this.btnColor}; font-size: ${btnWidth}; width: auto;`
-          : `transform: rotate(180deg);`
+          : `transform: rotate(180deg) scale(${this.btnWidth / 100}); background-image: url('assets/${this.btnImgName}');`
       }
     }
     .swiper-button-next::after{
       ${
         this.btnType == "default" && this.buttonVar
-          ? `--swiper-navigation-size: ${btnWidth}; content: '';`
-          : `content:'';`
+          ? `--swiper-navigation-size: ${btnWidth};`
+          : `content: ""`
       }
     }
     .swiper-button-prev::after{
       ${
         this.btnType == "default" && this.buttonVar
-          ? `--swiper-navigation-size: ${btnWidth}; content: '';`
-          : `content:'';`
+          ? `--swiper-navigation-size: ${btnWidth};`
+          : `content: ""`
       }
-    }
-    ${this.btnType == "image" ? `.img-arrow{width: ${btnWidth};}` : ``}
+    } 
+       
     `
         : ``
     }
@@ -851,21 +804,13 @@ export default {
         </div>
         ${
             this.buttonVar
-              ? `
-                <div class="swiper-button-next btn btn-primary" id="arrow-right">
-                  ${
-                    this.btnType === "image"
-                      ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`
-                      : `<div><span style="display: inline-block">&#x203A;</span></div>`
+              ? ` 
+                ${ this.btnType === "image" ? `<div class="swiper-button-next swiper-custom-next" id="arrow-right"></div>` 
+                  : `<div class="swiper-button-next" id="arrow-right"></div>`
                   }
-                </div>
-                <div class="swiper-button-prev" id="arrow-left">
-                  ${
-                    this.btnType === "image"
-                      ? `<img src='assets/${this.btnImgName}' class='img-arrow'/>`
-                      : `<div><span style="transform: scaleX(-1); display: inline-block">&#x203A;</span></div>`
+                 ${ this.btnType === "image" ? `<div class="swiper-button-prev swiper-custom-prev" id="arrow-left"></div>` 
+                  : `<div class="swiper-button-prev" id="arrow-left"></div>`
                   }
-                </div>
               ` 
               : ""
           }
@@ -903,6 +848,7 @@ export default {
 
 .swiper {
   margin: 0;
+  line-height: 0;
 }
 
 .swiper-slide {
@@ -1138,12 +1084,42 @@ export default {
   overflow-y: auto;
   /* Enable scrolling if content overflows */
   margin-bottom: 50px;
+  text-wrap: wrap;
+  font-size: .75rem;
 }
-.swiper-button-next:after,
+
+.swiper-custom-next:after, .swiper-custom-prev::after {
+  content: ''
+}
+
+.swiper-custom-next, .swiper-custom-prev {
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center center;
+}
+.import-flex { 
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 2rem; /* Optional spacing between items */ 
+}
+.codeCopy {
+ background-color: #f3f3f3; 
+ border-radius: .75rem;
+ overflow: hidden;
+ padding: 2rem;
+ width: 100%;
+ position: relative;
+} 
+.copy-btn {
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+}
+/*.swiper-button-next:after,
 .swiper-rtl .swiper-button-prev:after {
   content: "";
 }
 .swiper-button-prev:after {
   content: "";
-}
+}*/
 </style>
