@@ -39,8 +39,8 @@
     </v-card>
   </v-dialog>
 
-  <v-row class="flex-container">
-    <v-col class="second">
+  <v-row class="">
+    <v-col class="second" cols="6">
       <Images @imagesUpdated="updateImages" />
 
       <div class="settings">
@@ -196,9 +196,12 @@
             }
           : { position: 'relative' }
       "
-    >
-      <div
-        :style="{ top: positionTop + 'px', left: positionLeft + 'px' }"
+     cols="6">
+      <div 
+        :style="
+            index == 1
+              ? ''
+              : { top: positionTop + 'px', left: positionLeft + 'px', width: realSliderWidth() + '%' }"
         class="first"
       >
         <Swiper
@@ -206,7 +209,7 @@
           :style="
             index == 1
               ? { overflow: 'visible', width: realSliderWidth() + 'px' }
-              : { width: realSliderWidth() + 'px' }
+              : ''
           "
           class="swiper mySwiper asd swiper-navigation-vertical"
           :modules="modules[index]"
@@ -292,7 +295,7 @@ export default {
       positionLeft: 50,
       slideCount: 1,
       spaceBetweenSlides: 0,
-      sliderWidth: 150,
+      sliderWidth: 40,
       loopVar: true,
       autoplayVar: false,
       autoplayInt: false,
@@ -618,7 +621,7 @@ export default {
       const wrapper = document.querySelector(".swiper");
       if (wrapper) {
         const height = wrapper.offsetHeight;
-        return height / 2 + "px";
+        return height + "px";
       }
     },
 
@@ -641,7 +644,7 @@ export default {
     }
     .wrapper {
       height: ${wrapperHeight};
-      width: ${this.realSliderWidth() / 2}px;
+      width: ${this.realSliderWidth()}%;
       position:absolute;
       top: ${top};
       left:${left};
@@ -857,6 +860,7 @@ export default {
   position: absolute;
   /* Keep this if you need to position children absolutely */
   margin: 0px !important;
+  width: 100%;
 }
 
 .swiper {
@@ -912,8 +916,11 @@ export default {
 }
 
 .content-box {
-  width: 1440px;
-  height: 810px;
+  /* width: 1440px;
+  height: 810px; */
+  width: 1920px;
+  /* height: 1080px; */
+  aspect-ratio: 16/9;
   background-color: #dedede;
   flex: none;
 }
@@ -1065,7 +1072,7 @@ export default {
 
 .content-box {
   flex: none;
-  width: 1440px;
+  /* width: 1440px; */
   /* Other styles */
 }
 
@@ -1083,7 +1090,7 @@ export default {
 
   .second {
     margin: auto;
-    margin-top: 30px;
+    /* margin-top: 30px; */
     width: 600px;
   }
 }
