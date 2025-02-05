@@ -174,10 +174,12 @@
           outlined
         ></v-text-field>
         <v-file-input
-          clearable
           @change="importBgImage"
-          prepend-icon=""
+          id="bgImageInput"
+          prepend-icon="" 
           label="Background image"
+          clearable 
+          @click:clear="clearBgImage"
         ></v-file-input>
 
         <button @click="exportCode" id="activator-target">Export Code</button>
@@ -253,7 +255,7 @@
     </v-col>
   </v-row>
 </template>
-
+ 
 <script>
 
 import { Swiper, SwiperSlide } from "swiper/vue";
@@ -270,6 +272,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/effect-creative";
 import "swiper/css/autoplay";
+import "@mdi/font/css/materialdesignicons.css";
 
 export default {
   props: {
@@ -420,6 +423,14 @@ export default {
       }
     },
 
+    // clear backround image function
+    clearBgImage() {
+      this.background = ''; // Reset background to empty string
+      const fileInput = document.getElementById('bgImageInput'); // Get file input element
+      if (fileInput) {
+        fileInput.value = ''; // Clear the file input value
+      }
+    },
     // Button image save function
     importBtnImage(event) {
       const file = event.target.files[0]; // Get the first file from the input
