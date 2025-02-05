@@ -39,76 +39,8 @@
     </v-card>
   </v-dialog>
 
-  <div class="flex-container">
-    <div
-      class="content-box"
-      :style="
-        background
-          ? {
-              backgroundImage: 'url(' + background + ')',
-              backgroundSize: 'cover',
-              position: 'relative',
-            }
-          : { position: 'relative' }
-      "
-    >
-      <div
-        :style="{ top: positionTop + 'px', left: positionLeft + 'px' }"
-        class="first"
-      >
-        <Swiper
-          :key="creativeType + cubeShaddow"
-          :style="
-            index == 1
-              ? { overflow: 'visible', width: realSliderWidth() + 'px' }
-              : { width: realSliderWidth() + 'px' }
-          "
-          class="swiper mySwiper asd swiper-navigation-vertical"
-          :modules="modules[index]"
-          :effect="effects[index]"
-          :navigation="getSwiperNavigation()"
-          :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
-          :loop="loopVar"
-          :slidesPerView="slideCount"
-          :spaceBetween="spaceBetweenSlides"
-          v-bind="effectBindings()"
-        >
-          <SwiperSlide v-for="(image, index) in images" :key="index">
-            <img :src="image.url" alt="" />
-          </SwiperSlide>
-        </Swiper>
-
-        <!-- swiper default buttons -->
-        <div
-          v-if="getSwiperNavigation() != false"
-          class="swiper-button-prev"
-          :style="getSwiperNavigationLeft()"
-          v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
-        >
-          <!-- <img
-            v-if="btnImg"
-            :style="getSwiperNavigationImg()"
-            :src="btnImg"
-            alt="Previous Slide"
-          /> -->
-        </div>
-        <div
-          v-if="getSwiperNavigation() != false"
-          class="swiper-button-next"
-          :style="getSwiperNavigationRight()"
-          v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
-        >
-          <!-- <img
-            v-if="btnImg"
-            :style="getSwiperNavigationImg()"
-            :src="btnImg"
-            alt="Next Slide"
-          /> -->
-        </div>  
-      </div>
-      <div></div>
-    </div>
-    <div class="second">
+  <v-row class="flex-container">
+    <v-col class="second">
       <Images @imagesUpdated="updateImages" />
 
       <div class="settings">
@@ -250,8 +182,76 @@
 
         <button @click="exportCode" id="activator-target">Export Code</button>
       </div>
-    </div>
-  </div>
+    </v-col>
+    <v-col
+      class="content-box"
+      :style="
+        background
+          ? {
+              backgroundImage: 'url(' + background + ')',
+              backgroundSize: 'cover',
+              position: 'relative',
+            }
+          : { position: 'relative' }
+      "
+    >
+      <div
+        :style="{ top: positionTop + 'px', left: positionLeft + 'px' }"
+        class="first"
+      >
+        <Swiper
+          :key="creativeType + cubeShaddow"
+          :style="
+            index == 1
+              ? { overflow: 'visible', width: realSliderWidth() + 'px' }
+              : { width: realSliderWidth() + 'px' }
+          "
+          class="swiper mySwiper asd swiper-navigation-vertical"
+          :modules="modules[index]"
+          :effect="effects[index]"
+          :navigation="getSwiperNavigation()"
+          :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
+          :loop="loopVar"
+          :slidesPerView="slideCount"
+          :spaceBetween="spaceBetweenSlides"
+          v-bind="effectBindings()"
+        >
+          <SwiperSlide v-for="(image, index) in images" :key="index">
+            <img :src="image.url" alt="" />
+          </SwiperSlide>
+        </Swiper>
+
+        <!-- swiper default buttons -->
+        <div
+          v-if="getSwiperNavigation() != false"
+          class="swiper-button-prev"
+          :style="getSwiperNavigationLeft()"
+          v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
+        >
+          <!-- <img
+            v-if="btnImg"
+            :style="getSwiperNavigationImg()"
+            :src="btnImg"
+            alt="Previous Slide"
+          /> -->
+        </div>
+        <div
+          v-if="getSwiperNavigation() != false"
+          class="swiper-button-next"
+          :style="getSwiperNavigationRight()"
+          v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
+        >
+          <!-- <img
+            v-if="btnImg"
+            :style="getSwiperNavigationImg()"
+            :src="btnImg"
+            alt="Next Slide"
+          /> -->
+        </div>  
+      </div>
+      <div></div>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
