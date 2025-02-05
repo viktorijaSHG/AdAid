@@ -798,7 +798,7 @@ export default {
     `;
       // Define the code you want to export
       const htmlCode = `
-      <div class="wrapper">
+      <div class="wrapper" id="gallery">
         <div class="swiper mySwiper max-height">
           <div class="swiper-wrapper max-height" id="cards">
             ${swiperSlidesHtml}
