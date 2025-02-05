@@ -739,6 +739,8 @@ export default {
     },`
         : ""
     }
+    observer: true,
+    observeParents: true,
     slidesPerView: ${this.slideCount},
     spaceBetween: ${this.spaceBetweenSlides / 2},
     loop: ${this.loopVar},
