@@ -40,15 +40,16 @@
   </v-dialog>
 
   <v-row class="">
-    <v-col class="second" cols="6">
+    <v-col class="second" cols="4">
       <Images @imagesUpdated="updateImages" />
 
       <div class="settings">
         <v-text-field
           label="Slider width"
           v-model="sliderWidth"
-          type="number"
-          outlined
+          type="number"  
+          :max="100"
+          @input="validateInput"
         ></v-text-field>
         <v-switch
           v-model="loopVar"
@@ -196,7 +197,7 @@
             }
           : { position: 'relative' }
       "
-     cols="6">
+     cols="8">
       <div 
         :style="
             index == 1
@@ -335,10 +336,25 @@ export default {
         [Navigation, EffectFade],
         [Navigation, EffectCreative],
       ],
+
+      sliderWidth: "40", // Empty string to prevent issues with number type
     };
   },
 
-  methods: {
+  methods: { 
+    validateInput() {
+      let num = Number(this.sliderWidth);
+
+      // If input is not a number or out of bounds, correct it
+      if (isNaN(num) || num < 0) {
+        num = 0;
+      } else if (num > 100) {
+        num = 100;
+      }
+
+      // Assign back the corrected value
+      this.sliderWidth = num.toString();
+    },
     // slider images
     updateImages(newImages) {
       this.images = newImages;
@@ -1145,4 +1161,7 @@ export default {
 .swiper-button-prev:after {
   content: "";
 }*/
+.v-row {
+  gap: 2rem;
+}
 </style>
