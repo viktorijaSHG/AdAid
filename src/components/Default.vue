@@ -39,221 +39,225 @@
     </v-card>
   </v-dialog>
 
-  <v-row class="">
+  <v-row class="panel">
     <v-col class="second" cols="4">
-      <Images @imagesUpdated="updateImages" />
+      <div class="panel-container">
+        
+        <Images @imagesUpdated="updateImages" />
 
-      <div class="settings">
-        <v-text-field
-          label="Slider width"
-          v-model="sliderWidth"
-          type="number"  
-          :max="100"
-          @input="validateInput"
-        ></v-text-field>
-        <v-switch
-          v-model="loopVar"
-          color="#00e18c"
-          label="Enable Loop"
-          hide-details
-        ></v-switch>
-        <v-switch
-          v-if="this.type == 'cube'"
-          v-model="cubeShaddow"
-          color="#00e18c"
-          label="Enable Shaddow"
-          hide-details
-        ></v-switch>
-
-        <div v-if="this.type == 'multiple'">
+        <div class="settings">
           <v-text-field
-            label="Slides Per View"
-            v-model="slideCount"
-            outlined
+            label="Slider width"
+            v-model="sliderWidth"
+            type="number"  
+            :max="100"
+            @input="validateInput"
           ></v-text-field>
-          <v-text-field
-            label="Space Between Slides"
-            v-model="spaceBetweenSlides"
-            outlined
-          ></v-text-field>
-        </div>
+          <v-switch
+            v-model="loopVar"
+            color="#00e18c"
+            label="Enable Loop"
+            hide-details
+          ></v-switch>
+          <v-switch
+            v-if="this.type == 'cube'"
+            v-model="cubeShaddow"
+            color="#00e18c"
+            label="Enable Shaddow"
+            hide-details
+          ></v-switch>
 
-        <v-switch
-          v-model="autoplayVar"
-          color="#00e18c"
-          label="Enable autoplay"
-          hide-details
-        ></v-switch>
-        <v-switch
-          v-model="autoplayInt"
-          v-if="autoplayVar"
-          color="#00e18c"
-          label="Disable Autoplay On Interaction"
-          hide-details
-        ></v-switch>
-        <v-text-field
-          v-if="autoplayVar"
-          label="Delay(ms)"
-          v-model="autoplayDelay"
-          type="number"
-          outlined
-        ></v-text-field>
-        <v-switch
-          v-model="buttonVar"
-          color="#00e18c"
-          label="Side buttons"
-          hide-details
-        ></v-switch>
-
-        <div v-if="buttonVar">
-          <v-select
-            v-model="btnType"
-            :items="['image', 'default']"
-            label="Button Type"
-            item-text="text"
-            item-value="value"
-            return-object
-            outlined
-          ></v-select>
-
-          <div v-if="btnType == 'default'">
-            <v-color-picker v-model="btnColor"></v-color-picker>
+          <div v-if="this.type == 'multiple'">
+            <v-text-field
+              label="Slides Per View"
+              v-model="slideCount"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              label="Space Between Slides"
+              v-model="spaceBetweenSlides"
+              outlined
+            ></v-text-field>
           </div>
 
-          <div v-else>
-            <v-file-input
-              clearable
-              @change="importBtnImage"
-              prepend-icon=""
-              label="Button image"
-            ></v-file-input>
+          <v-switch
+            v-model="autoplayVar"
+            color="#00e18c"
+            label="Enable autoplay"
+            hide-details
+          ></v-switch>
+          <v-switch
+            v-model="autoplayInt"
+            v-if="autoplayVar"
+            color="#00e18c"
+            label="Disable Autoplay On Interaction"
+            hide-details
+          ></v-switch>
+          <v-text-field
+            v-if="autoplayVar"
+            label="Delay(ms)"
+            v-model="autoplayDelay"
+            type="number"
+            outlined
+          ></v-text-field>
+          <v-switch
+            v-model="buttonVar"
+            color="#00e18c"
+            label="Side buttons"
+            hide-details
+          ></v-switch>
+
+          <div v-if="buttonVar">
+            <v-select
+              v-model="btnType"
+              :items="['image', 'default']"
+              label="Button Type"
+              item-text="text"
+              item-value="value"
+              return-object
+              outlined
+            ></v-select>
+
+            <div v-if="btnType == 'default'">
+              <v-color-picker v-model="btnColor" :swatches="swatches" swatches-max-height="100px" mode="hexa" show-swatches class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
+            </div>
+
+            <div v-else>
+              <v-file-input
+                clearable
+                @change="importBtnImage"
+                prepend-icon=""
+                label="Button image"
+              ></v-file-input>
+            </div>
+
+            <v-text-field
+              label="Button offset x"
+              v-model="offset"
+              type="number"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              label="Button width"
+              v-model="btnWidth"
+              type="number"
+              outlined
+            ></v-text-field>
+          </div>
+          <!-- changed the names from numbers to titles -->
+          <div v-if="effects[index] == 'creative'">
+            <v-select
+              v-model="creativeType"
+              :items="[
+                { text: 'Zoomout Slider', value: 1 },
+                { text: 'Zoomout Carousel', value: 2 },
+                { text: 'Slider', value: 3 },
+                { text: 'Flip', value: 4 },
+                { text: 'Roll', value: 5 },
+                { text: 'Flipbook', value: 6 },
+              ]"
+              label="Slide type"
+              item-text="text"
+              item-title="text"
+              item-value="value"
+              outlined
+            ></v-select>
           </div>
 
           <v-text-field
-            label="Button offset x"
-            v-model="offset"
+            label="Position Top"
+            v-model="positionTop"
             type="number"
             outlined
           ></v-text-field>
           <v-text-field
-            label="Button width"
-            v-model="btnWidth"
-            type="number"
+            label="Position left"
+            v-model="positionLeft"
+            type="number"Q
             outlined
           ></v-text-field>
-        </div>
-        <!-- changed the names from numbers to titles -->
-        <div v-if="effects[index] == 'creative'">
-          <v-select
-            v-model="creativeType"
-            :items="[
-              { text: 'Zoomout Slider', value: 1 },
-              { text: 'Zoomout Carousel', value: 2 },
-              { text: 'Slider', value: 3 },
-              { text: 'Flip', value: 4 },
-              { text: 'Roll', value: 5 },
-              { text: 'Flipbook', value: 6 },
-            ]"
-            label="Slide type"
-            item-text="text"
-            item-title="text"
-            item-value="value"
-            outlined
-          ></v-select>
-        </div>
+          <v-file-input
+            @change="importBgImage"
+            id="bgImageInput"
+            prepend-icon="" 
+            label="Background image"
+            clearable 
+            @click:clear="clearBgImage"
+          ></v-file-input>
 
-        <v-text-field
-          label="Position Top"
-          v-model="positionTop"
-          type="number"
-          outlined
-        ></v-text-field>
-        <v-text-field
-          label="Position left"
-          v-model="positionLeft"
-          type="number"Q
-          outlined
-        ></v-text-field>
-        <v-file-input
-          @change="importBgImage"
-          id="bgImageInput"
-          prepend-icon="" 
-          label="Background image"
-          clearable 
-          @click:clear="clearBgImage"
-        ></v-file-input>
-
-        <button @click="exportCode" id="activator-target">Export Code</button>
+          <button @click="exportCode" id="activator-target">Export Code</button>
+        </div>
       </div>
     </v-col>
-    <v-col
-      class="content-box"
+    <v-col class="artboard" cols="8">
+      <div class="content-box"
       :style="
         background
           ? {
               backgroundImage: 'url(' + background + ')',
-              backgroundSize: 'cover',
+              backgroundSize: 'contain',
               position: 'relative',
             }
           : { position: 'relative' }
-      "
-     cols="8">
-      <div 
-        :style="
-            index == 1
-              ? ''
-              : { top: positionTop + 'px', left: positionLeft + 'px', width: realSliderWidth() + '%' }"
-        class="first"
-      >
-        <Swiper
-          :key="creativeType + cubeShaddow"
+      ">
+        
+        <div 
           :style="
-            index == 1
-              ? { overflow: 'visible', width: realSliderWidth() + 'px' }
-              : ''
-          "
-          class="swiper mySwiper asd swiper-navigation-vertical"
-          :modules="modules[index]"
-          :effect="effects[index]"
-          :navigation="getSwiperNavigation()"
-          :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
-          :loop="loopVar"
-          :slidesPerView="slideCount"
-          :spaceBetween="spaceBetweenSlides"
-          v-bind="effectBindings()"
+              index == 1
+                ? ''
+                : { top: positionTop + 'px', left: positionLeft + 'px', width: realSliderWidth() + '%' }"
+          class="first"
         >
-          <SwiperSlide v-for="(image, index) in images" :key="index">
-            <img :src="image.url" alt="" />
-          </SwiperSlide>
-        </Swiper>
+          <Swiper
+            :key="creativeType + cubeShaddow"
+            :style="
+              index == 1
+                ? { overflow: 'visible', width: realSliderWidth() + 'px' }
+                : ''
+            "
+            class="swiper mySwiper asd swiper-navigation-vertical"
+            :modules="modules[index]"
+            :effect="effects[index]"
+            :navigation="getSwiperNavigation()"
+            :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
+            :loop="loopVar"
+            :slidesPerView="slideCount"
+            :spaceBetween="spaceBetweenSlides"
+            v-bind="effectBindings()"
+          >
+            <SwiperSlide v-for="(image, index) in images" :key="index">
+              <img :src="image.url" alt="" />
+            </SwiperSlide>
+          </Swiper>
 
-        <!-- swiper default buttons -->
-        <div
-          v-if="getSwiperNavigation() != false"
-          class="swiper-button-prev"
-          :style="getSwiperNavigationLeft()"
-          v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
-        >
-          <!-- <img
-            v-if="btnImg"
-            :style="getSwiperNavigationImg()"
-            :src="btnImg"
-            alt="Previous Slide"
-          /> -->
+          <!-- swiper default buttons -->
+          <div
+            v-if="getSwiperNavigation() != false"
+            class="swiper-button-prev"
+            :style="getSwiperNavigationLeft()"
+            v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
+          >
+            <!-- <img
+              v-if="btnImg"
+              :style="getSwiperNavigationImg()"
+              :src="btnImg"
+              alt="Previous Slide"
+            /> -->
+          </div>
+          <div
+            v-if="getSwiperNavigation() != false"
+            class="swiper-button-next"
+            :style="getSwiperNavigationRight()"
+            v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
+          >
+            <!-- <img
+              v-if="btnImg"
+              :style="getSwiperNavigationImg()"
+              :src="btnImg"
+              alt="Next Slide"
+            /> -->
+          </div>  
         </div>
-        <div
-          v-if="getSwiperNavigation() != false"
-          class="swiper-button-next"
-          :style="getSwiperNavigationRight()"
-          v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
-        >
-          <!-- <img
-            v-if="btnImg"
-            :style="getSwiperNavigationImg()"
-            :src="btnImg"
-            alt="Next Slide"
-          /> -->
-        </div>  
       </div>
       <div></div>
     </v-col>
@@ -290,6 +294,14 @@ export default {
 
   data() {
     return {
+      
+      swatches: [
+        ['#FF0000', '#AA0000', '#550000'],
+        ['#FFFF00', '#AAAA00', '#555500'],
+        ['#00FF00', '#00AA00', '#005500'],
+        ['#00FFFF', '#00AAAA', '#005555'],
+        ['#0000FF', '#0000AA', '#000055'],
+      ],
       images: [],
       // params
       positionTop: 50,
@@ -871,6 +883,67 @@ export default {
 .v-dialog > .v-overlay__content > form > .v-card > .v-card-text {
   color: #0b3144 !important;
 }
+.color-picker {
+  margin-bottom: 2rem;
+}
+.artboard {
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 4rem 2rem 3rem;
+  background-color: #223a46;
+}
+.panel {
+  height: 100vh;
+}
+.panel-container { 
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+  position: relative;
+  padding: 0rem 1rem;
+  width: 100%;
+
+  
+}
+/* Firefox (uncomment to work in Firefox, although other properties will not work!)  */
+/** {
+  scrollbar-width: thin;
+  scrollbar-color: #FFFFFF #DADADA;
+}*/
+
+/* Chrome, Edge and Safari */
+.panel-container::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+.panel-container::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background-color: #0b3144;
+}
+
+.panel-container::-webkit-scrollbar-track:hover {
+  background-color: #0b3144;
+}
+
+.panel-container::-webkit-scrollbar-track:active {
+  background-color: #0b3144;
+}
+
+.panel-container::-webkit-scrollbar-thumb {
+  border-radius: 1px;
+  background-color: #0e5363;
+}
+
+.panel-container::-webkit-scrollbar-thumb:hover {
+  background-color: #0e5363;
+}
+
+.panel-container::-webkit-scrollbar-thumb:active {
+  background-color: #0e5363;
+}
 
 .first {
   position: absolute;
@@ -890,10 +963,10 @@ export default {
 }
 
 .card {
-  width: 100%;
-  padding: 10px;
-  margin: 10px;
-  background-color: #0b3144;
+  width: 100%; 
+  padding: 0rem;
+  margin: 0rem;
+  /* background-color: #0b3144; */
 }
 
 .card .top {
@@ -934,10 +1007,10 @@ export default {
 .content-box {
   /* width: 1440px;
   height: 810px; */
-  width: 1920px;
+  width: 100%;
   /* height: 1080px; */
   aspect-ratio: 16/9;
-  background-color: #dedede;
+  background-color: #ffffff;
   flex: none;
 }
 
@@ -947,24 +1020,26 @@ export default {
 }
 
 .second {
+  padding: 0rem;
   color: #f0f0f0;
-  max-width: 600px;
+  /* max-width: 600px; */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  background-color: #2b4d5e;
-  border-radius: 10px;
+  /* padding: 20px; */
+  /* background-color: #2b4d5e;  */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
+  overflow: hidden;
+  height: 100%; 
 }
 
 .settings {
   width: 100%;
-  max-width: 600px;
+  /* max-width: 600px; */
   padding: 20px;
-  background-color: #0b3144;
+  /* background-color: #0b3144; */
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
@@ -1107,7 +1182,7 @@ export default {
   .second {
     margin: auto;
     /* margin-top: 30px; */
-    width: 600px;
+    /* width: 600px; */
   }
 }
 
@@ -1162,6 +1237,6 @@ export default {
   content: "";
 }*/
 .v-row {
-  gap: 2rem;
+  gap: 0rem;
 }
 </style>
