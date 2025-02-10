@@ -134,7 +134,7 @@ export default {
  
  .card .img-container .image {
   width: 100px;
-  height: 100px;
+  height: 100%;
   margin: 10px;
   position: relative;
  }
@@ -223,7 +223,7 @@ export default {
 }
 
 .custom-file-label {
-    padding: 10px 16px;
+    padding: 14px 16px;
 
  color: white;
  border-radius: 4px;

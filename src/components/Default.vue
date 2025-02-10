@@ -45,105 +45,71 @@
         
         <Images @imagesUpdated="updateImages" />
 
-        <div class="settings">
-          <v-text-field
-            label="Slider width"
-            v-model="sliderWidth"
-            type="number"  
-            :max="100"
-            @input="validateInput"
-          ></v-text-field>
-          <v-switch
-            v-model="loopVar"
+        <div class="settings"> 
+
+          <v-slider
+            v-model="sliderWidth" 
+            :step="1" 
             color="#00e18c"
-            label="Enable Loop"
+            class="align-center"
             hide-details
-          ></v-switch>
-          <v-switch
-            v-if="this.type == 'cube'"
-            v-model="cubeShaddow"
+          >
+            <template v-slot:prepend>
+              <v-text-field
+              
+                label="Slider width"
+                v-model="sliderWidth"
+                type="text"  
+                append-inner-icon="mdi-percent-outline" 
+                style="width: 170px"
+                @input="validateInput" 
+                hide-details
+                 
+              ></v-text-field>
+            </template>
+          </v-slider>
+          
+          <v-slider
+            v-model="positionTop" 
+            :step="1" 
             color="#00e18c"
-            label="Enable Shaddow"
+            class="align-center" 
             hide-details
-          ></v-switch>
+          >
+            <template v-slot:prepend>
+              <v-text-field
+                label="Position Top"
+                v-model="positionTop"
+                append-inner-icon="mdi-percent-outline"
+                type="text"
+                style="width: 170px"
+                outlined 
+                hide-details
+              ></v-text-field>
+            </template>
+          </v-slider>
 
-          <div v-if="this.type == 'multiple'">
-            <v-text-field
-              label="Slides Per View"
-              v-model="slideCount"
-              outlined
-            ></v-text-field>
-            <v-text-field
-              label="Space Between Slides"
-              v-model="spaceBetweenSlides"
-              outlined
-            ></v-text-field>
-          </div>
-
-          <v-switch
-            v-model="autoplayVar"
+          
+          <v-slider
+            v-model="positionLeft" 
+            :step="1" 
             color="#00e18c"
-            label="Enable autoplay"
+            class="align-center"  
             hide-details
-          ></v-switch>
-          <v-switch
-            v-model="autoplayInt"
-            v-if="autoplayVar"
-            color="#00e18c"
-            label="Disable Autoplay On Interaction"
-            hide-details
-          ></v-switch>
-          <v-text-field
-            v-if="autoplayVar"
-            label="Delay(ms)"
-            v-model="autoplayDelay"
-            type="number"
-            outlined
-          ></v-text-field>
-          <v-switch
-            v-model="buttonVar"
-            color="#00e18c"
-            label="Side buttons"
-            hide-details
-          ></v-switch>
+          >
+            <template v-slot:prepend>
+              <v-text-field
+                label="Position left"
+                v-model="positionLeft"
+                append-inner-icon="mdi-percent-outline"
+                type="text"
+                style="width: 170px"
+                outlined 
+                hide-details
+              ></v-text-field>
+            </template>
+          </v-slider> 
 
-          <div v-if="buttonVar">
-            <v-select
-              v-model="btnType"
-              :items="['image', 'default']"
-              label="Button Type"
-              item-text="text"
-              item-value="value"
-              return-object
-              outlined
-            ></v-select>
-
-            <div v-if="btnType == 'default'">
-              <v-color-picker v-model="btnColor" :swatches="swatches" swatches-max-height="100px" mode="hexa" show-swatches class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
-            </div>
-
-            <div v-else>
-              <v-file-input
-                clearable
-                @change="importBtnImage"
-                prepend-icon=""
-                label="Button image"
-              ></v-file-input>
-            </div>
-
-            <v-text-field
-              label="Button offset x"
-              v-model="offset"
-              type="number"
-              outlined
-            ></v-text-field>
-            <v-text-field
-              label="Button width"
-              v-model="btnWidth"
-              type="number"
-              outlined
-            ></v-text-field>
-          </div>
           <!-- changed the names from numbers to titles -->
           <div v-if="effects[index] == 'creative'">
             <v-select
@@ -164,18 +130,128 @@
             ></v-select>
           </div>
 
+          <div v-if="this.type == 'multiple'">
+            <v-text-field
+              label="Slides Per View"
+              v-model="slideCount"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              label="Space Between Slides"
+              v-model="spaceBetweenSlides"
+              outlined
+            ></v-text-field>
+          </div>
+
+          <v-switch
+            v-model="loopVar"
+            color="#00e18c"
+            label="Enable Loop"
+            hide-details
+          ></v-switch>
+          <v-switch
+            v-if="this.type == 'cube'"
+            v-model="cubeShaddow"
+            color="#00e18c"
+            label="Enable Shaddow"
+            hide-details
+          ></v-switch>
+          <v-switch
+            v-model="autoplayVar"
+            color="#00e18c"
+            label="Enable autoplay"
+            hide-details
+          ></v-switch>
+          <v-switch
+            v-model="autoplayInt"
+            v-if="autoplayVar"
+            color="#00e18c"
+            label="Disable Autoplay On Interaction"
+            hide-details
+          ></v-switch>
           <v-text-field
-            label="Position Top"
-            v-model="positionTop"
-            type="number"
+            v-if="autoplayVar"
+            label="Delay(ms)"
+            v-model="autoplayDelay"
+            type="text"
             outlined
           ></v-text-field>
-          <v-text-field
-            label="Position left"
-            v-model="positionLeft"
-            type="number"Q
-            outlined
-          ></v-text-field>
+          <v-switch
+            v-model="buttonVar"
+            color="#00e18c"
+            label="Side buttons"
+            hide-details
+          ></v-switch>
+
+          <div v-if="buttonVar">
+            <v-select
+              v-model="btnType"
+              :items="['default', 'image']"
+              label="Button Type"
+              item-text="text"
+              item-value="value"
+              return-object
+              outlined
+            ></v-select>
+
+            <div v-if="btnType == 'default'">
+              <v-color-picker v-model="btnColor" :swatches="swatches" swatches-max-height="100px" mode="hexa" show-swatches class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
+            </div>
+
+            <div v-else>
+              <v-file-input
+                clearable
+                @change="importBtnImage"
+                prepend-icon=""
+                label="Button image"
+              ></v-file-input>
+            </div> 
+          <v-slider
+            v-model="offset"
+            :max="maxOffset"
+            :min="minOffset"
+            :step="1" 
+            color="#00e18c"
+            class="align-center" 
+            hide-details
+          >
+            <template v-slot:prepend>
+              <v-text-field
+                label="Arrow offset"
+                v-model="offset"
+                type="text"
+                :max="maxOffset"
+                :min="minOffset"
+                outlined
+                append-inner-icon="mdi-percent-outline" 
+                style="width: 170px" 
+                hide-details
+              ></v-text-field>
+            </template>
+          </v-slider>
+            
+          <v-slider
+            v-model="btnWidth" 
+            :step="1" 
+            color="#00e18c"
+            class="align-center" 
+            hide-details
+          >
+            <template v-slot:prepend>
+              <v-text-field
+                label="Arrow size"
+                v-model="btnWidth"
+                type="text"
+                append-inner-icon="mdi-percent-outline"
+                outlined
+                style="width: 170px" 
+                hide-details
+              ></v-text-field>
+            </template>
+          </v-slider>
+          </div>
+          
+          
           <v-file-input
             @change="importBgImage"
             id="bgImageInput"
@@ -204,15 +280,15 @@
         <div 
           :style="
               index == 1
-                ? ''
-                : { top: positionTop + 'px', left: positionLeft + 'px', width: realSliderWidth() + '%' }"
+                ? { top: positionTop + '%', left: positionLeft + '%', width: realSliderWidth() + '%' }
+                : { top: positionTop + '%', left: positionLeft + '%', width: realSliderWidth() + '%' }"
           class="first"
         >
           <Swiper
             :key="creativeType + cubeShaddow"
             :style="
               index == 1
-                ? { overflow: 'visible', width: realSliderWidth() + 'px' }
+                ? { overflow: 'visible'}
                 : ''
             "
             class="swiper mySwiper asd swiper-navigation-vertical"
@@ -223,7 +299,7 @@
             :loop="loopVar"
             :slidesPerView="slideCount"
             :spaceBetween="spaceBetweenSlides"
-            v-bind="effectBindings()"
+            v-bind="effectBindings()"   
           >
             <SwiperSlide v-for="(image, index) in images" :key="index">
               <img :src="image.url" alt="" />
@@ -304,12 +380,12 @@ export default {
       ],
       images: [],
       // params
-      positionTop: 50,
-      positionLeft: 50,
+      positionTop: 4,
+      positionLeft: 2,
       slideCount: 1,
       spaceBetweenSlides: 0,
       sliderWidth: 40,
-      loopVar: true,
+      loopVar: false,
       autoplayVar: false,
       autoplayInt: false,
       autoplayDelay: 2000,
@@ -319,7 +395,9 @@ export default {
 
       // for buttons
       buttonVar: false,
-      offset: 0,
+      offset: 4,
+      minOffset: -15,   // Set to the desired negative limit
+      maxOffset: 30,    // Set to the desired positive limit
       btnColor: "#fff",
       btnType: "default",
       btnWidth: 40,
@@ -338,7 +416,7 @@ export default {
 
       // for effect specifics
       creativeType: 3,
-      cubeShaddow: true,
+      cubeShaddow: false,
 
       // effects&modules
       effects: ["", "cube", "fade", "creative"],
@@ -476,12 +554,18 @@ export default {
     },
 
     // calculate width
+    // realSliderWidth() {
+    //   return (
+    //     this.slideCount * this.sliderWidth +
+    //     (this.slideCount - 1) * this.spaceBetweenSlides
+    //   );
+    // },
     realSliderWidth() {
       return (
-        this.slideCount * this.sliderWidth +
-        (this.slideCount - 1) * this.spaceBetweenSlides
+        this.sliderWidth 
       );
     },
+
 
     getSwiperNavigation() {
       if (this.buttonVar) {
@@ -503,14 +587,16 @@ export default {
     getSwiperNavigationLeft() {
       if (this.btnType == "image") {
         return { 
-          left: this.offset * -1 + "px",
+          left: this.offset + "%",
+          // left: this.offset * 1 + "%",
           transform: `rotate(180deg) scale(${this.btnWidth / 50})`, // Adjust scaling dynamically
           backgroundImage: `url('${this.btnImg}')`,
         };
       }
       this.btnImg = null;
       return {
-        left: this.offset * -1 + "px",
+        left: this.offset + "%",
+        // left: this.offset * 1 + "%",
         "--swiper-navigation-size": this.btnWidth + "px",
         color: this.btnColor,
         width: "auto",
@@ -521,13 +607,15 @@ export default {
       if (this.btnType == "image") {
         return {
           transform: `scale(${this.btnWidth / 50})`, // Adjust scaling dynamically
-          right: this.offset * -1 + "px",
+          right: this.offset + "%",
+          // right: this.offset * -1 + "%",
           backgroundImage: `url('${this.btnImg}')`,
         };
       }
       this.btnImg = null;
       return {
-        right: this.offset * -1 + "px",
+        right: this.offset + "%",
+        // right: this.offset * -1 + "%",
         "--swiper-navigation-size": this.btnWidth + "px",
         color: this.btnColor,
         width: "auto",
@@ -648,21 +736,26 @@ export default {
     calculateWrapperHeight() {
       const wrapper = document.querySelector(".swiper");
       if (wrapper) {
-        const height = wrapper.offsetHeight;
+        const height = wrapper.offsetHeight; 
         return height + "px";
       }
     },
+    
 
     // big export code function
     exportCode() {
       const wrapperHeight = this.calculateWrapperHeight();
       const windowHeight = 810;
       const windowWidth = 1440;
-      const top = (this.positionTop / windowHeight) * 100 + "%";
-      const left = (this.positionLeft / windowWidth) * 100 + "%";
-      const offset = "-" + (this.offset / windowWidth) * 100 + "%";
+      const top = this.positionTop + "%";
+      const left = this.positionLeft + "%";
+      // const top = (this.positionTop / windowHeight) * 100 + "%";
+      // const left = (this.positionLeft / windowWidth) * 100 + "%";
+      // const offset = "-" + (this.offset / windowWidth) * 100 + "%";
+      const offset = this.offset + "%";
       //const offset = "-" + this.offset + "px";
-      const btnWidth = (this.btnWidth / windowWidth) * 100 + "vw";
+      // const btnWidth = (this.btnWidth / windowWidth) * 100 + "px";
+      const btnWidth = this.btnWidth + "px";
       const styles = `
     html, body {
       text-rendering: auto !important;
@@ -695,7 +788,7 @@ export default {
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? ` color: ${this.btnColor}; font-size: ${btnWidth}; width: auto;`
+          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${btnWidth}; width: auto;`
           : `transform: scale(${this.btnWidth / 100});background-image: url('assets/${this.btnImgName}');`
       }
     }
@@ -705,7 +798,7 @@ export default {
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? ` color: ${this.btnColor}; font-size: ${btnWidth}; width: auto;`
+          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${btnWidth}; width: auto;`
           : `transform: rotate(180deg) scale(${this.btnWidth / 100}); background-image: url('assets/${this.btnImgName}');`
       }
     }
@@ -876,6 +969,7 @@ export default {
     Images,
   },
 };
+ 
 </script>
 
 <style scoped>
@@ -934,15 +1028,15 @@ export default {
 
 .panel-container::-webkit-scrollbar-thumb {
   border-radius: 1px;
-  background-color: #0e5363;
+  background-color: #00e18c;
 }
 
 .panel-container::-webkit-scrollbar-thumb:hover {
-  background-color: #0e5363;
+  background-color: #00e18c;
 }
 
 .panel-container::-webkit-scrollbar-thumb:active {
-  background-color: #0e5363;
+  background-color: #00e18c;
 }
 
 .first {
@@ -1038,10 +1132,10 @@ export default {
 .settings {
   width: 100%;
   /* max-width: 600px; */
-  padding: 20px;
+  padding: 2rem 1rem;
   /* background-color: #0b3144; */
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  /* border-radius: 10px; */
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
   margin-bottom: 20px;
 }
 
@@ -1059,6 +1153,9 @@ export default {
 }
 
 .settings button {
+  top: 0%;
+  right: 1.5%;
+  position: fixed;
   background-color: #00e18c;
   /* Bootstrap primary color */
   color: #2b4d5e;
@@ -1237,6 +1334,10 @@ export default {
   content: "";
 }*/
 .v-row {
+  margin: 0rem;
   gap: 0rem;
+}
+.v-slider.v-input--horizontal {
+  margin: 0rem .6rem 1.2rem 0rem;
 }
 </style>
