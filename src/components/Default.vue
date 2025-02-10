@@ -733,20 +733,36 @@ export default {
     },
 
     //calculate wrapper height from auto to px for export to gwd
+    // calculateWrapperHeight() {
+    //   const wrapper = document.querySelector(".swiper");
+    //   if (wrapper) {
+    //     // const height = wrapper.offsetHeight; 
+    //     const height = 100; 
+    //     return height + "%";
+    //   }
+    // },
     calculateWrapperHeight() {
       const wrapper = document.querySelector(".swiper");
-      if (wrapper) {
-        const height = wrapper.offsetHeight; 
-        return height + "px";
+      const parent = document.querySelector(".first");
+      if (wrapper && wrapper.parentElement) {
+        const wrapperHeight = wrapper.offsetHeight;
+        const parentHeight = parent.parentElement.offsetHeight;
+
+        if (parentHeight === 0) return "0%"; // Avoid division by zero
+
+        const heightPercentage = (wrapperHeight / parentHeight) * 100;
+        return heightPercentage.toFixed(0) + "%"; // Return as a formatted percentage
       }
+      return "N/A";  
     },
+
     
 
     // big export code function
     exportCode() {
       const wrapperHeight = this.calculateWrapperHeight();
-      const windowHeight = 810;
-      const windowWidth = 1440;
+      const windowHeight = 1080;
+      const windowWidth = 1920;
       const top = this.positionTop + "%";
       const left = this.positionLeft + "%";
       // const top = (this.positionTop / windowHeight) * 100 + "%";
