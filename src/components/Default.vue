@@ -552,8 +552,9 @@ export default {
 
     // clear backround image function
     clearBgImage() {
-      this.background = ''; // Reset background to empty string 
-      if (fileInput) {  
+      this.background = ''; // Reset background to empty string
+      
+      if (fileInput) { 
         this.bgImageInput = null
       }
     }, 
@@ -990,7 +991,7 @@ export default {
     `;
       this.ContentHead = `<pre><link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     /></pre>`;
       this.ContentHtml = `<pre>${htmlCode}</pre>`;
       this.ContentCss = `<pre>${styles}</pre>`;
