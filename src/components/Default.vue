@@ -552,12 +552,8 @@ export default {
 
     // clear backround image function
     clearBgImage() {
-      this.background = ''; // Reset background to empty string
-      
-      // const fileInput = document.getElementById('bgImageInput'); // Get file input element
-      if (fileInput) {
-        console.log('text');
-        // fileInput.value = ''; // Clear the file input value
+      this.background = ''; // Reset background to empty string 
+      if (fileInput) {  
         this.bgImageInput = null
       }
     }, 
