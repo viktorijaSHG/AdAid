@@ -136,11 +136,25 @@
               v-model="slideCount"
               outlined
             ></v-text-field>
-            <v-text-field
-              label="Space Between Slides"
-              v-model="spaceBetweenSlides"
-              outlined
-            ></v-text-field>
+
+            
+            <v-slider
+              v-model="spaceBetweenSlides" 
+              :step="1" 
+              color="#00e18c"
+              class="align-center"
+              hide-details
+            >
+              <template v-slot:prepend>
+                <v-text-field
+                  label="Space Between Slides"
+                  v-model="spaceBetweenSlides"
+                  style="width: 170px" 
+                  outlined
+                ></v-text-field>
+              </template>
+            </v-slider>
+            
           </div>
 
           <v-switch
@@ -244,6 +258,7 @@
                 type="text"
                 append-inner-icon="mdi-percent-outline"
                 outlined
+                @input="validateInput" 
                 style="width: 170px" 
                 hide-details
               ></v-text-field>
@@ -254,12 +269,14 @@
           
           <v-file-input
             @change="importBgImage"
-            id="bgImageInput"
+            v-model="bgImageInput"
             prepend-icon="" 
-            label="Background image"
-            clearable 
-            @click:clear="clearBgImage"
-          ></v-file-input>
+            :clearable="false"
+            append-icon="mdi-delete-empty-outline"
+            label="Background image" 
+            @click:append="clearBgImage" 
+          >
+        </v-file-input>
 
           <button @click="exportCode" id="activator-target">Export Code</button>
         </div>
@@ -392,6 +409,7 @@ export default {
       swiper: null,
       background: null,
       showDialog: false,
+      bgImageInput: null,
 
       // for buttons
       buttonVar: false,
@@ -400,7 +418,7 @@ export default {
       maxOffset: 30,    // Set to the desired positive limit
       btnColor: "#fff",
       btnType: "default",
-      btnWidth: 40,
+      btnWidth: 25,
       btnImg: null,
 
       // for pop-up dialog
@@ -535,11 +553,16 @@ export default {
     // clear backround image function
     clearBgImage() {
       this.background = ''; // Reset background to empty string
-      const fileInput = document.getElementById('bgImageInput'); // Get file input element
+      
+      // const fileInput = document.getElementById('bgImageInput'); // Get file input element
       if (fileInput) {
-        fileInput.value = ''; // Clear the file input value
+        console.log('text');
+        // fileInput.value = ''; // Clear the file input value
+        this.bgImageInput = null
       }
-    },
+    }, 
+
+
     // Button image save function
     importBtnImage(event) {
       const file = event.target.files[0]; // Get the first file from the input
@@ -580,24 +603,24 @@ export default {
     //get navigation styling
     getSwiperNavigationImg() {
       return {
-        "font-size": this.btnWidth + "px",
+        "font-size": this.btnWidth / 10 + "px",
       };
     },
 
     getSwiperNavigationLeft() {
       if (this.btnType == "image") {
         return { 
-          left: this.offset + "%",
-          // left: this.offset * 1 + "%",
-          transform: `rotate(180deg) scale(${this.btnWidth / 50})`, // Adjust scaling dynamically
-          backgroundImage: `url('${this.btnImg}')`,
+          left: this.offset + "%", 
+          transform: `rotate(180deg) scale(${this.btnWidth / 45})`, 
+          backgroundImage: `url('${this.btnImg}')`, 
+          width: this.btnWidth / 40 + 'vw',
         };
       }
       this.btnImg = null;
       return {
         left: this.offset + "%",
         // left: this.offset * 1 + "%",
-        "--swiper-navigation-size": this.btnWidth + "px",
+        "--swiper-navigation-size": this.btnWidth / 10 + "vw",
         color: this.btnColor,
         width: "auto",
       };
@@ -606,17 +629,17 @@ export default {
     getSwiperNavigationRight() {
       if (this.btnType == "image") {
         return {
-          transform: `scale(${this.btnWidth / 50})`, // Adjust scaling dynamically
-          right: this.offset + "%",
-          // right: this.offset * -1 + "%",
+          transform: `scale(${this.btnWidth / 45})`, // Adjust scaling dynamically 
+          right: this.offset + "%", 
           backgroundImage: `url('${this.btnImg}')`,
+          width: this.btnWidth / 40 + 'vw',
         };
       }
       this.btnImg = null;
       return {
         right: this.offset + "%",
         // right: this.offset * -1 + "%",
-        "--swiper-navigation-size": this.btnWidth + "px",
+        "--swiper-navigation-size": this.btnWidth / 10 + "vw",
         color: this.btnColor,
         width: "auto",
       };
@@ -771,7 +794,7 @@ export default {
       const offset = this.offset + "%";
       //const offset = "-" + this.offset + "px";
       // const btnWidth = (this.btnWidth / windowWidth) * 100 + "px";
-      const btnWidth = this.btnWidth + "px";
+      const btnWidth = this.btnWidth + "vw";
       const styles = `
     html, body {
       text-rendering: auto !important;
@@ -865,7 +888,7 @@ export default {
       });
       // Construct the Swiper component HTML
       const swiperScript = `
-    <script* src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script*>
+    <script* src="https://cdn.jsdelivr.net/npm/swiper@10.3.1/swiper-bundle.min.js"></script*>
     <script*> 
     var userSwipe = false;
     var buttonClicked = false;
@@ -971,7 +994,7 @@ export default {
     `;
       this.ContentHead = `<pre><link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+      href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"
     /></pre>`;
       this.ContentHtml = `<pre>${htmlCode}</pre>`;
       this.ContentCss = `<pre>${styles}</pre>`;
@@ -1143,8 +1166,7 @@ export default {
   margin-top: 20px;
   overflow: hidden;
   height: 100%; 
-}
-
+} 
 .settings {
   width: 100%;
   /* max-width: 600px; */
