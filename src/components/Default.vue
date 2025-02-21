@@ -824,8 +824,8 @@ export default {
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${btnWidth}; width: auto;`
-          : `transform: scale(${this.btnWidth / 100});background-image: url('assets/${this.btnImgName}');`
+          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${ this.btnWidth / 10}; width: auto;`
+          : `transform: scale(${this.btnWidth / 45}); background-image: url('assets/${this.btnImgName}'); width: ${this.btnWidth / 40}vw;`
       }
     }
     .swiper-button-prev{
@@ -834,8 +834,8 @@ export default {
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${btnWidth}; width: auto;`
-          : `transform: rotate(180deg) scale(${this.btnWidth / 100}); background-image: url('assets/${this.btnImgName}');`
+          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${ this.btnWidth / 10}; width: auto;`
+          : `transform: rotate(180deg) scale(${this.btnWidth / 45}); background-image: url('assets/${this.btnImgName}'); width: ${this.btnWidth / 40}vw;` 
       }
     }
     .swiper-button-next::after{
