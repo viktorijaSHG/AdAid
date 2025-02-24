@@ -913,7 +913,7 @@ export default {
     observer: true,
     observeParents: true,
     slidesPerView: ${this.slideCount},
-    spaceBetween: ${this.spaceBetweenSlides / 2},
+    spaceBetween: ${this.spaceBetweenSlides},
     loop: ${this.loopVar},
     ${
       this.buttonVar
