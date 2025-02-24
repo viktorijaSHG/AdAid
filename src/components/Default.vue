@@ -824,7 +824,7 @@ export default {
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${ this.btnWidth / 10}; width: auto;`
+          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${ this.btnWidth / 10}vw; width: auto;`
           : `transform: scale(${this.btnWidth / 45}); background-image: url('assets/${this.btnImgName}'); width: ${this.btnWidth / 40}vw;`
       }
     }
@@ -834,21 +834,21 @@ export default {
       font-family: Arial, sans-serif;
       ${
         this.btnType == "default"
-          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${ this.btnWidth / 10}; width: auto;`
+          ? ` color: ${this.btnColor}; --swiper-navigation-size: ${ this.btnWidth / 10}vw; width: auto;`
           : `transform: rotate(180deg) scale(${this.btnWidth / 45}); background-image: url('assets/${this.btnImgName}'); width: ${this.btnWidth / 40}vw;` 
       }
     }
     .swiper-button-next::after{
       ${
         this.btnType == "default" && this.buttonVar
-          ? `--swiper-navigation-size: ${btnWidth};`
+          ? `--swiper-navigation-size: ${ this.btnWidth / 10}vw;`
           : `content: ""`
       }
     }
     .swiper-button-prev::after{
       ${
         this.btnType == "default" && this.buttonVar
-          ? `--swiper-navigation-size: ${btnWidth};`
+          ? `--swiper-navigation-size: ${ this.btnWidth / 10}vw;`
           : `content: ""`
       }
     } 
