@@ -69,12 +69,14 @@ export default {
 
       Sortable.create(el, {
         animation: 150,
+        handle: '.image',
         onEnd: (evt) => {
-          const movedItem = this.images.splice(evt.oldIndex, 1)[0];
-          this.images.splice(evt.newIndex, 0, movedItem);
-          this.$emit('imagesUpdated', this.images);
+            const movedItem = this.images.splice(evt.oldIndex, 1)[0];
+            this.images.splice(evt.newIndex, 0, movedItem);
+            this.$emit('imagesUpdated', this.images);
         }
-      });
+        });
+
     }
   }
 };
@@ -82,7 +84,22 @@ export default {
 
 
 <style>
-
+.img-container {
+  user-select: none;
+  -webkit-user-drag: none;
+  
+  min-height: 100px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.image img {
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+.image {
+  cursor: move;
+}
 
  .card{
   width: 100%;
