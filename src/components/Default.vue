@@ -165,9 +165,9 @@
           ></v-switch>
           <v-switch
             v-if="this.type == 'cube'"
-            v-model="cubeShaddow"
+            v-model="cubeShadow"
             color="#00e18c"
-            label="Enable Shaddow"
+            label="Enable Shadow"
             hide-details
           ></v-switch>
           <v-switch
@@ -302,7 +302,7 @@
           class="first"
         >
           <Swiper
-            :key="creativeType + cubeShaddow"
+            :key="creativeType + cubeShadow"
             :style="
               index == 1
                 ? { overflow: 'visible'}
@@ -434,7 +434,7 @@ export default {
 
       // for effect specifics
       creativeType: 3,
-      cubeShaddow: false,
+      cubeShadow: false,
 
       // effects&modules
       effects: ["", "cube", "fade", "creative"],
@@ -723,7 +723,7 @@ export default {
     },
 
     getCubeParams() {
-      if (!this.cubeShaddow) {
+      if (!this.cubeShadow) {
         return {
           shadow: false,
           slideShadows: false,

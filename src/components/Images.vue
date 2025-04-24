@@ -1,49 +1,82 @@
 <template>
     <div class="card">
-
-        <div class="custom-file-input">
-            <label for="fileInput" class="custom-file-label">Choose files</label>
-            <input type="file" id="fileInput" ref="fileInput" @change="importImages" multiple style="display: none;" />
+      <div class="custom-file-input">
+        <label for="fileInput" class="custom-file-label">Choose files</label>
+        <input
+          type="file"
+          id="fileInput"
+          ref="fileInput"
+          @change="importImages"
+          multiple
+          style="display: none;"
+        />
+      </div>
+  
+      <div class="img-container" ref="imgContainer">
+        <div
+          class="image"
+          v-for="(image, index) in images"
+          :key="image.id"
+        >
+          <span class="delete" @click="deleteImage(index)">&times;</span>
+          <img :src="image.url" />
         </div>
-        <div class="img-container">
-          <div class="image" v-for="(image, index) in images" :key="index">
-            <span class="delete" @click="deleteImage(index)">&times;</span>
-            <img :src="image.url"/>
-          </div>
-        </div>
-     </div>
-
-
-</template>
+      </div>
+    </div>
+  </template>
 
 <script>
+import Sortable from 'sortablejs';
+
 export default {
-    data() {
-        return {
-            images: [] // Initialize the images array
+  data() {
+    return {
+      images: []
+    };
+  },
+  emits: ['imagesUpdated'],
+  mounted() {
+    this.initSortable();
+  },
+  methods: {
+    importImages(event) {
+      const files = Array.from(event.target.files);
+      const sortedFiles = files.sort((a, b) => a.name.localeCompare(b.name)); // Optional: prevent Safari randomness
+
+      sortedFiles.forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.images.push({
+            id: Date.now() + i, // Unique ID
+            url: e.target.result,
+            name: file.name
+          });
         };
+        reader.readAsDataURL(file);
+      });
+
+      // Emit updated images after load (optional, better after drag end)
+      setTimeout(() => {
+        this.$emit('imagesUpdated', this.images);
+      }, 500);
     },
-    emits: ['imagesUpdated'],
-    methods: {
-        importImages(event) {
-            const files = event.target.files;
-            for (let i = 0; i < files.length; i++) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.images.push({
-                        id: i,
-                        url: e.target.result,
-                        name: files[i].name
-                    });
-                };
-                reader.readAsDataURL(files[i]);
-            }
-            this.$emit('imagesUpdated', this.images);
-        },
-        deleteImage(index){
-            this.images.splice(index,1);
-        },
+    deleteImage(index) {
+      this.images.splice(index, 1);
+      this.$emit('imagesUpdated', this.images);
+    },
+    initSortable() {
+      const el = this.$refs.imgContainer;
+
+      Sortable.create(el, {
+        animation: 150,
+        onEnd: (evt) => {
+          const movedItem = this.images.splice(evt.oldIndex, 1)[0];
+          this.images.splice(evt.newIndex, 0, movedItem);
+          this.$emit('imagesUpdated', this.images);
+        }
+      });
     }
+  }
 };
 </script>
 
@@ -211,6 +244,18 @@ export default {
     width: 200px;
     height: 200px;
     object-fit: cover;
+}
+
+.image:hover {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+.image:active  {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
 }
 
 .custom-file-input {
