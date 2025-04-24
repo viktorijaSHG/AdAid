@@ -19,7 +19,7 @@
           :key="image.id"
         >
           <span class="delete" @click="deleteImage(index)">&times;</span>
-          <img :src="image.url" />
+          <img :src="image.url" draggable="false" />
         </div>
       </div>
     </div>
@@ -69,14 +69,14 @@ export default {
 
       Sortable.create(el, {
         animation: 150,
-        handle: '.image',
+        fallbackOnBody: true,
+        forceFallback: true,
         onEnd: (evt) => {
             const movedItem = this.images.splice(evt.oldIndex, 1)[0];
             this.images.splice(evt.newIndex, 0, movedItem);
             this.$emit('imagesUpdated', this.images);
-        }
+        } 
         });
-
     }
   }
 };
@@ -84,10 +84,7 @@ export default {
 
 
 <style>
-.img-container {
-  user-select: none;
-  -webkit-user-drag: none;
-  
+.img-container { 
   min-height: 100px;
   display: flex;
   flex-wrap: wrap;
