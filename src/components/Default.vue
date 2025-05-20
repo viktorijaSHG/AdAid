@@ -333,68 +333,68 @@
                 : { top: positionTop + '%', left: positionLeft + '%', width: realSliderWidth() + '%' }"
           class="first"
         >
-        <div v-if="images && images.length">
-          <Swiper
-            v-if="type === 'multiple' || type === 'cube' || type === 'creative' || type === 'single'"
-            :key="creativeType + cubeShadow"
-            :style="
-              index == 1
-                ? { overflow: 'visible' }
-                : ''
-            "
-            class="swiper mySwiper testcallout swiper-navigation-vertical"
-            :modules="modules[index]"
-            :effect="effects[index]"
-            :navigation="getSwiperNavigation()"
-            :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
-            :loop="loopVar"
-            :slidesPerView="type === 'scrollable' ? 'auto' : slideCount"
-            :spaceBetween="spaceBetweenSlides"
-            :mousewheel="type === 'scrollable'"
-            :free-mode="type === 'scrollable'"
-            :direction="type === 'scrollable' ? 'horizontal' : undefined"
-            :observe="true"
-            :observe-parents="true"
-            :breakpoints="{
-              200: {
-                spaceBetween: spaceBetweenSlides / 3
-              },
-              400: {
-                spaceBetween: spaceBetweenSlides / 3
-              },
-              640: {
-                spaceBetween: spaceBetweenSlides
-              },
-              1024: {
-                spaceBetween: spaceBetweenSlides
-              }
-            }"
-            v-bind="effectBindings()"   
-          >
-            <SwiperSlide v-for="(image, index) in images" :key="index">
-              <img :src="image.url" alt="" />
-            </SwiperSlide>
-          </Swiper>
-        </div>
-        <div
-            v-if="getSwiperNavigation() != false"
-            class="swiper-button-prev"
-            :style="getSwiperNavigationLeft()"
-            v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
-          >
-            <!-- <img
-              v-if="btnImg"
-              :style="getSwiperNavigationImg()"
-              :src="btnImg"
-              alt="Previous Slide"
-            /> -->
+          <div v-if="images && images.length">
+            <Swiper
+              v-if="type === 'multiple' || type === 'cube' || type === 'creative' || type === 'single'"
+              :key="creativeType + cubeShadow"
+              :style="
+                index == 1
+                  ? { overflow: 'visible' }
+                  : ''
+              "
+              class="swiper mySwiper testcallout swiper-navigation-vertical"
+              :modules="modules[index]"
+              :effect="effects[index]"
+              :navigation="getSwiperNavigation()"
+              :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
+              :loop="loopVar"
+              :slidesPerView="type === 'scrollable' ? 'auto' : slideCount"
+              :spaceBetween="spaceBetweenSlides"
+              :mousewheel="type === 'scrollable'"
+              :free-mode="type === 'scrollable'"
+              :direction="type === 'scrollable' ? 'horizontal' : undefined"
+              :observe="true"
+              :observe-parents="true"
+              :breakpoints="{
+                200: {
+                  spaceBetween: spaceBetweenSlides / 3
+                },
+                400: {
+                  spaceBetween: spaceBetweenSlides / 3
+                },
+                640: {
+                  spaceBetween: spaceBetweenSlides
+                },
+                1024: {
+                  spaceBetween: spaceBetweenSlides
+                }
+              }"
+              v-bind="effectBindings()"   
+            >
+              <SwiperSlide v-for="(image, index) in images" :key="index">
+                <img :src="image.url" alt="" />
+              </SwiperSlide>
+            </Swiper> 
+              <div
+                  v-if="getSwiperNavigation() != false"
+                  class="swiper-button-prev"
+                  :style="getSwiperNavigationLeft()"
+                  v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
+                >
+                  <!-- <img
+                    v-if="btnImg"
+                    :style="getSwiperNavigationImg()"
+                    :src="btnImg"
+                    alt="Previous Slide"
+                  /> -->
+                </div>
+                <div
+                  v-if="getSwiperNavigation() != false"
+                  class="swiper-button-next"
+                  :style="getSwiperNavigationRight()"
+                  v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
+                ></div>
           </div>
-          <div
-            v-if="getSwiperNavigation() != false"
-            class="swiper-button-next"
-            :style="getSwiperNavigationRight()"
-            v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
-          ></div>
         </div>
         <!-- Scrollable Gallery -->
         <div 
