@@ -207,16 +207,19 @@ export default {
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: flex-start;
-  max-height: 300px;
-  overflow-y: auto; /* Enable scrolling if content overflows */
+  max-height: 360px;
+  overflow-y: auto; /* Enable scrolling if content overflows */ 
+  padding: 1rem;
+  border-radius: 6px;
+  background-color: #0c2b3b;
  }
  
  .card .img-container .image {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
-  max-height: 80px;
+  width: 100%; 
+  max-height: 60px;
   /* height: 100%; */
   /* margin: 10px; */
   position: relative;
