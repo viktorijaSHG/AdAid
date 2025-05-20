@@ -30,7 +30,7 @@ export default {
         { src: "cube.png", alt: "Cube" },
         { src: "fade.png", alt: "Fade" },
         { src: "creative.png", alt: "Creative" },
-        { src: "scrollable.png", alt: "Scrollable" },
+        // { src: "scrollable.png", alt: "Scrollable" },
         // Add more images as needed
       ],
     };
@@ -78,7 +78,7 @@ body {
 .image-grid {
   display: grid;
   grid-template-columns: repeat(
-    5,
+    4,
     minmax(12.5rem, 1fr)
   ); /* 200px is approximately 12.5rem */
   gap: 1rem;
