@@ -359,7 +359,7 @@
               200: {
                 spaceBetween: spaceBetweenSlides / 3
               },
-              420: {
+              400: {
                 spaceBetween: spaceBetweenSlides / 3
               },
               640: {
@@ -1011,7 +1011,7 @@ export default {
       200: {
         spaceBetween: ${Math.floor(this.spaceBetweenSlides / 3)},
       },
-      420: {
+      400: {
         spaceBetween: ${Math.floor(this.spaceBetweenSlides / 3)},
       },
       640: {
