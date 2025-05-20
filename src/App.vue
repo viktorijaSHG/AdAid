@@ -29,7 +29,8 @@ export default {
         { src: "default.png", alt: "Default" },
         { src: "cube.png", alt: "Cube" },
         { src: "fade.png", alt: "Fade" },
-        { src: "creative.png", alt: "Fade" },
+        { src: "creative.png", alt: "Creative" },
+        { src: "scrollable.png", alt: "Scrollable" },
         // Add more images as needed
       ],
     };
@@ -46,6 +47,8 @@ export default {
         this.type = "cube";
       } else if (this.selectedIndex == 3) {
         this.type = "creative";
+      } else if (this.selectedIndex == 4) {
+        this.type = "scrollable";
       } else {
         this.type = "single";
       }
@@ -75,7 +78,7 @@ body {
 .image-grid {
   display: grid;
   grid-template-columns: repeat(
-    4,
+    5,
     minmax(12.5rem, 1fr)
   ); /* 200px is approximately 12.5rem */
   gap: 1rem;

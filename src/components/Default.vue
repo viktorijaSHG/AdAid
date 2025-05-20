@@ -47,6 +47,13 @@
 
         <div class="settings"> 
 
+          <v-select
+            v-if="type == 'scrollable'"
+            v-model="SlideDirection"
+            :items="direction"
+            label="Slide direction"
+            outlined
+          ></v-select>
           <v-slider
             v-model="sliderWidth" 
             :step="1" 
@@ -69,6 +76,28 @@
             </template>
           </v-slider>
           
+          <v-slider
+            v-if="type == 'scrollable'"
+            v-model="sliderHeight" 
+            :step="1" 
+            color="#00e18c"
+            class="align-center"
+            hide-details
+          >
+            <template v-slot:prepend>
+              <v-text-field
+                v-if="type == 'scrollable'"
+                label="Slider Height"
+                v-model="sliderHeight"
+                type="text"  
+                append-inner-icon="mdi-percent-outline" 
+                style="width: 170px"
+                @input="validateInput" 
+                hide-details
+                 
+              ></v-text-field>
+            </template>
+          </v-slider>
           <v-slider
             v-model="positionTop" 
             :step="1" 
@@ -149,11 +178,12 @@
                 <v-text-field
                   label="Space Between Slides"
                   v-model="spaceBetweenSlides"
-                  style="width: 170px" 
+                  style="width: 200px" 
                   outlined
                 ></v-text-field>
               </template>
             </v-slider>
+             
             
           </div>
 
@@ -175,6 +205,7 @@
             color="#00e18c"
             label="Enable autoplay"
             hide-details
+            v-if="type !== 'scrollable'"
           ></v-switch>
           <v-switch
             v-model="autoplayInt"
@@ -191,6 +222,7 @@
             outlined
           ></v-text-field>
           <v-switch
+            v-if="type !== 'scrollable'"
             v-model="buttonVar"
             color="#00e18c"
             label="Side buttons"
@@ -301,28 +333,65 @@
                 : { top: positionTop + '%', left: positionLeft + '%', width: realSliderWidth() + '%' }"
           class="first"
         >
+        <div v-if="images && images.length">
           <Swiper
+            v-if="type === 'multiple' || type === 'cube' || type === 'creative' || type === 'single'"
             :key="creativeType + cubeShadow"
             :style="
               index == 1
-                ? { overflow: 'visible'}
+                ? { overflow: 'visible' }
                 : ''
             "
-            class="swiper mySwiper asd swiper-navigation-vertical"
+            class="swiper mySwiper testcallout swiper-navigation-vertical"
             :modules="modules[index]"
             :effect="effects[index]"
             :navigation="getSwiperNavigation()"
             :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
             :loop="loopVar"
-            :slidesPerView="slideCount"
+            :slidesPerView="type === 'scrollable' ? 'auto' : slideCount"
             :spaceBetween="spaceBetweenSlides"
+            :mousewheel="type === 'scrollable'"
+            :free-mode="type === 'scrollable'"
+            :direction="type === 'scrollable' ? 'horizontal' : undefined"
+            :observe="true"
+            :observe-parents="true"
+            :breakpoints="{
+              320: {
+                spaceBetween: spaceBetweenSlides / 2
+              },
+              640: {
+                spaceBetween: spaceBetweenSlides
+              },
+              1024: {
+                spaceBetween: spaceBetweenSlides
+              }
+            }"
             v-bind="effectBindings()"   
           >
             <SwiperSlide v-for="(image, index) in images" :key="index">
               <img :src="image.url" alt="" />
             </SwiperSlide>
           </Swiper>
+        </div>
+        </div>
+        <!-- Scrollable Gallery -->
+        <div 
+          :style="
+              index == 1
+                ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }
+                : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }"
+          
+              :class="['scrollable', SlideDirection === 'Vertical' ? 'vertical' : 'horizontal']"
+        >
+          <div v-if="type === 'scrollable' && images?.length" id="scrollable">
 
+            <div v-for="(image, index) in images" :key="index" :id="'Card' + (index + 1)" class="scrollcard">
+              <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'"></gwd-taparea>
+              <!-- <img :id="'Card' + (index + 1) + 'HoverImage'" :src="image.url" alt="" /> -->
+              <img :id="'Card' + (index + 1) + 'BaseImage'" :src="image.url" alt="" />
+            </div>
+            ....
+          </div>
           <!-- swiper default buttons -->
           <div
             v-if="getSwiperNavigation() != false"
@@ -361,8 +430,11 @@
 
 import { Swiper, SwiperSlide } from "swiper/vue";
 import {
+  Autoplay,
   EffectCube,
   EffectFade,
+  FreeMode,
+  Mousewheel,
   Navigation,
   EffectCreative,
 } from "swiper/modules";
@@ -388,6 +460,8 @@ export default {
   data() {
     return {
       
+      direction: ['Vertical', 'Horizontal'],
+      SlideDirection: 'Vertical',
       swatches: [
         ['#FF0000', '#AA0000', '#550000'],
         ['#FFFF00', '#AAAA00', '#555500'],
@@ -400,8 +474,9 @@ export default {
       positionTop: 4,
       positionLeft: 2,
       slideCount: 1,
-      spaceBetweenSlides: 0,
+      spaceBetweenSlides: 0, 
       sliderWidth: 40,
+      sliderHeight: 40,
       loopVar: false,
       autoplayVar: false,
       autoplayInt: false,
@@ -437,12 +512,15 @@ export default {
       cubeShadow: false,
 
       // effects&modules
-      effects: ["", "cube", "fade", "creative"],
+      effects: ["", "cube", "fade", "creative",""],
       modules: [
         [Navigation],
         [Navigation, EffectCube],
         [Navigation, EffectFade],
         [Navigation, EffectCreative],
+        [Autoplay],
+        [FreeMode],
+        [Mousewheel],
       ],
 
       sliderWidth: "40", // Empty string to prevent issues with number type
@@ -583,6 +661,11 @@ export default {
     realSliderWidth() {
       return (
         this.sliderWidth 
+      );
+    },
+    realSliderHeight() {
+      return (
+        this.sliderHeight
       );
     },
 
@@ -891,6 +974,14 @@ export default {
     var buttonClicked = false;
 
     var swiper = new Swiper(".mySwiper", {
+     ${ 
+      this.type == "scrollable"
+        ? `direction: "horizontal",
+           slidesPerView: "auto",
+           freeMode: true,
+           mousewheel: true,`
+        : ""
+    } 
     effect: "${this.effects[this.index]}",
     ${
       this.effects[this.index] == "creative"
@@ -912,9 +1003,21 @@ export default {
     }
     observer: true,
     observeParents: true,
-    slidesPerView: ${this.slideCount},
-    spaceBetween: ${this.spaceBetweenSlides},
+    slidesPerView: ${this.slideCount}, 
+    breakpoints: {
+      320: {
+        spaceBetween: ${this.spaceBetweenSlides/2},
+      },
+      640: {
+        spaceBetween: ${this.spaceBetweenSlides},
+      }, 
+      1024: {
+        spaceBetween: ${this.spaceBetweenSlides},
+      },
+    },
     loop: ${this.loopVar},
+
+    
     ${
       this.buttonVar
         ? `navigation: {
@@ -1081,7 +1184,56 @@ export default {
   margin: 0px !important;
   width: 100%;
 }
+.scrollable {
+  position: absolute;
+}
+.vertical #scrollable{ 
+  overflow: hidden auto;
+}
+.horizontal #scrollable{ 
+  display: flex;
+  overflow: auto hidden;
+  scroll-snap-type: x mandatory;
+  /* gap: 16px; */ 
+  white-space: nowrap;
+  scrollbar-width: thin; /* Firefox */
+} 
+#scrollable::-webkit-scrollbar {
+  width: 3px;   /* vertical scrollbar thickness */
+  height: 3px;  /* horizontal scrollbar thickness */
+}
 
+#scrollable::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+
+#scrollable::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.7);
+}
+
+#scrollable::-webkit-scrollbar-thumb:hover {
+  background: rgb(85, 85, 85);
+}
+
+
+.scrollable #scrollable, #scrollable img {
+  height: 100%; 
+  width: 100%;
+}
+.scrollcard {
+  position: relative; 
+  /* horizontal */ 
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+gwd-taparea {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
 .swiper {
   margin: 0;
   line-height: 0;

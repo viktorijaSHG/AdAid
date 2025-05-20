@@ -18,8 +18,15 @@
           v-for="(image, index) in images"
           :key="image.id"
         >
-          <span class="delete" @click="deleteImage(index)">&times;</span>
-          <img :src="image.url" draggable="false" />
+        <div class="preview-container">
+          <img src="../assets/menu.svg" class="drag"/> 
+          <img :src="image.url" draggable="false" class="photo" />
+          <div id="name" class="filename">{{ image.name }}</div>
+        </div>
+        <div class="actions">
+          <img src="../assets/effect.svg" class="remove"/> 
+          <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)"/>
+        </div>
         </div>
       </div>
     </div>
@@ -84,13 +91,37 @@ export default {
 
 
 <style>
+.actions {
+  display: flex;
+  gap: .75rem;
+}
+.filename {
+  font-size: .7rem;
+  padding-left: .5rem;
+  padding-right: 1rem;
+  opacity: 0.7;
+}
+.preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  max-height: 80px;
+  height: 100%;
+}
+.drag {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 1rem;
+}
 .img-container { 
   min-height: 100px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 10px; 
+  padding: 0rem 1rem;
 }
-.image img {
+.image .photo {
   pointer-events: none;
   -webkit-user-drag: none;
 }
@@ -129,7 +160,7 @@ export default {
  }
 
 
-.card .img-container .image img{
+.card .img-container .image .photo{
   width: 100px;
  
   border-radius: 5px;
@@ -138,7 +169,7 @@ export default {
  
 
  
- .swiper-slide img {
+ .swiper-slide .photo {
   width: 100%;
   height: 100%;
  }
@@ -172,22 +203,27 @@ export default {
  .card .img-container {
   width: 100%;
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: flex-start;
-  max-height: 200px;
+  max-height: 300px;
   overflow-y: auto; /* Enable scrolling if content overflows */
  }
  
  .card .img-container .image {
-  width: 100px;
-  height: 100%;
-  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-height: 80px;
+  /* height: 100%; */
+  /* margin: 10px; */
   position: relative;
  }
  
- .card .img-container .image img {
-  width: 100%;
+ .card .img-container .image .photo {
+  width: auto;
   height: 100%;
   object-fit: cover; /* Ensure images cover the area without stretching */
   border-radius: 5px;
@@ -246,11 +282,17 @@ export default {
  }
 
 .card .img-container .image img{
-  width: 100px;
+  width: auto;
  
   border-radius: 5px;
 }
 
+.remove {
+  width: 2.3rem !important;
+  padding: .5rem;
+  border: #ffffff6e solid 1px;
+  cursor: pointer;
+}
 
 
 
@@ -296,5 +338,21 @@ input[type="file"] {
  display: none;
 }
 
+.img-container::-webkit-scrollbar {
+  width: 3px;   /* vertical scrollbar thickness */
+  height: 3px;  /* horizontal scrollbar thickness */
+}
+
+.img-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+}
+
+.img-container::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.7);
+}
+
+.img-container::-webkit-scrollbar-thumb:hover {
+  background: rgb(85, 85, 85);
+}
 
 </style>
