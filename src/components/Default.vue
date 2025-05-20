@@ -263,7 +263,7 @@
           >
             <template v-slot:prepend>
               <v-text-field
-                label="Arrow offset"
+                label="Arrow side offset"
                 v-model="offset"
                 type="text"
                 :max="maxOffset"
@@ -376,6 +376,25 @@
             </SwiperSlide>
           </Swiper>
         </div>
+        <div
+            v-if="getSwiperNavigation() != false"
+            class="swiper-button-prev"
+            :style="getSwiperNavigationLeft()"
+            v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
+          >
+            <!-- <img
+              v-if="btnImg"
+              :style="getSwiperNavigationImg()"
+              :src="btnImg"
+              alt="Previous Slide"
+            /> -->
+          </div>
+          <div
+            v-if="getSwiperNavigation() != false"
+            class="swiper-button-next"
+            :style="getSwiperNavigationRight()"
+            v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
+          ></div>
         </div>
         <!-- Scrollable Gallery -->
         <div 
@@ -395,35 +414,8 @@
             </div>
             ....
           </div>
-          <!-- swiper default buttons -->
-          <div
-            v-if="getSwiperNavigation() != false"
-            class="swiper-button-prev"
-            :style="getSwiperNavigationLeft()"
-            v-bind:class="{ 'swiper-custom-prev': btnType == 'image' }"
-          >
-            <!-- <img
-              v-if="btnImg"
-              :style="getSwiperNavigationImg()"
-              :src="btnImg"
-              alt="Previous Slide"
-            /> -->
-          </div>
-          <div
-            v-if="getSwiperNavigation() != false"
-            class="swiper-button-next"
-            :style="getSwiperNavigationRight()"
-            v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
-          >
-            <!-- <img
-              v-if="btnImg"
-              :style="getSwiperNavigationImg()"
-              :src="btnImg"
-              alt="Next Slide"
-            /> -->
-          </div>  
-        </div>
-      </div>
+          </div> 
+        </div> 
       <div></div>
     </v-col>
   </v-row>
