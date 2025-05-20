@@ -356,8 +356,11 @@
             :observe="true"
             :observe-parents="true"
             :breakpoints="{
-              320: {
-                spaceBetween: spaceBetweenSlides / 2
+              200: {
+                spaceBetween: spaceBetweenSlides / 3
+              },
+              420: {
+                spaceBetween: spaceBetweenSlides / 3
               },
               640: {
                 spaceBetween: spaceBetweenSlides
@@ -1005,8 +1008,11 @@ export default {
     observeParents: true,
     slidesPerView: ${this.slideCount}, 
     breakpoints: {
-      320: {
-        spaceBetween: ${this.spaceBetweenSlides/2},
+      200: {
+        spaceBetween: ${Math.floor(this.spaceBetweenSlides / 3)},
+      },
+      420: {
+        spaceBetween: ${Math.floor(this.spaceBetweenSlides / 3)},
       },
       640: {
         spaceBetween: ${this.spaceBetweenSlides},
