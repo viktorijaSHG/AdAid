@@ -12,21 +12,22 @@
         />
       </div>
   
-      <div class="img-container" ref="imgContainer">
+      <div class="img-container" ref="imgContainer" ghost-class="ghost" handle=".drag">
         <div
           class="image"
           v-for="(image, index) in images"
           :key="image.id"
+          :id="index+1"
         >
-        <div class="preview-container">
-          <img src="../assets/menu.svg" class="drag"/> 
-          <img :src="image.url" draggable="false" class="photo" />
-          <div id="name" class="filename">{{ image.name }}</div>
-        </div>
-        <div class="actions">
-          <img src="../assets/effect.svg" class="remove"/> 
-          <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)"/>
-        </div>
+          <div class="preview-container">
+            <img src="../assets/menu.svg" class="drag"/> 
+            <img :src="image.url" draggable="false" class="photo" />
+            <div id="name" class="filename">{{ image.name }}</div>
+          </div>
+          <div class="actions">
+            <img src="../assets/effect.svg" class="remove"/> 
+            <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)"/>
+          </div>
         </div>
       </div>
     </div>
@@ -91,6 +92,7 @@ export default {
 
 
 <style>
+
 .actions {
   display: flex;
   gap: .75rem;
@@ -120,6 +122,7 @@ export default {
   flex-wrap: wrap;
   gap: 10px; 
   padding: 0rem 1rem;
+  user-select: none;
 }
 .image .photo {
   pointer-events: none;
