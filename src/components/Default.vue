@@ -310,12 +310,42 @@
           >
         </v-file-input>
 
-          <button @click="exportCode" id="activator-target">Export Code</button>
         </div>
       </div>
     </v-col>
     <v-col class="artboard" cols="8">
-      <div class="content-box"
+      <button @click="exportCode" id="activator-target">Export Code</button>
+      <div class="artboard-size"> 
+        <v-btn-toggle
+          v-model="text"
+          color="#00e18c" 
+          class="text-color-1"
+          rounded="4"
+          group
+          divided 
+        >
+          <v-btn size="small" value="1">
+            16:9
+          </v-btn>
+ 
+          <v-btn size="small" value="2">
+            1:1
+          </v-btn>
+
+          <v-btn size="small" value="3">
+            9:16
+          </v-btn>
+
+          <v-btn size="small" value="4">
+            ShopAd
+          </v-btn>
+          <v-btn size="small" value="5">
+            Companion Banner
+          </v-btn>
+        </v-btn-toggle> 
+        
+      </div>
+      <div class="content-box" :class="artboardClass"
       :style="
         background
           ? {
@@ -464,6 +494,8 @@ export default {
         ['#00FFFF', '#00AAAA', '#005555'],
         ['#0000FF', '#0000AA', '#000055'],
       ],
+      
+      text: '1',
       images: [],
       // params
       positionTop: 4,
@@ -520,6 +552,18 @@ export default {
 
       sliderWidth: "40", // Empty string to prevent issues with number type
     };
+  },
+  computed: {
+    artboardClass() {
+      // Map value to class name
+      return {
+        'aspect-16-9': this.text === '1',
+        'aspect-1-1': this.text === '2',
+        'aspect-9-16': this.text === '3',
+        'shop-ad': this.text === '4',
+        'companion-banner': this.text === '5',
+      };
+    },
   },
 
   methods: { 
@@ -1147,12 +1191,12 @@ export default {
 
 /* Chrome, Edge and Safari */
 .panel-container::-webkit-scrollbar {
-  height: 4px;
-  width: 4px;
+  height: 3px;
+  width: 3px;
 }
 .panel-container::-webkit-scrollbar-track {
-  border-radius: 3px;
-  background-color: #0b3144;
+  border-radius: px;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .panel-container::-webkit-scrollbar-track:hover {
@@ -1165,15 +1209,15 @@ export default {
 
 .panel-container::-webkit-scrollbar-thumb {
   border-radius: 1px;
-  background-color: #00e18c;
+  background-color: rgba(100, 100, 100, 0.7);
 }
 
 .panel-container::-webkit-scrollbar-thumb:hover {
-  background-color: #00e18c;
+  background-color: rgb(85, 85, 85);
 }
 
 .panel-container::-webkit-scrollbar-thumb:active {
-  background-color: #00e18c;
+  background-color: #ffffff8e;
 }
 
 .first {
@@ -1524,5 +1568,47 @@ gwd-taparea {
 }
 .v-slider.v-input--horizontal {
   margin: 0rem .6rem 1.2rem 0rem;
+}
+.artboard {
+  position: relative;
+}
+.artboard-size {
+  position: absolute;
+  top: 1.6%; 
+  left: 2%;
+}
+#activator-target{
+  
+  top: 1.6%;
+  right: 1%;
+  position: fixed;
+  background-color: #00e18c;
+  /* Bootstrap primary color */
+  color: #2b4d5e;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer; 
+}
+.text-color-1 button{
+  color: #2b4d5e !important; 
+}
+.aspect-16-9 {
+  aspect-ratio: 16/9;
+}
+.aspect-1-1 {
+  width: 80%;
+  aspect-ratio: 1/1;
+}
+.aspect-9-16 {
+  width: 40%;
+  aspect-ratio: 9/16;
+}
+.aspect-shop-ad {
+  aspect-ratio: 9/4;
+}
+.companion-banner {
+  aspect-ratio: 9/2;
 }
 </style>
