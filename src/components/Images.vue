@@ -11,7 +11,7 @@
           style="display: none;"
         />
       </div>
-  
+      <h3 class="pb-2">Media Library</h3>
       <div class="img-container" ref="imgContainer" ghost-class="ghost" handle=".drag">
         <div
           class="image"
@@ -25,7 +25,7 @@
             <div id="name" class="filename">{{ image.name }}</div>
           </div>
           <div class="actions">
-            <img src="../assets/effect.svg" class="remove"/> 
+            <img v-if="type == 'scrollable'" src="../assets/effect.svg" class="remove"/> 
             <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)"/>
           </div>
         </div>
@@ -37,6 +37,12 @@
 import Sortable from 'sortablejs';
 
 export default {
+  props: {
+    type: {
+      type: String,
+      required: true,
+    }
+  },
   data() {
     return {
       images: []
@@ -45,6 +51,9 @@ export default {
   emits: ['imagesUpdated'],
   mounted() {
     this.initSortable();
+    if (this.type === 'scrollable') {
+      // console.log('Type is scrollable!');
+    }
   },
   methods: {
     importImages(event) {
@@ -98,10 +107,10 @@ export default {
   gap: .75rem;
 }
 .filename {
-  font-size: .7rem;
+  font-size: .6rem;
   padding-left: .5rem;
   padding-right: 1rem;
-  opacity: 0.7;
+  opacity: 0.7; 
 }
 .preview-container {
   display: flex;

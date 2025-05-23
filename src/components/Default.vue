@@ -40,108 +40,50 @@
   </v-dialog>
 
   <v-row class="panel">
-    <v-col class="second" cols="4">
+    <v-col class="second" cols="3">
       <div class="panel-container">
         
-        <Images @imagesUpdated="updateImages" />
+        <Images @imagesUpdated="updateImages" :type/>
 
         <div class="settings"> 
 
-          <v-select
-            v-if="type == 'scrollable'"
-            v-model="SlideDirection"
-            :items="direction"
-            label="Slide direction"
-            outlined
-          ></v-select>
-          <v-slider
-            v-model="sliderWidth" 
-            :step="1" 
-            color="#00e18c"
-            class="align-center"
-            hide-details
-          >
-            <template v-slot:prepend>
-              <v-text-field
-              
-                label="Slider width"
-                v-model="sliderWidth"
-                type="text"  
-                append-inner-icon="mdi-percent-outline" 
-                style="width: 170px"
-                @input="validateInput" 
-                hide-details
-                 
-              ></v-text-field>
-            </template>
-          </v-slider>
-          
-          <v-slider
-            v-if="type == 'scrollable'"
-            v-model="sliderHeight" 
-            :step="1" 
-            color="#00e18c"
-            class="align-center"
-            hide-details
-          >
-            <template v-slot:prepend>
-              <v-text-field
+          <h3 class="pb-2 pt-6">Gallery Settings</h3>
+        
+          <v-row>
+            
+            <!-- Background image -->
+            <v-col cols="12" class="p-0">
+              <v-file-input
+                @change="importBgImage"
+                v-model="bgImageInput"
+                prepend-icon="" 
+                :clearable="false"
+                append-icon="mdi-delete-empty-outline"
+                label="Background image" 
+                @click:append="clearBgImage"  
+                variant="outlined"
+              >
+              </v-file-input>
+            </v-col>
+            <!-- Background image -->
+
+            <!-- Slide Direction -->
+            <v-col cols="12" class="p-0">
+              <v-select
                 v-if="type == 'scrollable'"
-                label="Slider Height"
-                v-model="sliderHeight"
-                type="text"  
-                append-inner-icon="mdi-percent-outline" 
-                style="width: 170px"
-                @input="validateInput" 
+                v-model="SlideDirection"
+                :items="direction"
+                label="Slide direction" 
+                class="pt-3 pb-2"
                 hide-details
-                 
-              ></v-text-field>
-            </template>
-          </v-slider>
-          <v-slider
-            v-model="positionTop" 
-            :step="1" 
-            color="#00e18c"
-            class="align-center" 
-            hide-details
-          >
-            <template v-slot:prepend>
-              <v-text-field
-                label="Position Top"
-                v-model="positionTop"
-                append-inner-icon="mdi-percent-outline"
-                type="text"
-                style="width: 170px"
-                outlined 
-                hide-details
-              ></v-text-field>
-            </template>
-          </v-slider>
-
-          
-          <v-slider
-            v-model="positionLeft" 
-            :step="1" 
-            color="#00e18c"
-            class="align-center"  
-            hide-details
-          >
-            <template v-slot:prepend>
-              <v-text-field
-                label="Position left"
-                v-model="positionLeft"
-                append-inner-icon="mdi-percent-outline"
-                type="text"
-                style="width: 170px"
-                outlined 
-                hide-details
-              ></v-text-field>
-            </template>
-          </v-slider> 
-
-          <!-- changed the names from numbers to titles -->
-          <div v-if="effects[index] == 'creative'">
+                variant="outlined"
+              ></v-select> 
+            </v-col>
+            <!-- Slide Direction -->
+             
+            <!-- Slide Type changed the names from numbers to titles --> 
             <v-select
+              v-if="effects[index] == 'creative'"
               v-model="creativeType"
               :items="[
                 { text: 'Zoomout Slider', value: 1 },
@@ -154,43 +96,193 @@
               label="Slide type"
               item-text="text"
               item-title="text"
-              item-value="value"
-              outlined
-            ></v-select>
-          </div>
-
-          <div v-if="this.type == 'multiple'">
-            <v-text-field
-              label="Slides Per View"
-              v-model="slideCount"
-              outlined
-            ></v-text-field>
-
-            
-            <v-slider
-              v-model="spaceBetweenSlides" 
-              :step="1" 
+              item-value="value" 
+              variant="outlined"
               color="#00e18c"
-              class="align-center"
               hide-details
-            >
-              <template v-slot:prepend>
-                <v-text-field
-                  label="Space Between Slides"
-                  v-model="spaceBetweenSlides"
-                  style="width: 200px" 
-                  outlined
-                ></v-text-field>
-              </template>
-            </v-slider>
+              class="pt-3 pb-2"
+            ></v-select> 
+            <!-- Slide Type changed the names from numbers to titles --> 
+
+            <!-- Slider Width -->
+            <v-col cols="8" class="align-self-center p-0">
+              <h4>Slider Width</h4>
+            </v-col>
+
+            <v-col cols="4" class="p-0">
+              <v-text-field 
+                v-model="sliderWidth"
+                type="text"   
+                @input="validateInput" 
+                variant="outlined solo"
+                class="white center text-right"
+                hide-details
+                density="small" 
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="p-0">
+              <v-slider
+                v-model="sliderWidth" 
+                :step="1" 
+                color="#00e18c"
+                class="align-center"
+                hide-details
+              ></v-slider>
+            </v-col> 
+            <!-- Slider Width -->
              
+            <!-- Slider Height  -->
+             <template v-if="type === 'scrollable'">
+              
+              <v-col cols="8" class="align-self-center p-0">
+                <h4>Slider Height</h4>
+              </v-col> 
+              <v-col cols="4" class="p-0">
+                <v-text-field 
+                  v-model="sliderHeight"
+                  type="text"   
+                  @input="validateInput" 
+                  variant="outlined solo"
+                  class="white center text-right"
+                  hide-details
+                  density="small" 
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="p-0">
+                <v-slider
+                  v-model="sliderHeight" 
+                  :step="1" 
+                  color="#00e18c"
+                  class="align-center"
+                  hide-details
+                ></v-slider>
+              </v-col> 
+            </template>
+            <!-- Slider Height -->
+
+            <!-- Top Position -->
+            <v-col cols="8" class="align-self-center p-0">
+              <h4>Top Position</h4>
+            </v-col> 
+            <v-col cols="4" class="p-0">
+              <v-text-field 
+                v-model="positionTop"
+                type="text"   
+                @input="validateInput" 
+                variant="outlined solo"
+                class="white center text-right"
+                hide-details
+                density="small" 
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="p-0">
+              <v-slider
+                v-model="positionTop" 
+                :step="1" 
+                color="#00e18c"
+                class="align-center"
+                hide-details
+              ></v-slider>
+            </v-col> 
+            <!-- Top Position -->
+
+            <!-- Left Position -->
+            <v-col cols="8" class="align-self-center p-0">
+              <h4>Left Position</h4>
+            </v-col> 
+            <v-col cols="4" class="p-0">
+              <v-text-field 
+                v-model="positionLeft"
+                type="text"   
+                @input="validateInput" 
+                variant="outlined solo"
+                class="white center text-right"
+                hide-details
+                density="small" 
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="p-0">
+              <v-slider
+                v-model="positionLeft" 
+                :step="1" 
+                color="#00e18c"
+                class="align-center"
+                hide-details
+              ></v-slider>
+            </v-col> 
+            <!-- Left Position -->
+
+            <!-- Slides per View -->
+            <template v-if="this.type == 'multiple'">
+              <v-col cols="8" class="align-self-center p-0">
+                <h4>Slides Per View</h4>
+              </v-col> 
+              <v-col cols="4" class="p-0">
+                <v-text-field 
+                  v-model="slideCount"
+                  type="text"   
+                  @input="validateInput" 
+                  variant="outlined solo"
+                  class="white center text-right"
+                  hide-details
+                  density="small" 
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="p-0">
+                <v-slider
+                  v-model="slideCount" 
+                  :step="1" 
+                  color="#00e18c"
+                  class="align-center"
+                  hide-details
+                  :max="6"
+                ></v-slider>
+              </v-col> 
+            </template>
+            <!-- Slides per View -->
+
             
-          </div>
+            <!-- Space between slides -->
+            <template v-if="this.type == 'multiple'">
+              <v-col cols="8" class="align-self-center p-0">
+                <h4>Space Between Slides</h4>
+              </v-col> 
+              <v-col cols="4" class="p-0">
+                <v-text-field 
+                  v-model="spaceBetweenSlides"
+                  type="text"   
+                  @input="validateInput" 
+                  variant="outlined solo"
+                  class="white center text-right"
+                  hide-details
+                  density="small" 
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="p-0">
+                <v-slider
+                  v-model="spaceBetweenSlides" 
+                  :step="1" 
+                  color="#00e18c"
+                  class="align-center"
+                  hide-details 
+                ></v-slider>
+              </v-col> 
+            </template>
+            <!-- Space between slides -->
+              
+
+          </v-row>
+              
+
+
 
           <v-switch
             v-model="loopVar"
             color="#00e18c"
             label="Enable Loop"
+            density="small"
+            class="pb-2 pt-5"
+            inset
             hide-details
           ></v-switch>
           <v-switch
@@ -198,12 +290,18 @@
             v-model="cubeShadow"
             color="#00e18c"
             label="Enable Shadow"
+            density="small"
+            class="pb-2"
+            inset
             hide-details
           ></v-switch>
           <v-switch
             v-model="autoplayVar"
             color="#00e18c"
             label="Enable autoplay"
+            density="small"
+            class="pb-2"
+            inset
             hide-details
             v-if="type !== 'scrollable'"
           ></v-switch>
@@ -212,23 +310,90 @@
             v-if="autoplayVar"
             color="#00e18c"
             label="Disable Autoplay On Interaction"
+            density="small"
+            class="pb-2"
+            inset
             hide-details
           ></v-switch>
           <v-text-field
             v-if="autoplayVar"
             label="Delay(ms)"
             v-model="autoplayDelay"
-            type="text"
-            outlined
+            type="text" 
+            variant="outlined"
+            class="pt-3"
           ></v-text-field>
+          
           <v-switch
             v-if="type !== 'scrollable'"
             v-model="buttonVar"
             color="#00e18c"
             label="Side buttons"
+            density="small"
+            class="pb-1"
+            inset
             hide-details
           ></v-switch>
 
+          <h3 class="pb-2 pt-6" v-if="buttonVar">Navigation Settings</h3>
+          
+            <v-row> 
+              <!-- Arrow Side Offset -->
+               <template v-if="buttonVar">
+                <v-col cols="8" class="align-self-center p-0">
+                  <h4>Side Offset</h4>
+                </v-col> 
+                <v-col cols="4" class="p-0">
+                  <v-text-field 
+                    v-model="offset"
+                    type="text"   
+                    @input="validateInput" 
+                    variant="outlined solo"
+                    class="white center text-right"
+                    hide-details
+                    density="small" 
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" class="p-0">
+                  <v-slider
+                    v-model="offset" 
+                    :step="1" 
+                    color="#00e18c"
+                    class="align-center"
+                    hide-details
+                  ></v-slider>
+                </v-col>
+              </template>
+              <!-- Arrow Side Offset -->
+               
+              <!-- Arrow Size-->
+               <template v-if="buttonVar">
+                <v-col cols="8" class="align-self-center p-0">
+                  <h4>Icon Size</h4>
+                </v-col> 
+                <v-col cols="4" class="p-0">
+                  <v-text-field 
+                    v-model="btnWidth"
+                    type="text"   
+                    @input="validateInput" 
+                    variant="outlined solo"
+                    class="white center text-right"
+                    hide-details
+                    density="small" 
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" class="p-0">
+                  <v-slider
+                    v-model="btnWidth" 
+                    :step="1" 
+                    color="#00e18c"
+                    class="align-center"
+                    hide-details
+                  ></v-slider>
+                </v-col>
+              </template>
+              <!-- Arrow Size-->
+            </v-row> 
           <div v-if="buttonVar">
             <v-select
               v-model="btnType"
@@ -237,7 +402,8 @@
               item-text="text"
               item-value="value"
               return-object
-              outlined
+              class="pt-3"
+              variant="outlined"
             ></v-select>
 
             <div v-if="btnType == 'default'">
@@ -249,71 +415,19 @@
                 clearable
                 @change="importBtnImage"
                 prepend-icon=""
-                label="Button image"
+                label="Upload Button image"
+                variant="outlined"
               ></v-file-input>
-            </div> 
-          <v-slider
-            v-model="offset"
-            :max="maxOffset"
-            :min="minOffset"
-            :step="1" 
-            color="#00e18c"
-            class="align-center" 
-            hide-details
-          >
-            <template v-slot:prepend>
-              <v-text-field
-                label="Arrow side offset"
-                v-model="offset"
-                type="text"
-                :max="maxOffset"
-                :min="minOffset"
-                outlined
-                append-inner-icon="mdi-percent-outline" 
-                style="width: 170px" 
-                hide-details
-              ></v-text-field>
-            </template>
-          </v-slider>
-            
-          <v-slider
-            v-model="btnWidth" 
-            :step="1" 
-            color="#00e18c"
-            class="align-center" 
-            hide-details
-          >
-            <template v-slot:prepend>
-              <v-text-field
-                label="Arrow size"
-                v-model="btnWidth"
-                type="text"
-                append-inner-icon="mdi-percent-outline"
-                outlined
-                @input="validateInput" 
-                style="width: 170px" 
-                hide-details
-              ></v-text-field>
-            </template>
-          </v-slider>
+            </div>
+             
           </div>
           
-          
-          <v-file-input
-            @change="importBgImage"
-            v-model="bgImageInput"
-            prepend-icon="" 
-            :clearable="false"
-            append-icon="mdi-delete-empty-outline"
-            label="Background image" 
-            @click:append="clearBgImage" 
-          >
-        </v-file-input>
+           
 
         </div>
       </div>
     </v-col>
-    <v-col class="artboard" cols="8">
+    <v-col class="artboard" cols="9">
       <button @click="exportCode" id="activator-target">Export Code</button>
       <div class="artboard-size"> 
         <v-btn-toggle
@@ -1178,7 +1292,7 @@ export default {
   overflow-x: hidden;
   height: 100%;
   position: relative;
-  padding: 0rem 1rem;
+  padding: 0rem 1.5rem;
   width: 100%;
 
   
@@ -1361,7 +1475,7 @@ gwd-taparea {
 .settings {
   width: 100%;
   /* max-width: 600px; */
-  padding: 2rem 1rem;
+  /* padding: 2rem 1rem; */
   /* background-color: #0b3144; */
   /* border-radius: 10px; */
   /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
@@ -1598,17 +1712,58 @@ gwd-taparea {
   aspect-ratio: 16/9;
 }
 .aspect-1-1 {
-  width: 80%;
+  width: 70%;
   aspect-ratio: 1/1;
 }
 .aspect-9-16 {
   width: 40%;
   aspect-ratio: 9/16;
 }
-.aspect-shop-ad {
+.shop-ad { 
   aspect-ratio: 9/4;
 }
 .companion-banner {
   aspect-ratio: 9/2;
+}
+.white span{
+  color: #f0f0f0 !important; /* or any desired color */
+}
+/* .d-flex :deep(.v-text-field) { 
+  display: flex;
+  justify-content: space-between; 
+ flex-direction: row;
+}
+.d-flex.v-slider.v-input--horizontal {
+  margin: 0;
+  display: flex !important;
+  justify-content: space-between; 
+ flex-direction: column !important;
+}
+.d-flex .v-slider, .d-flex .v-slider :deep(.v-input__prepend), .d-flex :deep(.v-input__control){
+  width: 100%;
+} 
+.d-flex .v-input--center-affix .v-input__prepend {
+  width: 100%;
+}
+.d-flex :deep(.v-text-field) {
+  width: 45%;
+} 
+.d-flex :deep(.v-input__prepend ){
+  width: 100%;
+  margin: 0;
+} */
+ .p-0  {
+  padding: 0; 
+ }
+ .mt-0 {
+  margin-top: 0px;
+ }
+ .text-right :deep(input) {
+      text-align: right;
+      padding-top: .5rem;
+      padding-bottom: .5rem;
+  }
+.v-slider.v-input--horizontal {
+  margin:0rem .6rem 0rem 0rem
 }
 </style>

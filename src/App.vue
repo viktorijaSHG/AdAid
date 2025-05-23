@@ -1,6 +1,6 @@
 <template>
   <div v-if="type">
-    <Default :type="this.type" :index="this.selectedIndex" />
+    <Default :type="this.type" :index="this.selectedIndex" /> 
   </div>
 
   <div v-else class="container">
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import Default from "./components/Default.vue";
+import Default from "./components/Default.vue"; 
 
 export default {
   data() {
@@ -30,13 +30,13 @@ export default {
         { src: "cube.png", alt: "Cube" },
         { src: "fade.png", alt: "Fade" },
         { src: "creative.png", alt: "Creative" },
-        // { src: "scrollable.png", alt: "Scrollable" },
+        { src: "scrollable.png", alt: "Scrollable" },
         // Add more images as needed
       ],
     };
   },
   components: {
-    Default,
+    Default, 
   },
   methods: {
     chooseType(index) {
@@ -78,7 +78,7 @@ body {
 .image-grid {
   display: grid;
   grid-template-columns: repeat(
-    4,
+    5,
     minmax(12.5rem, 1fr)
   ); /* 200px is approximately 12.5rem */
   gap: 1rem;
