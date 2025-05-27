@@ -5,28 +5,28 @@
       <v-card-text class="import-flex">
         <div class="codeCopy">
           <h3>Head import</h3>
-          <pre v-text="ContentHead" class="codeBlock"></pre>
+          <pre v-text="ContentHead" class="codeBlock" v-if="type !== 'scrollable'"></pre>
           <v-btn id="copy-head-btn" class="copy-btn" @click="copyHeadCode">
             {{ BtnHead }}
           </v-btn> 
         </div>
         <div class="codeCopy">
           <h3>CSS code</h3>
-          <pre v-text="ContentCss" class="codeBlock"></pre>
+          <pre v-text="ContentCss" class="codeBlock" v-if="type !== 'scrollable'"></pre>
           <v-btn id="copy-css-btn" class="copy-btn" @click="copyCssCode">
             {{ BtnCss }}
           </v-btn> 
         </div>
         <div class="codeCopy">
           <h3>HTML code</h3>
-          <pre v-text="ContentHtml" class="codeBlock"></pre>
+          <pre v-text="ContentHtml" class="codeBlock" v-if="type !== 'scrollable'"></pre>
           <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
             {{ BtnHtml }}
           </v-btn> 
         </div>
         <div class="codeCopy">
           <h3>JavaScript code</h3>
-          <pre v-text="ContentJavaScript" class="codeBlock"></pre>
+          <pre v-text="ContentJavaScript" class="codeBlock" v-if="type !== 'scrollable'"></pre>
           <v-btn id="copy-js-btn" class="copy-btn" @click="copyJavaScriptCode">
             {{ BtnJavaScript }}
           </v-btn>
@@ -48,11 +48,11 @@
         <div class="settings"> 
 
           <h3 class="pb-2 pt-6">Gallery Settings</h3>
-        
           <v-row>
             
             <!-- Background image -->
             <v-col cols="12" class="p-0">
+              <h4 class="py-3">Background Image</h4>
               <v-file-input
                 @change="importBgImage"
                 v-model="bgImageInput"
@@ -68,13 +68,12 @@
             <!-- Background image -->
 
             <!-- Slide Direction -->
-            <v-col cols="12" class="p-0">
-              <v-select
-                v-if="type == 'scrollable'"
+            <v-col cols="12" class="p-0"  v-if="type == 'scrollable'">
+              <h4 class="py-0">Slide direction</h4>
+              <v-select 
                 v-model="SlideDirection"
-                :items="direction"
-                label="Slide direction" 
-                class="pt-3 pb-2"
+                :items="direction" 
+                class="pt-3 pb-3"
                 hide-details
                 variant="outlined"
               ></v-select> 
@@ -82,26 +81,28 @@
             <!-- Slide Direction -->
              
             <!-- Slide Type changed the names from numbers to titles --> 
-            <v-select
-              v-if="effects[index] == 'creative'"
-              v-model="creativeType"
-              :items="[
-                { text: 'Zoomout Slider', value: 1 },
-                { text: 'Zoomout Carousel', value: 2 },
-                { text: 'Slider', value: 3 },
-                { text: 'Flip', value: 4 },
-                { text: 'Roll', value: 5 },
-                { text: 'Flipbook', value: 6 },
-              ]"
-              label="Slide type"
-              item-text="text"
-              item-title="text"
-              item-value="value" 
-              variant="outlined"
-              color="#00e18c"
-              hide-details
-              class="pt-3 pb-2"
-            ></v-select> 
+             
+            <v-col cols="12" class="p-0" v-if="effects[index] == 'creative'">
+              <h4 class="py-0">Slide type</h4>
+              <v-select 
+                v-model="creativeType"
+                :items="[
+                  { text: 'Zoomout Slider', value: 1 },
+                  { text: 'Zoomout Carousel', value: 2 },
+                  { text: 'Slider', value: 3 },
+                  { text: 'Flip', value: 4 },
+                  { text: 'Roll', value: 5 },
+                  { text: 'Flipbook', value: 6 },
+                ]" 
+                item-text="text"
+                item-title="text"
+                item-value="value" 
+                variant="outlined"
+                color="#00e18c"
+                hide-details
+                class="pt-3 pb-3"
+              ></v-select> 
+            </v-col>
             <!-- Slide Type changed the names from numbers to titles --> 
 
             <!-- Slider Width -->
@@ -270,7 +271,35 @@
             </template>
             <!-- Space between slides -->
               
-
+            <!-- Transition duration -->
+            <template v-if="this.type != 'scrollable'">
+              <v-col cols="7" class="align-self-center p-0">
+                <h4>Transition</h4>
+              </v-col> 
+              <v-col cols="5" class="p-0">
+                <v-text-field 
+                  v-model="transitionDuration"
+                  type="text"   
+                  @input="validateInput" 
+                  variant="outlined solo"
+                  class="white center text-right"
+                  hide-details
+                  density="small" 
+                  :model-value="`${transitionDuration} ms`"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="p-0">
+                <v-slider
+                  v-model="transitionDuration" 
+                  :step="50" 
+                  :max="5000"
+                  color="#00e18c"
+                  class="align-center"
+                  hide-details 
+                ></v-slider>
+              </v-col> 
+            </template>
+            <!-- Transition duration -->
           </v-row>
               
 
@@ -498,6 +527,7 @@
               :free-mode="type === 'scrollable'"
               :direction="type === 'scrollable' ? 'horizontal' : undefined"
               :observe="true"
+              :speed="transitionDuration"
               :observe-parents="true"
               :breakpoints="{
                 200: {
@@ -612,10 +642,11 @@ export default {
       text: '1',
       images: [],
       // params
-      positionTop: 4,
-      positionLeft: 2,
+      positionTop: 0,
+      positionLeft: 0,
       slideCount: 1,
       spaceBetweenSlides: 0, 
+      transitionDuration: 300,
       sliderWidth: 40,
       sliderHeight: 40,
       loopVar: false,
@@ -681,6 +712,11 @@ export default {
   },
 
   methods: { 
+    onDurationInput(val) {
+      // Remove "ms" and parse number
+      const numericValue = parseInt(val.replace(/[^\d]/g, '')) || 0;
+      this.transitionDuration = numericValue;
+    },
     validateInput() {
       let num = Number(this.sliderWidth);
 
@@ -1157,6 +1193,7 @@ export default {
     observer: true,
     observeParents: true,
     slidesPerView: ${this.slideCount}, 
+    speed: ${this.transitionDuration},
     breakpoints: {
       200: {
         spaceBetween: ${Math.floor(this.spaceBetweenSlides / 3)},
@@ -1765,5 +1802,8 @@ gwd-taparea {
   }
 .v-slider.v-input--horizontal {
   margin:0rem .6rem 0rem 0rem
+}
+.sortable-fallback, .sortable-chosen {
+  opacity: 0;
 }
 </style>

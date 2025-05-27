@@ -1,37 +1,75 @@
 <template>
     <div class="card">
-      <div class="custom-file-input">
-        <label for="fileInput" class="custom-file-label">Choose files</label>
-        <input
-          type="file"
-          id="fileInput"
-          ref="fileInput"
-          @change="importImages"
-          multiple
-          style="display: none;"
-        />
-      </div>
-      <h3 class="pb-2">Media Library</h3>
-      <div class="img-container" ref="imgContainer" ghost-class="ghost" handle=".drag">
+
+    <v-row class="panel pt-4 pb-4">
+      <v-col cols="auto"><h3>Media Library</h3></v-col>
+      <v-col cols="auto">
+        <div class="custom-file-input">
+          <!-- <label for="fileInput" class="custom-file-label" density="small">Choose files</label> -->
+           <v-btn  @click="$refs.fileInput.click()" size="small" variant="tonal" class="no-uppercase">Select Image</v-btn>
+          <input
+            type="file"
+            id="fileInput"
+            ref="fileInput"
+            @change="importImages"
+            multiple
+            style="display: none;"
+          />
+        </div>
+      </v-col>
+    </v-row>
+      
+
+      <div class="img-container py-1 px-3" ref="imgContainer" ghost-class="ghost" handle=".drag"> 
         <div
-          class="image"
+          class="image "
           v-for="(image, index) in images"
           :key="image.id"
           :id="index+1"
-        >
+          
+        > 
           <div class="preview-container">
             <img src="../assets/menu.svg" class="drag"/> 
-            <img :src="image.url" draggable="false" class="photo" />
+            <v-avatar rounded="sm"> 
+              <img :src="image.url" draggable="false" class="photo" />
+            </v-avatar>
             <div id="name" class="filename">{{ image.name }}</div>
           </div>
           <div class="actions">
-            <img v-if="type == 'scrollable'" src="../assets/effect.svg" class="remove"/> 
+            <img v-if="type == 'scrollable'" src="../assets/effect.svg" class="remove" @click="openDialog(image)"/> 
             <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)"/>
           </div>
-        </div>
+        </div>  
       </div>
     </div>
-  </template>
+    
+    <v-dialog v-model="showDialog" max-width="900px">
+      <v-card class="px-4 py-4">
+        <v-card-title class="code-title">Image Settings</v-card-title>
+
+        <v-row>
+          <v-col cols="8">
+            <div class="text-h6">{{ selectedImage?.name || 'Unnamed Image' }}</div>
+          </v-col>
+
+          <v-col cols="4">
+            <v-img
+              :src="selectedImage?.url" 
+              cover
+              color="surface-variant"
+              class="rounded"
+            ></v-img>
+          </v-col>
+        </v-row>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <!-- <v-btn text @click="showDialog = false">Close</v-btn> -->
+        </v-card-actions>
+      </v-card>
+  </v-dialog>
+
+  </template> 
 
 <script>
 import Sortable from 'sortablejs';
@@ -45,7 +83,9 @@ export default {
   },
   data() {
     return {
-      images: []
+      images: [], 
+      showDialog: false,
+      selectedImage: null, // <-- holds the clicked image
     };
   },
   emits: ['imagesUpdated'],
@@ -56,6 +96,10 @@ export default {
     }
   },
   methods: {
+    openDialog(image) {
+      this.selectedImage = image;
+      this.showDialog = true;
+    },
     importImages(event) {
       const files = Array.from(event.target.files);
       const sortedFiles = files.sort((a, b) => a.name.localeCompare(b.name)); // Optional: prevent Safari randomness
@@ -126,10 +170,10 @@ export default {
   margin-right: 1rem;
 }
 .img-container { 
-  min-height: 100px;
+  min-height: 70px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px; 
+  gap: .3rem; 
   padding: 0rem 1rem;
   user-select: none;
 }
@@ -143,8 +187,8 @@ export default {
 
  .card{
   width: 100%;
-  padding: 10px;
-  margin: 10px;
+  padding: 0;
+  margin: 0;
  background-color: #0b3144;
  }
  .card .top{
@@ -217,11 +261,11 @@ export default {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   max-height: 360px;
   overflow-y: auto; /* Enable scrolling if content overflows */ 
-  padding: 1rem;
+  /* padding: 1rem; */
   border-radius: 6px;
   background-color: #0c2b3b;
  }
@@ -270,13 +314,7 @@ export default {
   }
  }
 
- 
-.card{
-  width: 100%;
-  padding: 10px;
-  margin: 10px;
- 
- }
+  
  .card .top{
   text-align: center;
  }
@@ -303,8 +341,8 @@ export default {
 }
 
 .remove {
-  width: 2.3rem !important;
-  padding: .5rem;
+  width: 2rem !important;
+  padding: .4rem;
   border: #ffffff6e solid 1px;
   cursor: pointer;
 }
@@ -330,17 +368,16 @@ export default {
 }
 
 .custom-file-input {
-    margin: 30px 0;
+    /* margin: 30px 0;
  position: relative;
  display: inline-block;
  cursor: pointer;
- margin-left: 40%;
+ margin-left: 40%; */
 
 }
 
 .custom-file-label {
-    padding: 14px 16px;
-
+  padding: .2rem; 
  color: white;
  border-radius: 4px;
  cursor: pointer;
@@ -369,5 +406,7 @@ input[type="file"] {
 .img-container::-webkit-scrollbar-thumb:hover {
   background: rgb(85, 85, 85);
 }
-
+.no-uppercase {
+  text-transform: none;
+}
 </style>
