@@ -1749,11 +1749,11 @@ gwd-taparea {
   aspect-ratio: 16/9;
 }
 .aspect-1-1 {
-  width: 70%;
+  width: 50%;
   aspect-ratio: 1/1;
 }
 .aspect-9-16 {
-  width: 40%;
+  width: 32%;
   aspect-ratio: 9/16;
 }
 .shop-ad { 
