@@ -1,36 +1,50 @@
 <template>
   <v-dialog v-if="showDialog" v-model="showDialog" style="width: 1200px">
     <v-card>
-      <v-card-title class="code-title">Exported Code</v-card-title>
-      <v-card-text class="import-flex">
-        <div class="codeCopy">
-          <h3>Head import</h3>
-          <pre v-text="ContentHead" class="codeBlock" v-if="type !== 'scrollable'"></pre>
-          <v-btn id="copy-head-btn" class="copy-btn" @click="copyHeadCode">
-            {{ BtnHead }}
-          </v-btn> 
-        </div>
-        <div class="codeCopy">
-          <h3>CSS code</h3>
-          <pre v-text="ContentCss" class="codeBlock" v-if="type !== 'scrollable'"></pre>
-          <v-btn id="copy-css-btn" class="copy-btn" @click="copyCssCode">
-            {{ BtnCss }}
-          </v-btn> 
-        </div>
-        <div class="codeCopy">
-          <h3>HTML code</h3>
-          <pre v-text="ContentHtml" class="codeBlock" v-if="type !== 'scrollable'"></pre>
-          <v-btn id="copy-html-btn" class="copy-btn" @click="copyHtmlCode">
-            {{ BtnHtml }}
-          </v-btn> 
-        </div>
-        <div class="codeCopy">
-          <h3>JavaScript code</h3>
-          <pre v-text="ContentJavaScript" class="codeBlock" v-if="type !== 'scrollable'"></pre>
-          <v-btn id="copy-js-btn" class="copy-btn" @click="copyJavaScriptCode">
-            {{ BtnJavaScript }}
-          </v-btn>
-        </div>
+      <v-card-title>Exported Code</v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col cols="6" v-if="type !== 'scrollable'">
+            <div class="codeCopy px-4 py-3">
+              <h3>Head import</h3>
+              <pre v-text="ContentHead" class="codeBlock"></pre>
+              <v-btn id="copy-head-btn" class="copy-btn" variant="tonal" @click="copyHeadCode">
+                {{ BtnHead }}
+              </v-btn> 
+            </div>
+          </v-col>
+          <v-col cols="6">
+            <div class="codeCopy px-4 py-3">
+              <h3>CSS code</h3>
+              <pre v-text="ContentCss" class="codeBlock" v-if="type !== 'scrollable'"></pre>
+              <v-btn id="copy-css-btn" class="copy-btn" variant="tonal" @click="copyCssCode">
+                {{ BtnCss }}
+              </v-btn> 
+            </div>           
+          </v-col>
+          <v-col cols="6">
+            <div class="codeCopy px-4 py-3">
+              <h3>HTML code</h3>
+              <pre v-text="ContentHtml" class="codeBlock" v-if="type !== 'scrollable'"></pre>
+              <v-btn id="copy-html-btn" class="copy-btn" variant="tonal" @click="copyHtmlCode">
+                {{ BtnHtml }}
+              </v-btn> 
+            </div>  
+          </v-col>
+          <v-col cols="6" v-if="type !== 'scrollable'">
+            <div class="codeCopy px-4 py-3">
+              <h3>JavaScript code</h3>
+              <pre v-text="ContentJavaScript" class="codeBlock"></pre>
+              <v-btn id="copy-js-btn" class="copy-btn" variant="tonal" @click="copyJavaScriptCode">
+                {{ BtnJavaScript }}
+              </v-btn>
+            </div> 
+          </v-col>
+        </v-row>
+
+
+
+
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -47,7 +61,7 @@
 
         <div class="settings"> 
 
-          <h3 class="pb-2 pt-6">Gallery Settings</h3>
+          <h3 class="pb-2 pt-8">Gallery Settings</h3>
           <v-row>
             
             <!-- Background image -->
@@ -58,10 +72,11 @@
                 v-model="bgImageInput"
                 prepend-icon="" 
                 :clearable="false"
-                append-icon="mdi-delete-empty-outline"
-                label="Background image" 
+                append-icon="mdi-close" 
                 @click:append="clearBgImage"  
                 variant="outlined"
+                class="pb-3"
+                hide-details
               >
               </v-file-input>
             </v-col>
@@ -274,7 +289,7 @@
             <!-- Transition duration -->
             <template v-if="this.type != 'scrollable'">
               <v-col cols="7" class="align-self-center p-0">
-                <h4>Transition</h4>
+                <h4>Animation speed</h4>
               </v-col> 
               <v-col cols="5" class="p-0">
                 <v-text-field 
@@ -334,6 +349,37 @@
             hide-details
             v-if="type !== 'scrollable'"
           ></v-switch>
+          <v-row class="pb-5" v-if="autoplayVar">
+            <!-- Delay -->
+            <template v-if="autoplayVar">
+              <v-col cols="7" class="align-self-center p-0">
+                <h4>Delay</h4>
+              </v-col> 
+              <v-col cols="5" class="p-0">
+                <v-text-field 
+                  v-model="autoplayDelay"
+                  type="text"   
+                  @input="validateInput" 
+                  variant="outlined solo"
+                  class="white center text-right"
+                  hide-details
+                  density="small" 
+                  :model-value="`${autoplayDelay} ms`"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="p-0">
+                <v-slider
+                  v-model="autoplayDelay" 
+                  :step="50" 
+                  :max="5000"
+                  color="#00e18c"
+                  class="align-center"
+                  hide-details 
+                ></v-slider>
+              </v-col> 
+            </template>
+            <!-- Delay -->
+          </v-row> 
           <v-switch
             v-model="autoplayInt"
             v-if="autoplayVar"
@@ -344,14 +390,7 @@
             inset
             hide-details
           ></v-switch>
-          <v-text-field
-            v-if="autoplayVar"
-            label="Delay(ms)"
-            v-model="autoplayDelay"
-            type="text" 
-            variant="outlined"
-            class="pt-3"
-          ></v-text-field>
+
           
           <v-switch
             v-if="type !== 'scrollable'"
@@ -364,7 +403,7 @@
             hide-details
           ></v-switch>
 
-          <h3 class="pb-2 pt-6" v-if="buttonVar">Navigation Settings</h3>
+          <h3 class="pb-2 pt-8" v-if="buttonVar">Arrow Navigation Settings</h3>
           
             <v-row> 
               <!-- Arrow Side Offset -->
@@ -436,6 +475,8 @@
             ></v-select>
 
             <div v-if="btnType == 'default'">
+              
+              <h4 class="pb-2">Color</h4>
               <v-color-picker v-model="btnColor" :swatches="swatches" swatches-max-height="100px" mode="hexa" show-swatches class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
             </div>
 
@@ -456,8 +497,10 @@
         </div>
       </div>
     </v-col>
-    <v-col class="artboard" cols="9">
-      <button @click="exportCode" id="activator-target">Export Code</button>
+    <v-col class="artboard" cols="9"> 
+      <v-btn prepend-icon="mdi-xml" variant="text" @click="exportCode" id="activator-target">
+        Export Code
+      </v-btn>
       <div class="artboard-size"> 
         <v-btn-toggle
           v-model="text"
@@ -570,24 +613,24 @@
                 ></div>
           </div>
         </div>
-        <!-- Scrollable Gallery -->
-        <div 
-          :style="
-              index == 1
-                ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }
-                : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }"
-          
-              :class="['scrollable', SlideDirection === 'Vertical' ? 'vertical' : 'horizontal']"
-        >
-          <div v-if="type === 'scrollable' && images?.length" id="scrollable">
+          <!-- Scrollable Gallery -->
+          <div 
+            :style="
+                index == 1
+                  ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }
+                  : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }"
+            
+                :class="['scrollable', SlideDirection === 'Vertical' ? 'vertical' : 'horizontal']"
+          >
+            <div v-if="type === 'scrollable' && images?.length" id="scrollable">
 
-            <div v-for="(image, index) in images" :key="index" :id="'Card' + (index + 1)" class="scrollcard">
-              <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'"></gwd-taparea>
-              <!-- <img :id="'Card' + (index + 1) + 'HoverImage'" :src="image.url" alt="" /> -->
-              <img :id="'Card' + (index + 1) + 'BaseImage'" :src="image.url" alt="" />
+              <div v-for="(image, index) in images" :key="index" :id="'Card' + (index + 1)" class="scrollcard">
+                <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'"></gwd-taparea>
+                <!-- <img :id="'Card' + (index + 1) + 'HoverImage'" :src="image.url" alt="" /> -->
+                <img :id="'Card' + (index + 1) + 'BaseImage'" :src="image.url" alt="" />
+              </div>
+              ....
             </div>
-            ....
-          </div>
           </div> 
         </div> 
       <div></div>
@@ -1265,33 +1308,28 @@ export default {
     `;
       // Define the code you want to export
       const htmlCode = `
-      <div class="wrapper" id="gallery">
-        <div class="swiper mySwiper max-height">
-          <div class="swiper-wrapper max-height" id="cards">
-            ${swiperSlidesHtml}
-          </div>
-        </div>
-        ${
-            this.buttonVar
-              ? ` 
-                ${ this.btnType === "image" ? `<div class="swiper-button-next swiper-custom-next" id="arrow-right"></div>` 
-                  : `<div class="swiper-button-next" id="arrow-right"></div>`
-                  }
-                 ${ this.btnType === "image" ? `<div class="swiper-button-prev swiper-custom-prev" id="arrow-left"></div>` 
-                  : `<div class="swiper-button-prev" id="arrow-left"></div>`
-                  }
-              ` 
-              : ""
-          }
-      </div>
+<div class="wrapper" id="gallery">
+  <div class="swiper mySwiper max-height">
+    <div class="swiper-wrapper max-height" id="cards">
+      ${swiperSlidesHtml}
+    </div>
+  </div>
+  ${
+      this.buttonVar
+        ? ` 
+          ${ this.btnType === "image" ? `<div class="swiper-button-next swiper-custom-next" id="arrow-right"></div>` 
+            : `<div class="swiper-button-next" id="arrow-right"></div>`
+            }
+            ${ this.btnType === "image" ? `<div class="swiper-button-prev swiper-custom-prev" id="arrow-left"></div>` 
+            : `<div class="swiper-button-prev" id="arrow-left"></div>`
+            }
+        `: ""}
+</div>
     `;
-      this.ContentHead = `<pre><link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
-    /></pre>`;
-      this.ContentHtml = `<pre>${htmlCode}</pre>`;
-      this.ContentCss = `<pre>${styles}</pre>`;
-      this.ContentJavaScript = `<pre>${swiperScript}</pre>`;
+      this.ContentHead = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>`;
+      this.ContentHtml = `${htmlCode}`;
+      this.ContentCss = `${styles}`;
+      this.ContentJavaScript = `${swiperScript}`;
       this.showDialog = true;
     },
   },
@@ -1691,16 +1729,16 @@ gwd-taparea {
   gap: 2rem; /* Optional spacing between items */ 
 }
 .codeCopy {
- background-color: #f3f3f3; 
- border-radius: .75rem;
- overflow: hidden;
- padding: 1rem 2rem 2rem 2rem;
+ background-color: #f3f3f3;  
+ overflow: hidden; 
  width: 100%;
+ height: 100%;
  position: relative;
+ min-height: 100px;
 } 
 .copy-btn {
   position: absolute;
-  bottom: 8%;
+  bottom: 4.5%;
   left: 5%;
 }
 .code-title {
@@ -1736,10 +1774,10 @@ gwd-taparea {
   background-color: #00e18c;
   /* Bootstrap primary color */
   color: #2b4d5e;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
+  /* border: none; */
+  /* border-radius: 5px; */
+  /* padding: 10px 20px; */
+  /* font-size: 16px; */
   cursor: pointer; 
 }
 .text-color-1 button{

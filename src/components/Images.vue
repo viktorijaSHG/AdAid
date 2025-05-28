@@ -1,12 +1,11 @@
 <template>
-    <div class="card">
+  <div class="card">
 
     <v-row class="panel pt-4 pb-4">
       <v-col cols="auto"><h3>Media Library</h3></v-col>
       <v-col cols="auto">
         <div class="custom-file-input">
-          <!-- <label for="fileInput" class="custom-file-label" density="small">Choose files</label> -->
-           <v-btn  @click="$refs.fileInput.click()" size="small" variant="tonal" class="no-uppercase">Select Image</v-btn>
+          <v-btn @click="$refs.fileInput.click()" size="small" variant="tonal" class="no-uppercase">Select Image</v-btn>
           <input
             type="file"
             id="fileInput"
@@ -18,112 +17,156 @@
         </div>
       </v-col>
     </v-row>
-      
 
-      <div class="img-container py-1 px-3" ref="imgContainer" ghost-class="ghost" handle=".drag"> 
-        <div
-          class="image "
-          v-for="(image, index) in images"
-          :key="image.id"
-          :id="index+1"
-          
-        > 
-          <div class="preview-container">
-            <img src="../assets/menu.svg" class="drag"/> 
-            <v-avatar rounded="sm"> 
-              <img :src="image.url" draggable="false" class="photo" />
-            </v-avatar>
-            <div id="name" class="filename">{{ image.name }}</div>
-          </div>
-          <div class="actions">
-            <img v-if="type == 'scrollable'" src="../assets/effect.svg" class="remove" @click="openDialog(image)"/> 
-            <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)"/>
-          </div>
-        </div>  
+    <div class="img-container py-1 px-3" ref="imgContainer" ghost-class="ghost" handle=".drag">
+      <div
+        class="image"
+        v-for="(image, index) in images"
+        :key="image.id"
+        :id="index + 1"
+      >
+        <div class="preview-container">
+          <img src="../assets/menu.svg" class="drag" />
+          <v-avatar rounded="sm">
+            <img :src="image.url" draggable="false" class="photo" />
+          </v-avatar>
+          <div id="name" class="filename">{{ image.name }}</div>
+        </div>
+        <div class="actions">
+          <img v-if="type == 'scrollable'" src="../assets/effect.svg" class="remove" @click="openDialog(image)" />
+          <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)" />
+        </div>
       </div>
     </div>
-    
-    <v-dialog v-model="showDialog" max-width="900px">
-      <v-card class="px-4 py-4">
-        <v-card-title class="code-title">Image Settings</v-card-title>
+  </div>
 
+  <v-dialog v-model="showDialog" max-width="600px">
+    <v-card class="px-6 pb-8 pt-6 rounded-lg">
+    <v-row>
+      <v-col cols="12">
+
+        <h3 class="px-0 pb-3 text-center">Add Hover Image</h3>
+          <v-img
+            :src="hovering ? (selectedHoverImage?.url || selectedImage?.hoverUrl || selectedImage?.url) : selectedImage?.url"
+            contain
+            color="#f3f5f7"
+            class="rounded-lg"
+            @mouseover="hovering = true"
+            @mouseleave="hovering = false"
+            style="min-height: 450px;max-height: 450px;cursor: pointer; border: 1px dashed #e9e9ea;"
+          ></v-img>
+      </v-col>
+      
+      <v-col cols="12" class="d-flex text-center justify-center align-center">
+       
+        <div class="custom-file-input">
+          <v-btn @click="$refs.fileHover.click()" variant="outlined" class="no-uppercase">Select Hover Image</v-btn>
+          <input
+            type="file"
+            id="fileHover"
+            ref="fileHover"
+            @change="importImages"
+            style="display: none;"
+          />
+        </div>
+  
+        <!-- hover image -->
+        <div
+          class="hover-preview"
+          v-for="(image, index) in images"
+          :key="image.id" 
+          v-if="image"
+        >  
         <v-row>
-          <v-col cols="8">
-            <div class="text-h6">{{ selectedImage?.name || 'Unnamed Image' }}</div>
+          <v-col cols="11"> 
+            <span class="hover-label" v-if="image.hoverUrl">{{ image.hoverName }}</span>  
           </v-col>
-
-          <v-col cols="4">
-            <v-img
-              :src="selectedImage?.url" 
-              cover
-              color="surface-variant"
-              class="rounded"
-            ></v-img>
+          <v-col cols="1"> 
+            <div class="actions">
+              <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)" />
+            </div>
           </v-col>
         </v-row>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <!-- <v-btn text @click="showDialog = false">Close</v-btn> -->
-        </v-card-actions>
-      </v-card>
+        </div>
+ 
+      </v-col>
+    </v-row>
+    </v-card>
+     
   </v-dialog>
-
-  </template> 
+</template>
 
 <script>
-import Sortable from 'sortablejs';
+import Sortable from "sortablejs";
 
 export default {
   props: {
     type: {
       type: String,
       required: true,
-    }
+    },
   },
   data() {
     return {
-      images: [], 
+      images: [],
+      Hoverimages: [],
       showDialog: false,
-      selectedImage: null, // <-- holds the clicked image
+      selectedImage: null,
+      selectedHoverImage: null,
+      hovering: false,
     };
   },
-  emits: ['imagesUpdated'],
+  emits: ["imagesUpdated"],
   mounted() {
     this.initSortable();
-    if (this.type === 'scrollable') {
-      // console.log('Type is scrollable!');
-    }
   },
   methods: {
     openDialog(image) {
       this.selectedImage = image;
+      // Load hover image from the image object if exists
+      this.selectedHoverImage = image.hoverUrl
+        ? { url: image.hoverUrl, name: "Hover Image" }
+        : null;
       this.showDialog = true;
     },
     importImages(event) {
       const files = Array.from(event.target.files);
-      const sortedFiles = files.sort((a, b) => a.name.localeCompare(b.name)); // Optional: prevent Safari randomness
+      const sortedFiles = files.sort((a, b) => a.name.localeCompare(b.name));
+      const isHover = event.target.id === "fileHover";
 
       sortedFiles.forEach((file, i) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.images.push({
-            id: Date.now() + i, // Unique ID
+          const imageData = {
+            id: Date.now() + i,
             url: e.target.result,
-            name: file.name
-          });
+            name: file.name,
+          };
+
+          if (isHover) {
+            this.selectedHoverImage = imageData;
+            if (this.selectedImage) {
+              // Save hover image URL on the selected image object
+              this.selectedImage.hoverUrl = imageData.url;
+              this.selectedImage.hoverName = imageData.name; // <--- Add this line
+            }
+          } else {
+            this.images.push(imageData);
+          }
         };
         reader.readAsDataURL(file);
       });
 
-      // Emit updated images after load (optional, better after drag end)
-      setTimeout(() => {
-        this.$emit('imagesUpdated', this.images);
-      }, 500);
+      if (!isHover) {
+        setTimeout(() => {
+          this.$emit("imagesUpdated", this.images);
+        }, 500);
+      }
     },
     deleteImage(index) {
       this.images.splice(index, 1);
-      this.$emit('imagesUpdated', this.images);
+      this.$emit("imagesUpdated", this.images);
     },
     initSortable() {
       const el = this.$refs.imgContainer;
@@ -133,13 +176,13 @@ export default {
         fallbackOnBody: true,
         forceFallback: true,
         onEnd: (evt) => {
-            const movedItem = this.images.splice(evt.oldIndex, 1)[0];
-            this.images.splice(evt.newIndex, 0, movedItem);
-            this.$emit('imagesUpdated', this.images);
-        } 
-        });
-    }
-  }
+          const movedItem = this.images.splice(evt.oldIndex, 1)[0];
+          this.images.splice(evt.newIndex, 0, movedItem);
+          this.$emit("imagesUpdated", this.images);
+        },
+      });
+    },
+  },
 };
 </script>
 
