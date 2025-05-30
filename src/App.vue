@@ -9,9 +9,9 @@
         class="image-container"
         v-for="(image, index) in images"
         :key="index"
+        @click="chooseType(index)"
       >
-        <img :src="getImage(image.src)" :alt="image.alt" />
-        <button @click="chooseType(index)" class="hidden-button">Choose</button>
+        <img :src="getImage(image.src)" :alt="image.alt" /> 
       </div>
     </div>
   </div>
@@ -95,12 +95,13 @@ body {
 .image-container img {
   width: 100%;
   height: auto;
-  transition: opacity 0.5s, transform 0.5s;
+  transition: opacity 0.3s, transform 0.3s;
+  cursor: pointer;
 }
 
 .image-container:hover img {
-  opacity: 0.5;
-  transform: scale(1.05);
+  opacity: 0.9;
+  transform: translateY(-6%);
 }
 
 .hidden-button {

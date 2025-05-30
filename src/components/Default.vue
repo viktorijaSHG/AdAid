@@ -17,7 +17,7 @@
             <div class="codeCopy px-4 py-3">
               <h3>CSS code</h3>
               <pre v-text="ContentCss" class="codeBlock" v-if="type !== 'scrollable'"></pre>
-              <v-btn id="copy-css-btn" class="copy-btn" variant="tonal" @click="copyCssCode">
+              <v-btn id="copy-css-btn" class="copy-btn" variant="tonal" @click="copyCssCode" v-if="type !== 'scrollable'">
                 {{ BtnCss }}
               </v-btn> 
             </div>           
@@ -26,7 +26,7 @@
             <div class="codeCopy px-4 py-3">
               <h3>HTML code</h3>
               <pre v-text="ContentHtml" class="codeBlock" v-if="type !== 'scrollable'"></pre>
-              <v-btn id="copy-html-btn" class="copy-btn" variant="tonal" @click="copyHtmlCode">
+              <v-btn id="copy-html-btn" class="copy-btn" variant="tonal" @click="copyHtmlCode" v-if="type !== 'scrollable'">
                 {{ BtnHtml }}
               </v-btn> 
             </div>  
@@ -228,6 +228,61 @@
             </v-col> 
             <!-- Left Position -->
 
+            
+            <!-- Animation Direction -->
+            <v-col cols="6" class="pl-0 pt-2 pb-1" v-if="type == 'scrollable'">
+              <h4 class="py-0">Animation</h4>
+              <v-select 
+                v-model="AnimationSlide"
+                :items="animation" 
+                class="pt-3 pb-0"
+                hide-details
+                variant="outlined"
+              ></v-select> 
+            </v-col>
+            <!-- Animation Direction -->
+
+            <!-- Easing -->
+            <v-col cols="6" class="pr-0 pt-2 pb-1" v-if="type == 'scrollable'">
+              <h4 class="py-0">Easing</h4>
+              <v-select 
+                v-model="Easing"
+                :items="easing" 
+                class="pt-3 pb-0"
+                hide-details
+                variant="outlined"
+              ></v-select> 
+            </v-col>
+            <!-- Easing -->
+ 
+            <!-- Slide Duration -->
+            <v-col cols="8" class="align-self-center p-0" v-if="type == 'scrollable' && AnimationSlide !== 'None'">
+              <h4>Duration</h4>
+            </v-col> 
+            <v-col cols="4" class="p-0" v-if="type == 'scrollable' && AnimationSlide !== 'None'">
+              <v-text-field 
+                v-model="slideDuration"
+                type="text"   
+                @input="validateInput" 
+                variant="outlined solo"
+                class="white center text-right"
+                hide-details
+                density="small" 
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="p-0" v-if="type == 'scrollable' && AnimationSlide !== 'None'">
+              <v-slider
+                v-model="slideDuration" 
+                :step="0.1" 
+                :min="0.1"
+                :max="10"
+                color="#00e18c"
+                class="align-center"
+                hide-details
+              ></v-slider>
+            </v-col> 
+            <!-- Left Position -->
+
             <!-- Slides per View -->
             <template v-if="this.type == 'multiple'">
               <v-col cols="8" class="align-self-center p-0">
@@ -321,6 +376,7 @@
 
 
           <v-switch
+           v-if="type != 'scrollable'"
             v-model="loopVar"
             color="#00e18c"
             label="Enable Loop"
@@ -614,24 +670,37 @@
           </div>
         </div>
           <!-- Scrollable Gallery -->
-          <div 
+          <!-- <div 
             :style="
                 index == 1
                   ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }
                   : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }"
             
                 :class="['scrollable', SlideDirection === 'Vertical' ? 'vertical' : 'horizontal']"
-          >
-            <div v-if="type === 'scrollable' && images?.length" id="scrollable">
+          > -->
+          
+            <div v-if="type === 'scrollable' && images?.length" id="scrollable" :style="
+                index == 1
+                  ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }
+                  : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }"
+            
+                :class="['scrollable', SlideDirection === 'Vertical' ? 'vertical' : 'horizontal']">
 
-              <div v-for="(image, index) in images" :key="index" :id="'Card' + (index + 1)" class="scrollcard">
+              <div v-for="(image, index) in images" :key="index" :id="'Card' + (index + 1)" class="scrollcard"  >
                 <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'"></gwd-taparea>
-                <!-- <img :id="'Card' + (index + 1) + 'HoverImage'" :src="image.url" alt="" /> -->
-                <img :id="'Card' + (index + 1) + 'BaseImage'" :src="image.url" alt="" />
+                <div class="base" :id="'Card' + (index + 1) + 'BaseImage'">
+                  <img :src="image.url"/>
+                </div>
+                <div class="hover" :id="'Card' + (index + 1) + 'HoverImage'">
+                  <img :src="image.hoverUrl" v-if="image.hoverUrl"/>
+                </div>
+                
+                
               </div>
               ....
             </div>
-          </div> 
+
+          <!-- </div>  -->
         </div> 
       <div></div>
     </v-col>
@@ -671,7 +740,11 @@ export default {
 
   data() {
     return {
-      
+       
+      animation: ['None','Slide left', 'Slide right', 'Slide up', 'Slide down'],
+      AnimationSlide: 'None',
+      Easing: 'Linear',
+      easing: ['Linear','Ease', 'Ease-In', 'Ease-Out', 'Ease-In-Out'],
       direction: ['Vertical', 'Horizontal'],
       SlideDirection: 'Vertical',
       swatches: [
@@ -687,6 +760,7 @@ export default {
       // params
       positionTop: 0,
       positionLeft: 0,
+      slideDuration: 0.3,
       slideCount: 1,
       spaceBetweenSlides: 0, 
       transitionDuration: 300,
@@ -754,7 +828,29 @@ export default {
     },
   },
 
-  methods: { 
+  methods: {  
+    getCardStyle(index) { 
+      const sizePercent = 100;
+
+      if (this.SlideDirection === 'Vertical') {
+        return {
+          position: 'absolute',
+          top: `${index * (sizePercent*.5)}%`, //  kunin yung height ng image tapos ilagay sa top as % value
+          left: '0%',
+          // height: `${sizePercent}%`, // lagay dito yung height ng image tapos convert sa %
+          width: '100%'
+        };
+      } else {
+        // Horizontal
+        return {
+          position: 'absolute',
+          top: '0%',
+          left: `${index * sizePercent}%`,
+          // width: `${sizePercent}%`,
+          height: '100%'
+        };
+      }
+    },
     onDurationInput(val) {
       // Remove "ms" and parse number
       const numericValue = parseInt(val.replace(/[^\d]/g, '')) || 0;
@@ -1418,10 +1514,10 @@ export default {
 .scrollable {
   position: absolute;
 }
-.vertical #scrollable{ 
+.vertical{ 
   overflow: hidden auto;
 }
-.horizontal #scrollable{ 
+.horizontal{ 
   display: flex;
   overflow: auto hidden;
   scroll-snap-type: x mandatory;
@@ -1451,11 +1547,34 @@ export default {
   height: 100%; 
   width: 100%;
 }
-.scrollcard {
-  position: relative; 
-  /* horizontal */ 
-  flex: 0 0 auto;
-  scroll-snap-align: start;
+.scrollcard {  
+  position: relative;
+}
+.base {  
+  line-height: 0;
+}
+.hover { 
+  position: absolute; 
+  top: 0%;
+  left: 0%;
+  line-height: 0;
+}
+.hover {
+  opacity: 0;
+  cursor: pointer;
+}
+.scrollcard:hover .hover {
+  opacity: 1;
+}
+/* .scrollcard img {
+  position: absolute; 
+  top: 0%;
+  left: 0%;
+} */
+
+.scrollcard:last-child {
+  margin: 0;
+
 }
 gwd-taparea {
   position: absolute;
@@ -1525,6 +1644,7 @@ gwd-taparea {
   aspect-ratio: 16/9;
   background-color: #ffffff;
   flex: none;
+  overflow: hidden;
 }
 
 .swiper-slide img {
@@ -1843,5 +1963,38 @@ gwd-taparea {
 }
 .sortable-fallback, .sortable-chosen {
   opacity: 0;
+}
+.animate-x {
+  transform: translateX(0);
+}
+.animate-y {
+  transform: translateY(0);
+}
+.slide-left-animation {
+  transform: translateX(100%);
+}
+.slide-right-animation {
+  transform: translateX(-100%);
+}
+.slide-top-animation {
+  transform: translateX(-100%);
+}
+.slide-bot-animation {
+  transform: translateX(100%);
+}
+.linear {
+  transition-timing-function: linear;
+}
+.ease {
+  transition-timing-function: ease;
+}
+.ease-in {
+  transition-timing-function: ease-in;
+}
+.ease-out {
+  transition-timing-function: ease-out;
+}
+.ease-in-out {
+  transition-timing-function: ease-in-out;
 }
 </style>

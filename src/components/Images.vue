@@ -50,15 +50,17 @@
             :src="hovering ? (selectedHoverImage?.url || selectedImage?.hoverUrl || selectedImage?.url) : selectedImage?.url"
             contain
             color="#f3f5f7"
-            class="rounded-lg"
+            class="rounded-lg position-relative"
             @mouseover="hovering = true"
             @mouseleave="hovering = false"
             style="min-height: 450px;max-height: 450px;cursor: pointer; border: 1px dashed #e9e9ea;"
-          ></v-img>
+          > <v-icon icon="mdi-check-circle" color="success" size="x-large" style="position: absolute; top: 1.6%; right: 1.6%;" v-if="selectedHoverImage"></v-icon>
+        </v-img>
       </v-col>
       
-      <v-col cols="12" class="d-flex text-center justify-center align-center">
-       
+    
+      <v-col cols="12" class="d-flex text-center justify-center align-center ga-4">
+        
         <div class="custom-file-input">
           <v-btn @click="$refs.fileHover.click()" variant="outlined" class="no-uppercase">Select Hover Image</v-btn>
           <input
@@ -68,29 +70,10 @@
             @change="importImages"
             style="display: none;"
           />
-        </div>
-  
-        <!-- hover image -->
-        <div
-          class="hover-preview"
-          v-for="(image, index) in images"
-          :key="image.id" 
-          v-if="image"
-        >  
-        <v-row>
-          <v-col cols="11"> 
-            <span class="hover-label" v-if="image.hoverUrl">{{ image.hoverName }}</span>  
-          </v-col>
-          <v-col cols="1"> 
-            <div class="actions">
-              <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)" />
-            </div>
-          </v-col>
-        </v-row>
-
-        </div>
- 
+        </div> 
+         <v-btn @click="removeHoverImage" append-icon="mdi-close" color="#000000" v-if="selectedHoverImage">Clear image</v-btn> 
       </v-col>
+       
     </v-row>
     </v-card>
      
@@ -122,6 +105,20 @@ export default {
     this.initSortable();
   },
   methods: {
+    removeHoverImage() {
+      if (this.selectedImage) {
+        this.selectedImage.hoverUrl = null;
+        this.selectedImage.hoverName = null;
+      }
+      this.selectedHoverImage = null;
+    },
+    removeHoverImage() {
+      if (this.selectedImage) {
+        this.selectedImage.hoverUrl = null;
+        this.selectedImage.hoverName = null;
+      }
+      this.selectedHoverImage = null;
+    },
     openDialog(image) {
       this.selectedImage = image;
       // Load hover image from the image object if exists
@@ -147,9 +144,8 @@ export default {
           if (isHover) {
             this.selectedHoverImage = imageData;
             if (this.selectedImage) {
-              // Save hover image URL on the selected image object
               this.selectedImage.hoverUrl = imageData.url;
-              this.selectedImage.hoverName = imageData.name; // <--- Add this line
+              this.selectedImage.hoverName = imageData.name;
             }
           } else {
             this.images.push(imageData);
@@ -158,12 +154,16 @@ export default {
         reader.readAsDataURL(file);
       });
 
+      // Reset the input to upload same file again
+      event.target.value = null;
+
       if (!isHover) {
         setTimeout(() => {
           this.$emit("imagesUpdated", this.images);
         }, 500);
       }
     },
+ 
     deleteImage(index) {
       this.images.splice(index, 1);
       this.$emit("imagesUpdated", this.images);
@@ -187,8 +187,7 @@ export default {
 </script>
 
 
-<style>
-
+<style> 
 .actions {
   display: flex;
   gap: .75rem;
@@ -245,7 +244,7 @@ export default {
  .card .drag-area{
   height: 150px;
   border-radius: 5px;
-  border: 2px dashed  #2b4d5e;
+  border: 4px dashed  #2b4d5e;
   display: flex;
   justify-content: center;
   align-items: center;
