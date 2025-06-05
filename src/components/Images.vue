@@ -71,7 +71,7 @@
             style="display: none;"
           />
         </div> 
-         <v-btn @click="removeHoverImage" append-icon="mdi-close" color="#000000" v-if="selectedHoverImage">Clear image</v-btn> 
+         <v-btn @click="removeHoverImage" append-icon="mdi-close" color="#000000" v-if="selectedHoverImage">Clear hover image</v-btn> 
       </v-col>
        
     </v-row>

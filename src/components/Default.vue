@@ -13,20 +13,38 @@
               </v-btn> 
             </div>
           </v-col>
-          <v-col cols="6">
+          <v-col cols="6" v-if="type !== 'scrollable'">
             <div class="codeCopy px-4 py-3">
               <h3>CSS code</h3>
-              <pre v-text="ContentCss" class="codeBlock" v-if="type !== 'scrollable'"></pre>
-              <v-btn id="copy-css-btn" class="copy-btn" variant="tonal" @click="copyCssCode" v-if="type !== 'scrollable'">
+              <pre v-text="ContentCss" class="codeBlock"></pre>
+              <v-btn id="copy-css-btn" class="copy-btn" variant="tonal" @click="copyCssCode">
                 {{ BtnCss }}
               </v-btn> 
             </div>           
           </v-col>
-          <v-col cols="6">
+          <v-col cols="6" v-if="type !== 'scrollable'">
             <div class="codeCopy px-4 py-3">
               <h3>HTML code</h3>
-              <pre v-text="ContentHtml" class="codeBlock" v-if="type !== 'scrollable'"></pre>
-              <v-btn id="copy-html-btn" class="copy-btn" variant="tonal" @click="copyHtmlCode" v-if="type !== 'scrollable'">
+              <pre v-text="ContentHtml" class="codeBlock"></pre>
+              <v-btn id="copy-html-btn" class="copy-btn" variant="tonal" @click="copyHtmlCode">
+                {{ BtnHtml }}
+              </v-btn> 
+            </div>  
+          </v-col>
+          <v-col cols="6" v-if="type == 'scrollable'">
+            <div class="codeCopy px-4 py-3">
+              <h3>CSS code</h3>
+              <pre v-text="ContentCssScroll" class="codeBlock"></pre>
+              <v-btn id="copy-css-btn" class="copy-btn" variant="tonal" @click="copyCssCodeScroll">
+                {{ BtnCss }}
+              </v-btn> 
+            </div>           
+          </v-col>
+          <v-col cols="6" v-if="type == 'scrollable'">
+            <div class="codeCopy px-4 py-3">
+              <h3>HTML code</h3>
+              <pre v-text="ContentHtmlScroll" class="codeBlock"></pre>
+              <v-btn id="copy-html-btn" class="copy-btn" variant="tonal" @click="copyHtmlCodeScroll">
                 {{ BtnHtml }}
               </v-btn> 
             </div>  
@@ -228,7 +246,55 @@
             </v-col> 
             <!-- Left Position -->
 
-            
+          </v-row>
+
+          <h3 class="pb-2 pt-8" v-if="type == 'scrollable'">Scrollbar Settings</h3>
+          <v-row v-if="type == 'scrollable'">
+            <!-- Scrollbar width -->
+            <v-col cols="8" class="align-self-center p-0">
+              <h4>Scrollbar Width</h4>
+            </v-col> 
+            <v-col cols="4" class="p-0">
+              <v-text-field 
+                v-model="scrollwidth"
+                type="text"   
+                @input="validateInput" 
+                variant="outlined solo"
+                class="white center text-right"
+                hide-details
+                density="small" 
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="p-0">
+              <v-slider
+                v-model="scrollwidth"  
+                :step="1" 
+                :min="1"
+                :max="10"
+                color="#00e18c"
+                class="align-center"
+                hide-details
+              ></v-slider>
+            </v-col> 
+            <!-- Scrollbar width --> 
+             
+            <!-- Scrollbar color --> 
+            <v-col cols="12" class="p-0">
+              <h4 class="pb-2 pt-2">Scrollbar Color</h4> 
+              <v-color-picker v-model="scrollColor" swatches-max-height="100px" mode="hexa" class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
+            </v-col>
+            <!-- Scrollbar color --> 
+
+            <!-- Scrollbar color --> 
+            <v-col cols="12" class="p-0">
+              <h4 class="pb-2 pt-0">Scrollbar Hover Color</h4>
+              <v-color-picker  v-model="scrollhoverColor" swatches-max-height="100px" mode="hexa" class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
+            </v-col>
+            <!-- Scrollbar color --> 
+
+          </v-row>
+          <h3 class="pb-2 pt-8" v-if="type == 'scrollable'">Animation Settings</h3>
+          <v-row v-if="type == 'scrollable'">
             <!-- Animation Direction -->
             <v-col cols="6" class="pl-0 pt-2 pb-1" v-if="type == 'scrollable'">
               <h4 class="py-0">Animation</h4>
@@ -681,8 +747,8 @@
           
             <div v-if="type === 'scrollable' && images?.length" id="scrollable" :style="
                 index == 1
-                  ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }
-                  : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }"
+                  ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor }
+                  : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor }"
             
                 :class="['scrollable', SlideDirection === 'Vertical' ? 'vertical' : 'horizontal']">
 
@@ -696,8 +762,7 @@
                 </div>
                 
                 
-              </div>
-              ....
+              </div> 
             </div>
 
           <!-- </div>  -->
@@ -748,11 +813,11 @@ export default {
       direction: ['Vertical', 'Horizontal'],
       SlideDirection: 'Vertical',
       swatches: [
-        ['#FF0000', '#AA0000', '#550000'],
-        ['#FFFF00', '#AAAA00', '#555500'],
-        ['#00FF00', '#00AA00', '#005500'],
-        ['#00FFFF', '#00AAAA', '#005555'],
-        ['#0000FF', '#0000AA', '#000055'],
+        ['#FF0000', '#550000'],
+        ['#FFFF00', '#555500'],
+        ['#00FF00', '#005500'],
+        ['#00FFFF', '#005555'],
+        ['#0000FF', '#000055'],
       ],
       
       text: '1',
@@ -760,6 +825,7 @@ export default {
       // params
       positionTop: 0,
       positionLeft: 0,
+      scrollwidth: 3, 
       slideDuration: 0.3,
       slideCount: 1,
       spaceBetweenSlides: 0, 
@@ -781,6 +847,8 @@ export default {
       minOffset: -15,   // Set to the desired negative limit
       maxOffset: 30,    // Set to the desired positive limit
       btnColor: "#fff",
+      scrollColor: "#000",
+      scrollhoverColor: "#666",
       btnType: "default",
       btnWidth: 25,
       btnImg: null,
@@ -789,7 +857,9 @@ export default {
       btnImgName: "",
       ContentJavaScript: "",
       ContentHtml: "",
+      ContentHtmlScroll: "",
       ContentCss: "",
+      ContentCssScroll: "",
       ContentHead: "",
       BtnHtml: "Copy HTML",
       BtnJavaScript: "Copy JavaScript",
@@ -894,6 +964,21 @@ export default {
           console.error("Could not copy text: ", err);
         });
     },
+    copyCssCodeScroll() {
+      navigator.clipboard
+        .writeText(this.trim(this.ContentCssScroll))
+        .then(() => {
+          var button = document.getElementById("copy-css-btn");
+          button.textContent = "Copied to clipboard ✔";
+          // Use setTimeout to revert the button text after 3 seconds
+          setTimeout(function () {
+            button.textContent = "Copy Css";
+          }, 2000); // 2000 milliseconds = 3 seconds
+        })
+        .catch((err) => {
+          console.error("Could not copy text: ", err);
+        });
+    },
 
     copyJavaScriptCode() {
       navigator.clipboard
@@ -914,6 +999,22 @@ export default {
     copyHtmlCode() {
       navigator.clipboard
         .writeText(this.trim(this.ContentHtml))
+        .then(() => {
+          var button = document.getElementById("copy-html-btn");
+          button.textContent = "Copied to clipboard ✔";
+
+          // Use setTimeout to revert the button text after 3 seconds
+          setTimeout(function () {
+            button.textContent = "Copy HTML";
+          }, 2000); // 2000 milliseconds = 3 seconds
+        })
+        .catch((err) => {
+          console.error("Could not copy text: ", err);
+        });
+    },
+    copyHtmlCodeScroll() {
+      navigator.clipboard
+        .writeText(this.trim(this.ContentHtmlScroll))
         .then(() => {
           var button = document.getElementById("copy-html-btn");
           button.textContent = "Copied to clipboard ✔";
@@ -1422,10 +1523,10 @@ export default {
         `: ""}
 </div>
     `;
-      this.ContentHead = `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>`;
-      this.ContentHtml = `${htmlCode}`;
-      this.ContentCss = `${styles}`;
-      this.ContentJavaScript = `${swiperScript}`;
+      this.ContentHead = `<pre><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/></pre>`;
+      this.ContentHtml = `<pre>${htmlCode}</pre>`;
+      this.ContentCss = `<pre>${styles}</pre>`;
+      this.ContentJavaScript = `<pre>${swiperScript}</pre>`;
       this.showDialog = true;
     },
   },
@@ -1519,15 +1620,26 @@ export default {
 }
 .horizontal{ 
   display: flex;
-  overflow: auto hidden;
-  scroll-snap-type: x mandatory;
-  /* gap: 16px; */ 
-  white-space: nowrap;
-  scrollbar-width: thin; /* Firefox */
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;  
 } 
+.horizontal .scrollcard { 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  scroll-snap-align: start;
+  flex-shrink: 0;
+   
+}
+
+.horizontal .base { 
+  height: 100%;
+}
 #scrollable::-webkit-scrollbar {
-  width: 3px;   /* vertical scrollbar thickness */
-  height: 3px;  /* horizontal scrollbar thickness */
+  width: var(--scroll-thumb-width);   /* vertical scrollbar thickness */
+  height: var(--scroll-thumb-width);  /* horizontal scrollbar thickness */
 }
 
 #scrollable::-webkit-scrollbar-track {
@@ -1535,11 +1647,11 @@ export default {
 }
 
 #scrollable::-webkit-scrollbar-thumb {
-  background: rgba(100, 100, 100, 0.7);
+  background: var(--scroll-thumb-color);
 }
 
 #scrollable::-webkit-scrollbar-thumb:hover {
-  background: rgb(85, 85, 85);
+  background: var(--scroll-thumb-color-hover);
 }
 
 
