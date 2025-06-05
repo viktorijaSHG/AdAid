@@ -746,7 +746,7 @@
                   ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }
                   : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }"
             
-                :class="['scrollable', SlideDirection === 'Vertical' ? 'vertical' : 'horizontal']"
+                :class="['scrollable', SlideDirection === 'vertical' ? 'vertical' : 'horizontal']"
           > -->
           
             <div v-if="type === 'scrollable' && images?.length" id="scrollable" :style="
@@ -754,10 +754,10 @@
                   ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor }
                   : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor }"
             
-                :class="['scrollable', SlideDirection === 'Vertical' ? 'vertical' : 'horizontal']">
+                :class="['scrollable', SlideDirection === 'vertical' ? 'vertical' : 'horizontal']">
 
               <div v-for="(image, index) in images" :key="index" :id="'Card' + (index + 1)" class="scrollcard"  >
-                <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'"></gwd-taparea>
+                <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'" class="taparea"></gwd-taparea>
                 <div class="base" :id="'Card' + (index + 1) + 'BaseImage'">
                   <img :src="image.url"/>
                 </div>
@@ -798,6 +798,7 @@ import "swiper/css/autoplay";
 import "@mdi/font/css/materialdesignicons.css";
 
 export default {
+  
   props: {
     type: {
       type: String,
@@ -814,8 +815,8 @@ export default {
       AnimationSlide: 'None',
       Easing: 'Linear',
       easing: ['Linear','Ease', 'Ease-In', 'Ease-Out', 'Ease-In-Out'],
-      direction: ['Vertical', 'Horizontal'],
-      SlideDirection: 'Vertical',
+      direction: ['vertical', 'horizontal'],
+      SlideDirection: 'vertical',
       swatches: [
         ['#FF0000', '#550000'],
         ['#FFFF00', '#555500'],
@@ -825,7 +826,9 @@ export default {
       ],
       
       text: '1',
-      images: [],
+      images: [],    
+      selectedImage: null, 
+      selectedHoverImage: null,
       // params
       positionTop: 0,
       positionLeft: 0,
@@ -906,7 +909,7 @@ export default {
     getCardStyle(index) { 
       const sizePercent = 100;
 
-      if (this.SlideDirection === 'Vertical') {
+      if (this.SlideDirection === 'vertical') {
         return {
           position: 'absolute',
           top: `${index * (sizePercent*.5)}%`, //  kunin yung height ng image tapos ilagay sa top as % value
@@ -915,7 +918,7 @@ export default {
           width: '100%'
         };
       } else {
-        // Horizontal
+        // horizontal
         return {
           position: 'absolute',
           top: '0%',
@@ -1308,8 +1311,91 @@ export default {
       //const offset = "-" + this.offset + "px";
       // const btnWidth = (this.btnWidth / windowWidth) * 100 + "px";
       const btnWidth = this.btnWidth + "vw";
+
+      // scrollable variables
+      const scrollwidth = this.sliderWidth + "%";
+      const scrollheight = this.sliderHeight + "%";
+      const scrollbarwidth = this.scrollwidth + "%"; 
+      const scrollcolor = this.scrollColor;
+      const scrollhovercolor = this.scrollhoverColor;
+
       const stylesScroll = `
-      
+.scrollable {
+  position: absolute; 
+  top: ${top};
+  left:  ${left};
+  width: ${scrollwidth};
+  height: ${scrollheight};
+}
+.scrollable #scrollable, #scrollable img {
+  height: 100%; 
+  width: 100%;
+  border-style: none;
+}
+.vertical{ 
+  overflow: hidden auto;
+}
+.horizontal{ 
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;  
+}
+.horizontal .scrollcard { 
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  scroll-snap-align: start;
+  flex-shrink: 0; 
+}
+.horizontal .base { 
+  height: 100%;
+}
+.base {  
+  line-height: 0;
+}
+.scrollcard {  
+  position: relative;
+}
+.scrollcard:last-child {
+  margin: 0;
+}
+.scrollcard:hover .hover {
+  opacity: 1;
+} 
+.hover { 
+  position: absolute; 
+  top: 0%;
+  left: 0%;
+  line-height: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.hover {
+}
+#scrollable::-webkit-scrollbar {
+  width: ${scrollbarwidth};
+  height: ${scrollbarwidth};
+} 
+#scrollable::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0);
+} 
+#scrollable::-webkit-scrollbar-thumb {
+  background: ${scrollcolor};
+} 
+#scrollable::-webkit-scrollbar-thumb:hover {
+  background: ${scrollhovercolor};
+}
+.taparea {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  right: 0%;
+  bottom: 0%;
+  width: 100%;
+  height: 100%;
+}
+ 
       `;
 
 
@@ -1404,6 +1490,25 @@ export default {
       </div>
       `;
       });
+
+let scrollSlideHtml = "";
+this.images.forEach((image, index) => {
+  scrollSlideHtml += `
+    <div id="Card${index + 1}" class="scrollcard">
+      <gwd-taparea id="Card${index + 1}TapArea" class="taparea"></gwd-taparea>
+      <div class="base" id="Card${index + 1}BaseImage">
+        <img src="assets/${image.name}">
+      </div>
+      ${image.hoverName ? `
+      <div class="hover" id="Card${index + 1}HoverImage">
+        <img src="assets/${image.hoverName}">
+      </div>` : ""}
+    </div>
+  `;
+});
+
+
+       
       // Construct the Swiper component HTML
       const swiperScript = `
     <script* src="https://cdn.jsdelivr.net/npm/swiper@10.3.1/swiper-bundle.min.js"></script*>
@@ -1516,22 +1621,8 @@ export default {
 
       
  const htmlCodeScroll = `
-<div class="wrapper" id="gallery">
-  <div class="swiper mySwiper max-height">
-    <div class="swiper-wrapper max-height" id="cards">
-      ${swiperSlidesHtml}
-    </div>
-  </div>
-  ${
-      this.buttonVar
-        ? ` 
-          ${ this.btnType === "image" ? `<div class="swiper-button-next swiper-custom-next" id="arrow-right"></div>` 
-            : `<div class="swiper-button-next" id="arrow-right"></div>`
-            }
-            ${ this.btnType === "image" ? `<div class="swiper-button-prev swiper-custom-prev" id="arrow-left"></div>` 
-            : `<div class="swiper-button-prev" id="arrow-left"></div>`
-            }
-        `: ""}
+<div id="scrollable" class="scrollable ${this.SlideDirection}">
+  ${scrollSlideHtml} 
 </div>
     `;
 
@@ -1667,9 +1758,6 @@ export default {
    
 }
 
-.horizontal .base { 
-  height: 100%;
-}
 #scrollable::-webkit-scrollbar {
   width: var(--scroll-thumb-width);   /* vertical scrollbar thickness */
   height: var(--scroll-thumb-width);  /* horizontal scrollbar thickness */
@@ -1692,8 +1780,8 @@ export default {
   height: 100%; 
   width: 100%;
 }
-.scrollcard {  
-  position: relative;
+.horizontal .base { 
+  height: 100%;
 }
 .base {  
   line-height: 0;
@@ -1707,6 +1795,9 @@ export default {
 .hover {
   opacity: 0;
   cursor: pointer;
+}
+.scrollcard {  
+  position: relative;
 }
 .scrollcard:hover .hover {
   opacity: 1;
