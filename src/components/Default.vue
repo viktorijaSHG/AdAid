@@ -538,6 +538,8 @@
                     v-model="offset"
                     type="text"   
                     @input="validateInput" 
+                    :max="maxOffset"
+                    :min="minOffset"
                     variant="outlined solo"
                     class="white center text-right"
                     hide-details
@@ -548,6 +550,8 @@
                   <v-slider
                     v-model="offset" 
                     :step="1" 
+                    :max="maxOffset"
+                    :min="minOffset"
                     color="#00e18c"
                     class="align-center"
                     hide-details
