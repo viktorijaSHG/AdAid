@@ -1304,6 +1304,11 @@ export default {
       //const offset = "-" + this.offset + "px";
       // const btnWidth = (this.btnWidth / windowWidth) * 100 + "px";
       const btnWidth = this.btnWidth + "vw";
+      const stylesScroll = `
+      
+      `;
+
+
       const styles = `
     html, body {
       text-rendering: auto !important;
@@ -1525,7 +1530,9 @@ export default {
     `;
       this.ContentHead = `<pre><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/></pre>`;
       this.ContentHtml = `<pre>${htmlCode}</pre>`;
+      this.ContentHtmlScroll = `<pre>${htmlCodeScroll}</pre>`;
       this.ContentCss = `<pre>${styles}</pre>`;
+      this.ContentCssScroll = `<pre>${stylesScroll}</pre>`;
       this.ContentJavaScript = `<pre>${swiperScript}</pre>`;
       this.showDialog = true;
     },
