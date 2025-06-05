@@ -1513,6 +1513,28 @@ export default {
   </script*>
     `;
       // Define the code you want to export
+
+      
+ const htmlCodeScroll = `
+<div class="wrapper" id="gallery">
+  <div class="swiper mySwiper max-height">
+    <div class="swiper-wrapper max-height" id="cards">
+      ${swiperSlidesHtml}
+    </div>
+  </div>
+  ${
+      this.buttonVar
+        ? ` 
+          ${ this.btnType === "image" ? `<div class="swiper-button-next swiper-custom-next" id="arrow-right"></div>` 
+            : `<div class="swiper-button-next" id="arrow-right"></div>`
+            }
+            ${ this.btnType === "image" ? `<div class="swiper-button-prev swiper-custom-prev" id="arrow-left"></div>` 
+            : `<div class="swiper-button-prev" id="arrow-left"></div>`
+            }
+        `: ""}
+</div>
+    `;
+
       const htmlCode = `
 <div class="wrapper" id="gallery">
   <div class="swiper mySwiper max-height">
