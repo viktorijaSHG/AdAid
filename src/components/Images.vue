@@ -220,8 +220,8 @@ export default {
   user-select: none;
 }
 .image .photo {
-  pointer-events: none;
-  -webkit-user-drag: none;
+  /* pointer-events: none;
+  -webkit-user-drag: none; */
 }
 .image {
   cursor: move;

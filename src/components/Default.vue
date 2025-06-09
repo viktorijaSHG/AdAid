@@ -1315,7 +1315,7 @@ export default {
       // scrollable variables
       const scrollwidth = this.sliderWidth + "%";
       const scrollheight = this.sliderHeight + "%";
-      const scrollbarwidth = this.scrollwidth + "%"; 
+      const scrollbarwidth = this.scrollwidth + "px"; 
       const scrollcolor = this.scrollColor;
       const scrollhovercolor = this.scrollhoverColor;
 
@@ -1371,8 +1371,6 @@ export default {
   opacity: 0;
   cursor: pointer;
 }
-.hover {
-}
 #scrollable::-webkit-scrollbar {
   width: ${scrollbarwidth};
   height: ${scrollbarwidth};
@@ -1387,13 +1385,18 @@ export default {
   background: ${scrollhovercolor};
 }
 .taparea {
-  position: absolute;
-  top: 0%;
-  left: 0%;
-  right: 0%;
-  bottom: 0%;
-  width: 100%;
-  height: 100%;
+    position: absolute;
+    display: block;
+    height: 100%;
+    width: 100%;
+    left: 0%;
+    top: 0%;
+    z-index: 10;
+}
+#scrollable,
+.taparea,
+.scrollcard {
+  pointer-events: auto;
 }
  
       `;
