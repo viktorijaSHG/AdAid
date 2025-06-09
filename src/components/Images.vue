@@ -18,7 +18,12 @@
       </v-col>
     </v-row>
 
+
+
+
     <div class="img-container py-1 px-3" ref="imgContainer" ghost-class="ghost" handle=".drag">
+
+      
       <div
         class="image"
         v-for="(image, index) in images"
@@ -26,9 +31,9 @@
         :id="index + 1"
       >
         <div class="preview-container">
-          <img src="../assets/menu.svg" class="drag" />
+          <v-icon class="drag" size="small" style="cursor: grab;">mdi-drag-vertical</v-icon>
           <v-avatar rounded="sm">
-            <img :src="image.url" draggable="false" class="photo" />
+            <img :src="image.url" class="photo" />
           </v-avatar>
           <div id="name" class="filename">{{ image.name }}</div>
         </div>
@@ -37,6 +42,7 @@
           <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)" />
         </div>
       </div>
+ 
     </div>
   </div>
 
@@ -305,8 +311,8 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  max-height: 360px;
-  overflow-y: auto; /* Enable scrolling if content overflows */ 
+  /* max-height: 360px; */
+  /* overflow-y: auto;  */
   /* padding: 1rem; */
   border-radius: 6px;
   background-color: #0c2b3b;
@@ -450,5 +456,17 @@ input[type="file"] {
 }
 .no-uppercase {
   text-transform: none;
+}
+.sortable-ghost {
+  opacity: 0.4;
+  transform: scale(0.98);
+}
+
+.sortable-chosen {
+  border: 2px dashed #2196f3;
+}
+
+.drag {
+  cursor: grab;
 }
 </style>
