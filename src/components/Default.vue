@@ -82,6 +82,24 @@
           <h3 class="pb-2 pt-8">Gallery Settings</h3>
           <v-row>
             
+            <!-- Scroller Background image -->
+            <v-col cols="12" class="p-0"  v-if="type == 'scrollable'">
+              <h4 class="py-3">Scroller Background Image</h4>
+              <v-file-input
+                @change="importScrollerBgImage"
+                v-model="bgScrollerImageInput"
+                prepend-icon="" 
+                :clearable="false"
+                append-icon="mdi-close" 
+                @click:append="clearScrollerBgImage"  
+                variant="outlined"
+                class="pb-1"
+                hide-details
+              >
+              </v-file-input>
+            </v-col>
+            <!-- Scroller Background image -->
+
             <!-- Background image -->
             <v-col cols="12" class="p-0">
               <h4 class="py-3">Background Image</h4>
@@ -93,7 +111,7 @@
                 append-icon="mdi-close" 
                 @click:append="clearBgImage"  
                 variant="outlined"
-                class="pb-3"
+                class="pb-4"
                 hide-details
               >
               </v-file-input>
@@ -194,6 +212,38 @@
             </template>
             <!-- Slider Height -->
 
+            
+            <!-- Padding  -->
+             <template v-if="type === 'scrollable'">
+              
+              <v-col cols="8" class="align-self-center p-0">
+                <h4>Padding (rem)</h4>
+              </v-col> 
+              <v-col cols="4" class="p-0">
+                <v-text-field 
+                  v-model="padding"
+                  type="text"   
+                  @input="validateInput" 
+                  variant="outlined solo"
+                  class="white center text-right"
+                  hide-details
+                  density="small" 
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="p-0">
+                <v-slider
+                  v-model="padding" 
+                  :step="0.1" 
+                  :min="0.1"
+                  :max="1.5"
+                  color="#00e18c"
+                  class="align-center"
+                  hide-details
+                ></v-slider>
+              </v-col> 
+            </template>
+            <!-- Slider Height -->
+
             <!-- Top Position -->
             <v-col cols="8" class="align-self-center p-0">
               <h4>Top Position</h4>
@@ -239,109 +289,6 @@
               <v-slider
                 v-model="positionLeft" 
                 :step="1" 
-                color="#00e18c"
-                class="align-center"
-                hide-details
-              ></v-slider>
-            </v-col> 
-            <!-- Left Position -->
-
-          </v-row>
-
-          <h3 class="pb-2 pt-8" v-if="type == 'scrollable'">Scrollbar Settings</h3>
-          <v-row v-if="type == 'scrollable'">
-            <!-- Scrollbar width -->
-            <v-col cols="8" class="align-self-center p-0">
-              <h4>Scrollbar Width</h4>
-            </v-col> 
-            <v-col cols="4" class="p-0">
-              <v-text-field 
-                v-model="scrollwidth"
-                type="text"   
-                @input="validateInput" 
-                variant="outlined solo"
-                class="white center text-right"
-                hide-details
-                density="small" 
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" class="p-0">
-              <v-slider
-                v-model="scrollwidth"  
-                :step="1" 
-                :min="1"
-                :max="10"
-                color="#00e18c"
-                class="align-center"
-                hide-details
-              ></v-slider>
-            </v-col> 
-            <!-- Scrollbar width --> 
-             
-            <!-- Scrollbar color --> 
-            <v-col cols="12" class="p-0">
-              <h4 class="pb-2 pt-2">Scrollbar Color</h4> 
-              <v-color-picker v-model="scrollColor" swatches-max-height="100px" mode="hexa" class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
-            </v-col>
-            <!-- Scrollbar color --> 
-
-            <!-- Scrollbar color --> 
-            <v-col cols="12" class="p-0">
-              <h4 class="pb-2 pt-0">Scrollbar Hover Color</h4>
-              <v-color-picker  v-model="scrollhoverColor" swatches-max-height="100px" mode="hexa" class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
-            </v-col>
-            <!-- Scrollbar color --> 
-
-          </v-row>
-          <h3 class="pb-2 pt-8" v-if="type == 'scrollable'">Animation Settings</h3>
-          <v-row v-if="type == 'scrollable'">
-            <!-- Animation Direction -->
-            <v-col cols="6" class="pl-0 pt-2 pb-1" v-if="type == 'scrollable'">
-              <h4 class="py-0">Animation</h4>
-              <v-select 
-                v-model="AnimationSlide"
-                :items="animation" 
-                class="pt-3 pb-0"
-                hide-details
-                variant="outlined"
-              ></v-select> 
-            </v-col>
-            <!-- Animation Direction -->
-
-            <!-- Easing -->
-            <v-col cols="6" class="pr-0 pt-2 pb-1" v-if="type == 'scrollable'">
-              <h4 class="py-0">Easing</h4>
-              <v-select 
-                v-model="Easing"
-                :items="easing" 
-                class="pt-3 pb-0"
-                hide-details
-                variant="outlined"
-              ></v-select> 
-            </v-col>
-            <!-- Easing -->
- 
-            <!-- Slide Duration -->
-            <v-col cols="8" class="align-self-center p-0" v-if="type == 'scrollable' && AnimationSlide !== 'None'">
-              <h4>Duration</h4>
-            </v-col> 
-            <v-col cols="4" class="p-0" v-if="type == 'scrollable' && AnimationSlide !== 'None'">
-              <v-text-field 
-                v-model="slideDuration"
-                type="text"   
-                @input="validateInput" 
-                variant="outlined solo"
-                class="white center text-right"
-                hide-details
-                density="small" 
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" class="p-0" v-if="type == 'scrollable' && AnimationSlide !== 'None'">
-              <v-slider
-                v-model="slideDuration" 
-                :step="0.1" 
-                :min="0.1"
-                :max="10"
                 color="#00e18c"
                 class="align-center"
                 hide-details
@@ -406,6 +353,113 @@
               </v-col> 
             </template>
             <!-- Space between slides -->
+          </v-row>
+
+          <h3 class="pb-2 pt-8" v-if="type == 'scrollable'">Scrollbar Settings</h3>
+          <v-row v-if="type == 'scrollable'">
+            <!-- Scrollbar width -->
+            <v-col cols="8" class="align-self-center p-0">
+              <h4>Scrollbar Width</h4>
+            </v-col> 
+            <v-col cols="4" class="p-0">
+              <v-text-field 
+                v-model="scrollwidth"
+                type="text"   
+                @input="validateInput" 
+                variant="outlined solo"
+                class="white center text-right"
+                hide-details
+                density="small" 
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="p-0">
+              <v-slider
+                v-model="scrollwidth"  
+                :step="1" 
+                :min="1"
+                :max="10"
+                color="#00e18c"
+                class="align-center"
+                hide-details
+              ></v-slider>
+            </v-col> 
+            <!-- Scrollbar width --> 
+             
+            <!-- Scrollbar color --> 
+            <v-col cols="12" class="p-0">
+              <h4 class="pb-2 pt-2">Scrollbar Color</h4> 
+              <v-color-picker v-model="scrollColor" swatches-max-height="100px" mode="hexa" class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
+            </v-col>
+            <!-- Scrollbar color --> 
+
+            <!-- Scrollbar color --> 
+            <v-col cols="12" class="p-0">
+              <h4 class="pb-2 pt-0">Scrollbar Hover Color</h4>
+              <v-color-picker  v-model="scrollhoverColor" swatches-max-height="100px" mode="hexa" class="color-picker" style="max-width:none; width: 100%;"></v-color-picker>
+            </v-col>
+            <!-- Scrollbar color --> 
+
+          </v-row>
+          <h3 class="pb-2 pt-8" v-if="type == 'scrollable'">Animation Settings</h3>
+          <v-row v-if="type == 'scrollable'">
+            <!-- Animation Direction -->
+            <v-col cols="6" class="pl-0 pt-2 pb-1" v-if="type == 'scrollable'">
+              <h4 class="py-0">Animation Loop</h4> 
+              
+                <v-switch
+                v-if="type == 'scrollable'"
+                  v-model="loopScrollVar"
+                  color="#00e18c"
+                  label="Enable Loop"
+                  density="small"
+                  class="pb-2 pt-5"
+                  inset
+                  hide-details
+                ></v-switch>
+            </v-col>
+            <!-- Animation Direction -->
+
+            <!-- Easing -->
+            <v-col cols="6" class="pr-0 pt-2 pb-1" v-if="loopScrollVar == true">
+              <h4 class="py-0">Easing</h4>
+              <v-select 
+                v-model="selectedEasing"
+                :items="easing" 
+                class="pt-3 pb-0"
+                hide-details
+                variant="outlined"
+              ></v-select> 
+            </v-col>
+            <!-- Easing -->
+ 
+            <!-- Slide Duration -->
+            <v-col cols="8" class="align-self-center p-0" v-if="type == 'scrollable' && loopScrollVar == true">
+              <h4>Duration Speed</h4>
+            </v-col> 
+            <v-col cols="4" class="p-0" v-if="type == 'scrollable' && loopScrollVar == true">
+              <v-text-field 
+                v-model="slideDuration"
+                type="text"   
+                @input="validateInput" 
+                variant="outlined solo"
+                class="white center text-right"
+                hide-details
+                density="small" 
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="p-0" v-if="type == 'scrollable' && loopScrollVar == true">
+              <v-slider
+                v-model="slideDuration" 
+                :step="0.1" 
+                :min="0.1"
+                :max="10"
+                color="#00e18c"
+                class="align-center"
+                hide-details
+              ></v-slider>
+            </v-col> 
+            <!-- Left Position -->
+
               
             <!-- Transition duration -->
             <template v-if="this.type != 'scrollable'">
@@ -751,21 +805,22 @@
           
             <div v-if="type === 'scrollable' && images?.length" id="scrollable" :style="
                 index == 1
-                  ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor }
-                  : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor }"
+                  ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor, backgroundImage: 'url(' + scrollerBackground + ')',backgroundSize: 'cover' }
+                  : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor, backgroundImage: 'url(' + scrollerBackground + ')',backgroundSize: 'cover' }"
             
-                :class="['scrollable', SlideDirection === 'vertical' ? 'vertical' : 'horizontal']">
-
-              <div v-for="(image, index) in images" :key="index" :id="'Card' + (index + 1)" class="scrollcard"  >
-                <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'" class="taparea"></gwd-taparea>
-                <div class="base" :id="'Card' + (index + 1) + 'BaseImage'">
-                  <img :src="image.url"/>
+                :class="['scrollable', SlideDirection === 'vertical' ? 'vertical' : 'horizontal', loopScrollVar ? 'loop' : '']">
+              <div :class="['scroll-inner', slideDuration ? selectedEasing : '']">
+                <div v-for="(image, index) in loopScrollVar ? [...images, ...images] : images" :key="index" :id="'Card' + (index + 1)" class="scrollcard" :style="{margin: padding +'rem'}">
+                  <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'" class="taparea"></gwd-taparea>
+                  <div class="base" :id="'Card' + (index + 1) + 'BaseImage'">
+                    <img :src="image.url"/>
+                  </div>
+                  <div class="hover" :id="'Card' + (index + 1) + 'HoverImage'">
+                    <img :src="image.hoverUrl" v-if="image.hoverUrl"/>
+                  </div>
+                  
+                  
                 </div>
-                <div class="hover" :id="'Card' + (index + 1) + 'HoverImage'">
-                  <img :src="image.hoverUrl" v-if="image.hoverUrl"/>
-                </div>
-                
-                
               </div> 
             </div>
 
@@ -813,8 +868,8 @@ export default {
        
       animation: ['None','Slide left', 'Slide right', 'Slide up', 'Slide down'],
       AnimationSlide: 'None',
-      Easing: 'Linear',
-      easing: ['Linear','Ease', 'Ease-In', 'Ease-Out', 'Ease-In-Out'],
+      selectedEasing: 'linear',
+      easing: ['linear','ease', 'ease-in', 'ease-out', 'ease-in-out'],
       direction: ['vertical', 'horizontal'],
       SlideDirection: 'vertical',
       swatches: [
@@ -839,14 +894,19 @@ export default {
       transitionDuration: 300,
       sliderWidth: 40,
       sliderHeight: 40,
+      padding: 0,
       loopVar: false,
+      loopScrollVar: false,
       autoplayVar: false,
       autoplayInt: false,
       autoplayDelay: 2000,
       swiper: null,
       background: null,
+      scrollerBackground: null,
+      scrollerBgFileName: '',  
       showDialog: false,
       bgImageInput: null,
+      bgScrollerImageInput: null,
 
       // for buttons
       buttonVar: false,
@@ -904,8 +964,34 @@ export default {
       };
     },
   },
-
+  mounted() {
+    this.startVerticalAutoScroll();
+  },
   methods: {  
+    // scrollable loop animation
+    startVerticalAutoScroll() {
+      const scroller = document.getElementById("scrollable");
+      if (!scroller) return;
+
+      let scrollAmount = 0;
+      let step = 1; // pixels per frame
+      let delay = 16; // ~60fps
+      let scrollHeight = scroller.scrollHeight;
+      let resetThreshold = scrollHeight / 2; // or scrollHeight for full loop
+
+      function loop() {
+        if (scrollAmount >= resetThreshold) {
+          scroller.scrollTop = 0;
+          scrollAmount = 0;
+        } else {
+          scroller.scrollTop += step;
+          scrollAmount += step;
+        }
+        requestAnimationFrame(loop);
+      }
+
+      loop();
+    },
     getCardStyle(index) { 
       const sizePercent = 100;
 
@@ -1064,12 +1150,34 @@ export default {
       }
     },
 
+    // Scroller background image save function
+    importScrollerBgImage(event) {
+      const file = event.target.files[0]; // Get the first file from the input
+      if (file) {
+        this.scrollerBgFileName = file.name; // Store the file name
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.scrollerBackground = e.target.result; // Update the component's state with the file's data URL
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+
     // clear backround image function
     clearBgImage() {
-      this.background = ''; // Reset background to empty string
+      this.background = ''; // Reset background to empty string 
       
       if (fileInput) { 
-        this.bgImageInput = null
+        this.bgImageInput = null; 
+      }
+    }, 
+
+    // clear scroller backround image function
+    clearScrollerBgImage() { 
+      this.scrollerBackground = ''; // Reset scroller background to empty string
+      
+      if (fileInput) {  
+        this.bgScrollerImageInput = null;
       }
     }, 
 
@@ -1300,8 +1408,10 @@ export default {
     // big export code function
     exportCode() {
       const wrapperHeight = this.calculateWrapperHeight();
+      const scrollerBGFileName = this.scrollerBgFileName;
       const windowHeight = 1080;
       const windowWidth = 1920;
+      const paddingScroll = this.padding;
       const top = this.positionTop + "%";
       const left = this.positionLeft + "%";
       // const top = (this.positionTop / windowHeight) * 100 + "%";
@@ -1326,6 +1436,8 @@ export default {
   left:  ${left};
   width: ${scrollwidth};
   height: ${scrollheight};
+  background-image: url('assets/${scrollerBGFileName}');
+  background-size: cover;
 }
 .scrollable #scrollable, #scrollable img {
   height: 100%; 
@@ -1356,10 +1468,8 @@ export default {
 }
 .scrollcard {  
   position: relative;
-}
-.scrollcard:last-child {
-  margin: 0;
-}
+  margin: ${paddingScroll}rem;
+} 
 .scrollcard:hover .hover {
   opacity: 1;
 } 
@@ -1664,6 +1774,7 @@ this.images.forEach((image, index) => {
   },
 };
  
+ 
 </script>
 
 <style scoped>
@@ -1742,8 +1853,10 @@ this.images.forEach((image, index) => {
 .scrollable {
   position: absolute;
 }
-.vertical{ 
-  overflow: hidden auto;
+.vertical{  
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-behavior: smooth; 
 }
 .horizontal{ 
   display: flex;
@@ -1810,11 +1923,7 @@ this.images.forEach((image, index) => {
   top: 0%;
   left: 0%;
 } */
-
-.scrollcard:last-child {
-  margin: 0;
-
-}
+ 
 gwd-taparea {
   position: absolute;
   top: 0%;
@@ -2208,19 +2317,7 @@ gwd-taparea {
 }
 .animate-y {
   transform: translateY(0);
-}
-.slide-left-animation {
-  transform: translateX(100%);
-}
-.slide-right-animation {
-  transform: translateX(-100%);
-}
-.slide-top-animation {
-  transform: translateX(-100%);
-}
-.slide-bot-animation {
-  transform: translateX(100%);
-}
+} 
 .linear {
   transition-timing-function: linear;
 }
@@ -2235,5 +2332,38 @@ gwd-taparea {
 }
 .ease-in-out {
   transition-timing-function: ease-in-out;
+} 
+.loop {
+  overflow: hidden;
+}
+ 
+
+.loop.vertical .scroll-inner  {
+  display: flex;
+  flex-direction: column;
+  animation: scrollUp 10s linear infinite;
+}
+
+.loop.horizontal .scroll-inner {
+  display: flex;
+  flex-direction: row;
+  animation: scrollRight 10s linear infinite;
+}
+
+@keyframes scrollUp {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%); /* scroll half (since we duplicated) */
+  }
+}
+@keyframes scrollRight {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%); /* scroll half (since we duplicated) */
+  }
 }
 </style>
