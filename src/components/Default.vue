@@ -400,17 +400,17 @@
             <!-- Scrollbar color --> 
 
           </v-row>
-          <h3 class="pb-2 pt-8" v-if="type == 'scrollable'">Animation Settings</h3>
+          <h3 class="pb-2 pt-4" v-if="type == 'scrollable'">Other Settings (In Progress)</h3>
           <v-row v-if="type == 'scrollable'">
             <!-- Animation Direction -->
-            <v-col cols="6" class="pl-0 pt-2 pb-1" v-if="type == 'scrollable'">
-              <h4 class="py-0">Animation Loop</h4> 
+            <v-col cols="12" class="pl-0 pt-2 pb-1" v-if="type == 'scrollable'">
+              <h4 class="py-0">Loop</h4> 
               
                 <v-switch
                 v-if="type == 'scrollable'"
                   v-model="loopScrollVar"
                   color="#00e18c"
-                  label="Enable Loop"
+                  label="Enable"
                   density="small"
                   class="pb-2 pt-5"
                   inset
@@ -420,7 +420,23 @@
             <!-- Animation Direction -->
 
             <!-- Easing -->
-            <v-col cols="6" class="pr-0 pt-2 pb-1" v-if="loopScrollVar == true">
+            <v-col cols="6" class="pl-0 pt-2 pb-1" v-if="loopScrollVar == true">
+              <h4 class="py-0">Animate</h4>
+                <v-switch
+                v-if="type == 'scrollable'"
+                  v-model="autoAnimate"
+                  color="#00e18c"
+                  label="Enable"
+                  density="small"
+                  class="pb-2 pt-5"
+                  inset
+                  hide-details
+                ></v-switch>
+            </v-col>
+            <!-- Easing -->
+
+            <!-- Easing -->
+            <v-col cols="6" class="pr-0 pt-2 pb-1" v-if="autoAnimate == true && loopScrollVar == true">
               <h4 class="py-0">Easing</h4>
               <v-select 
                 v-model="selectedEasing"
@@ -433,10 +449,10 @@
             <!-- Easing -->
  
             <!-- Slide Duration -->
-            <v-col cols="8" class="align-self-center p-0" v-if="type == 'scrollable' && loopScrollVar == true">
+            <v-col cols="8" class="align-self-center p-0" v-if="type == 'scrollable' && autoAnimate == true && loopScrollVar == true">
               <h4>Duration Speed</h4>
             </v-col> 
-            <v-col cols="4" class="p-0" v-if="type == 'scrollable' && loopScrollVar == true">
+            <v-col cols="4" class="p-0" v-if="type == 'scrollable' && autoAnimate == true && loopScrollVar == true">
               <v-text-field 
                 v-model="slideDuration"
                 type="text"   
@@ -447,7 +463,7 @@
                 density="small" 
               ></v-text-field>
             </v-col>
-            <v-col cols="12" class="p-0" v-if="type == 'scrollable' && loopScrollVar == true">
+            <v-col cols="12" class="p-0" v-if="type == 'scrollable' && autoAnimate == true && loopScrollVar == true">
               <v-slider
                 v-model="slideDuration" 
                 :step="0.1" 
@@ -803,26 +819,47 @@
                 :class="['scrollable', SlideDirection === 'vertical' ? 'vertical' : 'horizontal']"
           > -->
           
-            <div v-if="type === 'scrollable' && images?.length" id="scrollable" :style="
-                index == 1
-                  ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor, backgroundImage: 'url(' + scrollerBackground + ')',backgroundSize: 'cover' }
-                  : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%','--scroll-thumb-width': scrollwidth + 'px','--scroll-thumb-height': scrollheight + 'px','--scroll-thumb-color': scrollColor,'--scroll-thumb-color-hover': scrollhoverColor, backgroundImage: 'url(' + scrollerBackground + ')',backgroundSize: 'cover' }"
-            
-                :class="['scrollable', SlideDirection === 'vertical' ? 'vertical' : 'horizontal', loopScrollVar ? 'loop' : '']">
-              <div :class="['scroll-inner', slideDuration ? selectedEasing : '']">
-                <div v-for="(image, index) in loopScrollVar ? [...images, ...images] : images" :key="index" :id="'Card' + (index + 1)" class="scrollcard" :style="{margin: padding +'rem'}">
-                  <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'" class="taparea"></gwd-taparea>
-                  <div class="base" :id="'Card' + (index + 1) + 'BaseImage'">
-                    <img :src="image.url"/>
-                  </div>
-                  <div class="hover" :id="'Card' + (index + 1) + 'HoverImage'">
-                    <img :src="image.hoverUrl" v-if="image.hoverUrl"/>
-                  </div>
-                  
-                  
-                </div>
-              </div> 
-            </div>
+  <div
+    v-if="type === 'scrollable' && images?.length"
+    id="scrollable"
+    :class="[
+      'scrollable',
+      SlideDirection === 'vertical' ? 'vertical' : 'horizontal',
+      loopScrollVar ? 'loop' : '',
+      loopScrollVar && autoAnimate ? 'autoloop' : ''
+    ]"
+    :style="{
+      top: positionTop + '%',
+      left: positionLeft + '%',
+      height: realSliderHeight() + '%',
+      width: realSliderWidth() + '%',
+      '--scroll-thumb-width': scrollwidth + 'px',
+      '--scroll-thumb-height': scrollheight + 'px',
+      '--scroll-thumb-color': scrollColor,
+      '--scroll-thumb-color-hover': scrollhoverColor,
+      backgroundImage: 'url(' + scrollerBackground + ')',
+      backgroundSize: 'cover'
+    }"
+  >
+    <div :class="['scroll-inner', slideDuration ? selectedEasing : '']" :style="'animation-duration:' + slideDuration + 's'">
+      <div
+        v-for="(image, index) in loopScrollVar ? [...images, ...images, ...images] : images"
+        :key="index"
+        class="scrollcard"
+        :id="'Card' + (index + 1)"
+        :style="{ margin: padding + 'rem' }"
+      >
+        <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'" class="taparea" />
+        <div class="base" :id="'Card' + (index + 1) + 'BaseImage'">
+          <img :src="image.url" />
+        </div>
+        <div class="hover" :id="'Card' + (index + 1) + 'HoverImage'">
+          <img :src="image.hoverUrl" v-if="image.hoverUrl" />
+        </div>
+      </div>
+    </div>
+  </div>
+
 
           <!-- </div>  -->
         </div> 
@@ -888,7 +925,7 @@ export default {
       positionTop: 0,
       positionLeft: 0,
       scrollwidth: 3, 
-      slideDuration: 0.3,
+      slideDuration: 3,
       slideCount: 1,
       spaceBetweenSlides: 0, 
       transitionDuration: 300,
@@ -897,6 +934,7 @@ export default {
       padding: 0,
       loopVar: false,
       loopScrollVar: false,
+      autoAnimate: false,
       autoplayVar: false,
       autoplayInt: false,
       autoplayDelay: 2000,
@@ -906,8 +944,12 @@ export default {
       scrollerBgFileName: '',  
       showDialog: false,
       bgImageInput: null,
-      bgScrollerImageInput: null,
-
+      bgScrollerImageInput: null, 
+      
+      scrollRef: null,
+      itemSize: 0, // will be set dynamically
+      visibleItems: 0,
+      
       // for buttons
       buttonVar: false,
       offset: 4,
@@ -964,33 +1006,37 @@ export default {
       };
     },
   },
-  mounted() {
-    this.startVerticalAutoScroll();
-  },
-  methods: {  
-    // scrollable loop animation
-    startVerticalAutoScroll() {
-      const scroller = document.getElementById("scrollable");
-      if (!scroller) return;
-
-      let scrollAmount = 0;
-      let step = 1; // pixels per frame
-      let delay = 16; // ~60fps
-      let scrollHeight = scroller.scrollHeight;
-      let resetThreshold = scrollHeight / 2; // or scrollHeight for full loop
-
-      function loop() {
-        if (scrollAmount >= resetThreshold) {
-          scroller.scrollTop = 0;
-          scrollAmount = 0;
-        } else {
-          scroller.scrollTop += step;
-          scrollAmount += step;
-        }
-        requestAnimationFrame(loop);
+  mounted() {  
+    this.$nextTick(() => {
+      if (this.loopScrollVar) {
+        this.initLoopScroll();
       }
+    });
+  },
+  methods: {   
+    initLoopScroll() {
+      this.scrollRef = document.getElementById('scrollable');
+      const direction = this.SlideDirection === 'vertical' ? 'scrollTop' : 'scrollLeft';
 
-      loop();
+      const item = this.scrollRef.querySelector('.scrollcard');
+      if (!item) return;
+
+      this.itemSize = this.SlideDirection === 'vertical' ? item.offsetHeight : item.offsetWidth;
+      this.visibleItems = this.images.length;
+
+      // Set initial scroll position to the start of the middle clone set
+      this.scrollRef[direction] = this.itemSize * this.visibleItems;
+
+      this.scrollRef.addEventListener('scroll', () => {
+        const scrollPos = this.scrollRef[direction];
+        const maxScroll = this.itemSize * this.visibleItems * 2;
+
+        if (scrollPos <= 0) {
+          this.scrollRef[direction] = this.itemSize * this.visibleItems;
+        } else if (scrollPos >= maxScroll) {
+          this.scrollRef[direction] = this.itemSize * this.visibleItems;
+        }
+      });
     },
     getCardStyle(index) { 
       const sizePercent = 100;
@@ -1461,7 +1507,7 @@ export default {
   flex-shrink: 0; 
 }
 .horizontal .base { 
-  height: 100%;
+  height: 100%; 
 }
 .base {  
   line-height: 0;
@@ -1479,6 +1525,8 @@ export default {
   left: 0%;
   line-height: 0;
   opacity: 0;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
 }
 #scrollable::-webkit-scrollbar {
@@ -1508,7 +1556,63 @@ export default {
 .scrollcard {
   pointer-events: auto;
 }
- 
+.linear {
+  animation-timing-function: linear;
+}
+.ease {
+  animation-timing-function: ease;
+}
+.ease-in {
+  animation-timing-function: ease-in;
+}
+.ease-out {
+  animation-timing-function: ease-out;
+}
+.ease-in-out {
+  animation-timing-function: ease-in-out;
+} 
+.autoloop {
+  overflow: hidden;
+}  
+.vertical .scroll-inner  {
+  display: flex;
+  flex-direction: column; 
+}
+.horizontal .scroll-inner {
+  display: flex;
+  flex-direction: row;  
+}
+
+.autoloop.vertical .scroll-inner  {
+  display: flex;
+  flex-direction: column; 
+  animation-name: scrollUp;
+  animation-iteration-count: infinite;
+}
+
+.autoloop.horizontal .scroll-inner {
+  display: flex;
+  flex-direction: row; 
+  animation-name: scrollRight;
+  animation-iteration-count: infinite;
+}
+
+@keyframes scrollUp {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%); 
+  }
+}
+@keyframes scrollRight {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%); 
+  }
+}
       `;
 
 
@@ -1603,9 +1707,13 @@ export default {
       </div>
       `;
       });
+ 
+let scrollSlideHtml = '';
+const clonedImages = this.loopScrollVar
+  ? [...this.images, ...this.images, ...this.images]
+  : [...this.images];
 
-let scrollSlideHtml = "";
-this.images.forEach((image, index) => {
+clonedImages.forEach((image, index) => {
   scrollSlideHtml += `
     <div id="Card${index + 1}" class="scrollcard">
       <gwd-taparea id="Card${index + 1}TapArea" class="taparea"></gwd-taparea>
@@ -1619,7 +1727,6 @@ this.images.forEach((image, index) => {
     </div>
   `;
 });
-
 
        
       // Construct the Swiper component HTML
@@ -1734,8 +1841,10 @@ this.images.forEach((image, index) => {
 
       
  const htmlCodeScroll = `
-<div id="scrollable" class="scrollable ${this.SlideDirection}">
-  ${scrollSlideHtml} 
+ <div id="scrollable" class="scrollable ${this.SlideDirection} ${this.loopScrollVar === true ? 'loop' : '' } ${this.autoAnimate === true ? 'autoloop' : '' }"> 
+  <div class="scroll-inner ${this.autoAnimate ? this.selectedEasing : ''}" style="animation-duration: ${this.autoAnimate ? this.slideDuration : 0}s">
+    ${scrollSlideHtml} 
+  </div>
 </div>
     `;
 
@@ -1897,19 +2006,19 @@ this.images.forEach((image, index) => {
   width: 100%;
 }
 .horizontal .base { 
-  height: 100%;
+  height: 100%; 
 }
 .base {  
   line-height: 0;
-}
-.hover { 
+} 
+.hover {
   position: absolute; 
   top: 0%;
   left: 0%;
   line-height: 0;
-}
-.hover {
   opacity: 0;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
 }
 .scrollcard {  
@@ -2319,35 +2428,45 @@ gwd-taparea {
   transform: translateY(0);
 } 
 .linear {
-  transition-timing-function: linear;
+  animation-timing-function: linear;
 }
 .ease {
-  transition-timing-function: ease;
+  animation-timing-function: ease;
 }
 .ease-in {
-  transition-timing-function: ease-in;
+  animation-timing-function: ease-in;
 }
 .ease-out {
-  transition-timing-function: ease-out;
+  animation-timing-function: ease-out;
 }
 .ease-in-out {
-  transition-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
 } 
-.loop {
+.autoloop {
   overflow: hidden;
-}
- 
+} 
 
-.loop.vertical .scroll-inner  {
+.vertical .scroll-inner  {
   display: flex;
-  flex-direction: column;
-  animation: scrollUp 10s linear infinite;
+  flex-direction: column; 
+}
+.horizontal .scroll-inner {
+  display: flex;
+  flex-direction: row;  
 }
 
-.loop.horizontal .scroll-inner {
+.autoloop.vertical .scroll-inner  {
   display: flex;
-  flex-direction: row;
-  animation: scrollRight 10s linear infinite;
+  flex-direction: column; 
+  animation-name: scrollUp;
+  animation-iteration-count: infinite;
+}
+
+.autoloop.horizontal .scroll-inner {
+  display: flex;
+  flex-direction: row; 
+  animation-name: scrollRight;
+  animation-iteration-count: infinite;
 }
 
 @keyframes scrollUp {
@@ -2363,7 +2482,7 @@ gwd-taparea {
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-50%); /* scroll half (since we duplicated) */
+    transform: translateX(-100%); /* scroll half (since we duplicated) */
   }
 }
 </style>
