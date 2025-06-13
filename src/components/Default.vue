@@ -400,7 +400,7 @@
             <!-- Scrollbar color --> 
 
           </v-row>
-          <h3 class="pb-2 pt-4" v-if="type == 'scrollable'">Other Settings (In Progress)</h3>
+          <h3 class="pb-2 pt-4" v-if="type == 'scrollable'">Other Settings</h3>
           <v-row v-if="type == 'scrollable'">
             <!-- Animation Direction -->
             <v-col cols="12" class="pl-0 pt-2 pb-1" v-if="type == 'scrollable'">
@@ -468,7 +468,7 @@
                 v-model="slideDuration" 
                 :step="0.1" 
                 :min="0.1"
-                :max="10"
+                :max="25"
                 color="#00e18c"
                 class="align-center"
                 hide-details
@@ -1602,7 +1602,7 @@ export default {
     transform: translateY(0%);
   }
   100% {
-    transform: translateY(-50%); 
+    transform: translateY(-33%); 
   }
 }
 @keyframes scrollRight {
@@ -1610,7 +1610,7 @@ export default {
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-50%); 
+    transform: translateX(-33%); 
   }
 }
       `;
@@ -2474,7 +2474,7 @@ gwd-taparea {
     transform: translateY(0%);
   }
   100% {
-    transform: translateY(-50%); /* scroll half (since we duplicated) */
+    transform: translateY(-33%); /* scroll half (since we duplicated) */
   }
 }
 @keyframes scrollRight {
