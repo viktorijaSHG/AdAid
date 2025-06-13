@@ -1602,7 +1602,7 @@ export default {
     transform: translateY(0%);
   }
   100% {
-    transform: translateY(-33%); 
+    transform: translateY(-33.33%); 
   }
 }
 @keyframes scrollRight {
@@ -1610,7 +1610,7 @@ export default {
     transform: translateX(0%);
   }
   100% {
-    transform: translateX(-33%); 
+    transform: translateX(-33.33%); 
   }
 }
       `;
@@ -2474,7 +2474,7 @@ gwd-taparea {
     transform: translateY(0%);
   }
   100% {
-    transform: translateY(-33%); /* scroll half (since we duplicated) */
+    transform: translateY(-33.33%); /* scroll half (since we duplicated) */
   }
 }
 @keyframes scrollRight {
