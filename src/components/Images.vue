@@ -38,7 +38,7 @@
           <div id="name" class="filename">{{ image.name }}</div>
         </div>
         <div class="actions">
-          <img v-if="type == 'scrollable'" src="../assets/effect.svg" class="remove" @click="openDialog(image)" />
+          <img v-if="type == 'scroller'" src="../assets/effect.svg" class="remove" @click="openDialog(image)" />
           <img src="../assets/bin.svg" class="remove" @click="deleteImage(index)" />
         </div>
       </div>

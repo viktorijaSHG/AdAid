@@ -4,7 +4,8 @@
   </div>
 
   <div v-else class="container">
-    <div class="image-grid" style="margin: auto">
+    <h1 class="pb-5">Select Your Tool</h1>
+    <div class="image-grid">
       <div
         class="image-container"
         v-for="(image, index) in images"
@@ -30,7 +31,8 @@ export default {
         { src: "cube.png", alt: "Cube" },
         { src: "fade.png", alt: "Fade" },
         { src: "creative.png", alt: "Creative" },
-        { src: "scrollable.png", alt: "Scrollable" },
+        { src: "scrollable.png", alt: "Scroller" },
+        { src: "dragdrop.png", alt: "DragDrop" },
         // Add more images as needed
       ],
     };
@@ -42,15 +44,17 @@ export default {
     chooseType(index) {
       this.selectedIndex = index;
       if (this.selectedIndex == 0) {
-        this.type = "multiple";
+        this.type = "carousel";
       } else if (this.selectedIndex == 1) {
         this.type = "cube";
       } else if (this.selectedIndex == 3) {
         this.type = "creative";
       } else if (this.selectedIndex == 4) {
-        this.type = "scrollable";
+        this.type = "scroller";
+      } else if (this.selectedIndex == 5) {
+        this.type = "drag & drop";
       } else {
-        this.type = "single";
+        this.type = "fade";
       }
     },
     getImage(image) {
@@ -59,7 +63,9 @@ export default {
   },
 };
 </script>
-
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+</style>
 <style>
 body {
   background-color: #0b3144 !important;
@@ -78,11 +84,11 @@ body {
 .image-grid {
   display: grid;
   grid-template-columns: repeat(
-    5,
+    3,
     minmax(12.5rem, 1fr)
   ); /* 200px is approximately 12.5rem */
   gap: 1rem;
-  width: 65rem; /* 40% of viewport width */
+  width: 50rem; /* 40% of viewport width */
   height: auto; /* 40% of viewport height */
 }
 
@@ -127,5 +133,12 @@ body {
   .image-grid {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
+}
+h1 { 
+  font-family: "Poppins", sans-serif;
+  font-style: normal;
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #e8e8e8; 
 }
 </style>

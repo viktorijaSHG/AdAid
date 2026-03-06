@@ -4,7 +4,7 @@
       <v-card-title>Exported Code</v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="6" v-if="type !== 'scrollable'">
+          <v-col cols="6" v-if="type !== 'scroller'">
             <div class="codeCopy px-4 py-3">
               <h3>Head import</h3>
               <pre v-text="ContentHead" class="codeBlock"></pre>
@@ -13,7 +13,7 @@
               </v-btn> 
             </div>
           </v-col>
-          <v-col cols="6" v-if="type !== 'scrollable'">
+          <v-col cols="6" v-if="type !== 'scroller'">
             <div class="codeCopy px-4 py-3">
               <h3>CSS code</h3>
               <pre v-text="ContentCss" class="codeBlock"></pre>
@@ -22,7 +22,7 @@
               </v-btn> 
             </div>           
           </v-col>
-          <v-col cols="6" v-if="type !== 'scrollable'">
+          <v-col cols="6" v-if="type !== 'scroller'">
             <div class="codeCopy px-4 py-3">
               <h3>HTML code</h3>
               <pre v-text="ContentHtml" class="codeBlock"></pre>
@@ -31,7 +31,7 @@
               </v-btn> 
             </div>  
           </v-col>
-          <v-col cols="6" v-if="type == 'scrollable'">
+          <v-col cols="6" v-if="type == 'scroller'">
             <div class="codeCopy px-4 py-3">
               <h3>CSS code</h3>
               <pre v-text="ContentCssScroll" class="codeBlock"></pre>
@@ -40,7 +40,7 @@
               </v-btn> 
             </div>           
           </v-col>
-          <v-col cols="6" v-if="type == 'scrollable'">
+          <v-col cols="6" v-if="type == 'scroller'">
             <div class="codeCopy px-4 py-3">
               <h3>HTML code</h3>
               <pre v-text="ContentHtmlScroll" class="codeBlock"></pre>
@@ -49,7 +49,7 @@
               </v-btn> 
             </div>  
           </v-col>
-          <v-col cols="6" v-if="type !== 'scrollable'">
+          <v-col cols="6" v-if="type !== 'scroller'">
             <div class="codeCopy px-4 py-3">
               <h3>JavaScript code</h3>
               <pre v-text="ContentJavaScript" class="codeBlock"></pre>
@@ -83,7 +83,7 @@
           <v-row>
             
             <!-- Scroller Background image -->
-            <v-col cols="12" class="p-0"  v-if="type == 'scrollable'">
+            <v-col cols="12" class="p-0"  v-if="type == 'scroller'">
               <h4 class="py-3">Scroller Background Image</h4>
               <v-file-input
                 @change="importScrollerBgImage"
@@ -119,7 +119,7 @@
             <!-- Background image -->
 
             <!-- Slide Direction -->
-            <v-col cols="12" class="p-0"  v-if="type == 'scrollable'">
+            <v-col cols="12" class="p-0"  v-if="type == 'scroller'">
               <h4 class="py-0">Slide direction</h4>
               <v-select 
                 v-model="SlideDirection"
@@ -157,34 +157,36 @@
             <!-- Slide Type changed the names from numbers to titles --> 
 
             <!-- Slider Width -->
-            <v-col cols="8" class="align-self-center p-0">
-              <h4>Slider Width</h4>
-            </v-col>
+             <template v-if="type != 'drag & drop'">
+              <v-col cols="8" class="align-self-center p-0">
+                <h4>Slider Width</h4>
+              </v-col>
 
-            <v-col cols="4" class="p-0">
-              <v-text-field 
-                v-model="sliderWidth"
-                type="text"   
-                @input="validateInput" 
-                variant="outlined solo"
-                class="white center text-right"
-                hide-details
-                density="small" 
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" class="p-0">
-              <v-slider
-                v-model="sliderWidth" 
-                :step="1" 
-                color="#00e18c"
-                class="align-center"
-                hide-details
-              ></v-slider>
-            </v-col> 
+              <v-col cols="4" class="p-0">
+                <v-text-field 
+                  v-model="sliderWidth"
+                  type="text"   
+                  @input="validateInput" 
+                  variant="outlined solo"
+                  class="white center text-right"
+                  hide-details
+                  density="small" 
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" class="p-0">
+                <v-slider
+                  v-model="sliderWidth" 
+                  :step="1" 
+                  color="#00e18c"
+                  class="align-center"
+                  hide-details
+                ></v-slider>
+              </v-col> 
+            </template>
             <!-- Slider Width -->
              
             <!-- Slider Height  -->
-             <template v-if="type === 'scrollable'">
+             <template v-if="type === 'scroller'">
               
               <v-col cols="8" class="align-self-center p-0">
                 <h4>Slider Height</h4>
@@ -214,7 +216,7 @@
 
             
             <!-- Padding  -->
-             <template v-if="type === 'scrollable'">
+             <template v-if="type === 'scroller'">
               
               <v-col cols="8" class="align-self-center p-0">
                 <h4>Padding (rem)</h4>
@@ -297,7 +299,7 @@
             <!-- Left Position -->
 
             <!-- Slides per View -->
-            <template v-if="this.type == 'multiple'">
+            <template v-if="this.type == 'carousel'">
               <v-col cols="8" class="align-self-center p-0">
                 <h4>Slides Per View</h4>
               </v-col> 
@@ -327,7 +329,7 @@
 
             
             <!-- Space between slides -->
-            <template v-if="this.type == 'multiple'">
+            <template v-if="this.type == 'carousel'">
               <v-col cols="8" class="align-self-center p-0">
                 <h4>Space Between Slides</h4>
               </v-col> 
@@ -355,8 +357,8 @@
             <!-- Space between slides -->
           </v-row>
 
-          <h3 class="pb-2 pt-8" v-if="type == 'scrollable'">Scrollbar Settings</h3>
-          <v-row v-if="type == 'scrollable'">
+          <h3 class="pb-2 pt-8" v-if="type == 'scroller'">Scrollbar Settings</h3>
+          <v-row v-if="type == 'scroller'">
             <!-- Scrollbar width -->
             <v-col cols="8" class="align-self-center p-0">
               <h4>Scrollbar Width</h4>
@@ -400,14 +402,14 @@
             <!-- Scrollbar color --> 
 
           </v-row>
-          <h3 class="pb-2 pt-4" v-if="type == 'scrollable'">Other Settings</h3>
-          <v-row v-if="type == 'scrollable'">
+          <h3 class="pb-2 pt-4" v-if="type == 'scroller'">Other Settings</h3>
+          <v-row v-if="type == 'scroller'">
             <!-- Animation Direction -->
-            <v-col cols="12" class="pl-0 pt-2 pb-1" v-if="type == 'scrollable'">
+            <v-col cols="12" class="pl-0 pt-2 pb-1" v-if="type == 'scroller'">
               <h4 class="py-0">Loop</h4> 
               
                 <v-switch
-                v-if="type == 'scrollable'"
+                v-if="type == 'scroller'"
                   v-model="loopScrollVar"
                   color="#00e18c"
                   label="Enable"
@@ -423,7 +425,7 @@
             <v-col cols="6" class="pl-0 pt-2 pb-1" v-if="loopScrollVar == true">
               <h4 class="py-0">Animate</h4>
                 <v-switch
-                v-if="type == 'scrollable'"
+                v-if="type == 'scroller'"
                   v-model="autoAnimate"
                   color="#00e18c"
                   label="Enable"
@@ -449,10 +451,10 @@
             <!-- Easing -->
  
             <!-- Slide Duration -->
-            <v-col cols="8" class="align-self-center p-0" v-if="type == 'scrollable' && autoAnimate == true && loopScrollVar == true">
+            <v-col cols="8" class="align-self-center p-0" v-if="type == 'scroller' && autoAnimate == true && loopScrollVar == true">
               <h4>Duration Speed</h4>
             </v-col> 
-            <v-col cols="4" class="p-0" v-if="type == 'scrollable' && autoAnimate == true && loopScrollVar == true">
+            <v-col cols="4" class="p-0" v-if="type == 'scroller' && autoAnimate == true && loopScrollVar == true">
               <v-text-field 
                 v-model="slideDuration"
                 type="text"   
@@ -463,7 +465,7 @@
                 density="small" 
               ></v-text-field>
             </v-col>
-            <v-col cols="12" class="p-0" v-if="type == 'scrollable' && autoAnimate == true && loopScrollVar == true">
+            <v-col cols="12" class="p-0" v-if="type == 'scroller' && autoAnimate == true && loopScrollVar == true">
               <v-slider
                 v-model="slideDuration" 
                 :step="0.1" 
@@ -478,7 +480,7 @@
 
               
             <!-- Transition duration -->
-            <template v-if="this.type != 'scrollable'">
+            <template v-if="this.type != 'scroller'">
               <v-col cols="7" class="align-self-center p-0">
                 <h4>Animation speed</h4>
               </v-col> 
@@ -512,7 +514,7 @@
 
 
           <v-switch
-           v-if="type != 'scrollable'"
+           v-if="type != 'scroller'"
             v-model="loopVar"
             color="#00e18c"
             label="Enable Loop"
@@ -539,7 +541,7 @@
             class="pb-2"
             inset
             hide-details
-            v-if="type !== 'scrollable'"
+            v-if="type !== 'scroller'"
           ></v-switch>
           <v-row class="pb-5" v-if="autoplayVar">
             <!-- Delay -->
@@ -585,7 +587,7 @@
 
           
           <v-switch
-            v-if="type !== 'scrollable'"
+            v-if="type !== 'scroller'"
             v-model="buttonVar"
             color="#00e18c"
             label="Side buttons"
@@ -747,7 +749,7 @@
         >
           <div v-if="images && images.length">
             <Swiper
-              v-if="type === 'multiple' || type === 'cube' || type === 'creative' || type === 'single'"
+              v-if="type === 'carousel' || type === 'cube' || type === 'creative' || type === 'fade'"
               :key="creativeType + cubeShadow"
               :style="
                 index == 1
@@ -760,11 +762,11 @@
               :navigation="getSwiperNavigation()"
               :autoplay="{ delay: autoplayDelay, disableOnInteraction: autoplayInt }"
               :loop="loopVar"
-              :slidesPerView="type === 'scrollable' ? 'auto' : slideCount"
+              :slidesPerView="type === 'scroller' ? 'auto' : slideCount"
               :spaceBetween="spaceBetweenSlides"
-              :mousewheel="type === 'scrollable'"
-              :free-mode="type === 'scrollable'"
-              :direction="type === 'scrollable' ? 'horizontal' : undefined"
+              :mousewheel="type === 'scroller'"
+              :free-mode="type === 'scroller'"
+              :direction="type === 'scroller' ? 'horizontal' : undefined"
               :observe="true"
               :speed="transitionDuration"
               :observe-parents="true"
@@ -808,63 +810,65 @@
                   v-bind:class="{ 'swiper-custom-next': btnType == 'image' }"
                 ></div>
           </div>
-        </div>
-          <!-- Scrollable Gallery -->
-          <!-- <div 
-            :style="
-                index == 1
-                  ? { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }
-                  : { top: positionTop + '%', left: positionLeft + '%', height: realSliderHeight() + '%', width: realSliderWidth() + '%' }"
-            
-                :class="['scrollable', SlideDirection === 'vertical' ? 'vertical' : 'horizontal']"
-          > -->
+        </div> 
           
-  <div
-    v-if="type === 'scrollable' && images?.length"
-    id="scrollable"
-    :class="[
-      'scrollable',
-      SlideDirection === 'vertical' ? 'vertical' : 'horizontal',
-      loopScrollVar ? 'loop' : '',
-      loopScrollVar && autoAnimate ? 'autoloop' : ''
-    ]"
-    :style="{
-      top: positionTop + '%',
-      left: positionLeft + '%',
-      height: realSliderHeight() + '%',
-      width: realSliderWidth() + '%',
-      '--scroll-thumb-width': scrollwidth + 'px',
-      '--scroll-thumb-height': scrollheight + 'px',
-      '--scroll-thumb-color': scrollColor,
-      '--scroll-thumb-color-hover': scrollhoverColor,
-      backgroundImage: 'url(' + scrollerBackground + ')',
-      backgroundSize: 'cover'
-    }"
-  >
-    <div :class="['scroll-inner', slideDuration ? selectedEasing : '']" :style="'animation-duration:' + slideDuration + 's'">
-      <div
-        v-for="(image, index) in loopScrollVar ? [...images, ...images, ...images] : images"
-        :key="index"
-        class="scrollcard"
-        :id="'Card' + (index + 1)"
-        :style="{ margin: padding + 'rem' }"
-      >
-        <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'" class="taparea" />
-        <div class="base" :id="'Card' + (index + 1) + 'BaseImage'">
-          <img :src="image.url" />
+        <div
+          v-if="type === 'scroller' && images?.length"
+          id="scrollable"
+          :class="[
+            'scrollable',
+            SlideDirection === 'vertical' ? 'vertical' : 'horizontal',
+            loopScrollVar ? 'loop' : '',
+            loopScrollVar && autoAnimate ? 'autoloop' : ''
+          ]"
+          :style="{
+            top: positionTop + '%',
+            left: positionLeft + '%',
+            height: realSliderHeight() + '%',
+            width: realSliderWidth() + '%',
+            '--scroll-thumb-width': scrollwidth + 'px',
+            '--scroll-thumb-height': scrollheight + 'px',
+            '--scroll-thumb-color': scrollColor,
+            '--scroll-thumb-color-hover': scrollhoverColor,
+            backgroundImage: 'url(' + scrollerBackground + ')',
+            backgroundSize: 'cover'
+          }"
+        >
+          <div :class="['scroll-inner', slideDuration ? selectedEasing : '']" :style="'animation-duration:' + slideDuration + 's'">
+            <div
+              v-for="(image, index) in loopScrollVar ? [...images, ...images, ...images] : images"
+              :key="index"
+              class="scrollcard"
+              :id="'Card' + (index + 1)"
+              :style="{ margin: padding + 'rem' }"
+            >
+              <gwd-taparea :id="'Card' + (index + 1) + 'TapArea'" class="taparea" />
+              <div class="base" :id="'Card' + (index + 1) + 'BaseImage'">
+                <img :src="image.url" />
+              </div>
+              <div class="hover" :id="'Card' + (index + 1) + 'HoverImage'">
+                <img :src="image.hoverUrl" v-if="image.hoverUrl" />
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="hover" :id="'Card' + (index + 1) + 'HoverImage'">
-          <img :src="image.hoverUrl" v-if="image.hoverUrl" />
+
+        
+        <div
+          v-if="type === 'drag & drop' && images?.length"
+          id="dragdrop" 
+          :style="{
+            top: positionTop + '%',
+            left: positionLeft + '%',
+            height: realSliderHeight() + '%',
+            width: realSliderWidth() + '%',
+          }">
         </div>
-      </div>
-    </div>
-  </div>
-
-
-          <!-- </div>  -->
+        
         </div> 
       <div></div>
     </v-col>
+    <div class="template-text">Tool: <span>{{ this.type }}</span></div>
   </v-row>
 </template>
  
@@ -1015,7 +1019,7 @@ export default {
   },
   methods: {   
     initLoopScroll() {
-      this.scrollRef = document.getElementById('scrollable');
+      this.scrollRef = document.getElementById('scroller');
       const direction = this.SlideDirection === 'vertical' ? 'scrollTop' : 'scrollLeft';
 
       const item = this.scrollRef.querySelector('.scrollcard');
@@ -2484,5 +2488,20 @@ gwd-taparea {
   100% {
     transform: translateX(-100%); /* scroll half (since we duplicated) */
   }
+}
+.template-text {
+  position: absolute;
+  bottom: 2%;
+  right: 1.3%;
+  font-size: 0.75rem;
+  font-weight: 300;
+  text-transform: capitalize;
+}
+.template-text span { 
+  font-weight: 700; 
+}
+
+#dragdrop {
+  background-color: #f8f8f8;
 }
 </style>
